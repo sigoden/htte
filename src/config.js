@@ -212,7 +212,7 @@ class Config {
    */
   findSerializer(type) {
     if (_.isUndefined(type)) return this._serializer
-    return SerializerManager.findByType(type)
+    return SerializerManager.findByType(type) || this._serializer
   }
 
   /**

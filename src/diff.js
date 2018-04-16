@@ -22,14 +22,14 @@ function diff(context, expect, actual, isStrict = true) {
 
 function diffPrimitive(context, expect, actual) {
   if (_.isEqual(expect, actual)) return true
-  return context.error(`value different, expect: ${expect}, actual: ${target}`)
+  return context.error(`value different, expect: ${expect}, actual: ${actual}`)
 }
 
 function diffArray(context, expect, actual, isStrict) {
   if (!diffType(context, expect, actual)) return false
   let sameLength = expect.length === actual.length
   if (isStrict && !sameLength) {
-    return context.error(`array length different, expect: ${expect.length}, actual: ${actual.length}`)
+    return context.error(`element different, expect: ${expect.length}, actual: ${actual.length}`)
   }
   return expect.every((elem, index) => {
     return diff(context.enter(`[${index}]`), item, actual[index])
@@ -63,20 +63,24 @@ function diffObject(context, expect, actual, isStrict) {
 }
 
 function satifyObjectKeys(context, expect, actual) {
-  let satify = true
   let excludes = _.difference(expect, actual)
   let includes = _.difference(actual, expect)
 
+  let errMsg = ``
   if (excludes.length) {
-    context.error(`field different, no fields ${excludes}`)
-    satify = false
+    errMsg += `, miss props ${JSON.stringify(excludes)}`
   }
   if (includes.length) {
-    context.error(`field different, extra fields ${includes}`)
-    satify = false
+    errMsg += `, extra props ${JSON.stringify(includes)}`
   }
 
-  return satify
+  if (!errMsg) {
+    return true
+  }
+
+  errMsg = `property different` + errMsg
+  context.error(errMsg)
+  return false
 }
 
 module.exports = diff

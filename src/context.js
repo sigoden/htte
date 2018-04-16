@@ -29,6 +29,13 @@ class Context {
   }
 
   /**
+   * Get logger
+   */
+  logger() {
+    return this._logger
+  }
+
+  /**
    * Create context for resolve the request
    */
   _resolveCtx(logger) {
@@ -70,7 +77,7 @@ class Context {
    * Record the value to the session
    */
   record(key, value) {
-    this._session.record(this._unit, key, value)
+    this._session.writeUnit(this._unit, key, value)
   }
 
   /**
@@ -80,7 +87,7 @@ class Context {
     if (utils.isTypeOf(req, 'undefined')) return {}
     let logger = this._logger.enter('req')
     let result = resolve(this._resolveCtx(logger), req)
-    if (logger.dirty()) return
+    if (logger.dirty()) return {}
     return result
   }
 
@@ -91,7 +98,7 @@ class Context {
    */
   diffRes(expect, res) {
     let logger = this._logger.enter('res')
-    return diff(this._resolveCtx(logger), res)
+    return diff(this._diffCtx(logger), expect, res, false)
   }
 }
 

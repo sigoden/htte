@@ -189,8 +189,8 @@ class Logger {
   /**
    * Find the child by title
    */
-  findChild(title) {
-    return _.find(this.children, { title: title })
+  findChild(_title) {
+    return _.find(this._children, { _title })
   }
 
   /**

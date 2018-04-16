@@ -1,5 +1,4 @@
 const jsonpath = require('jsonpath')
-const _ = require('lodash')
 
 const RE_VAR = /^\${1,4}/
 
@@ -19,7 +18,7 @@ const RE_VAR = /^\${1,4}/
  * @returns {function}
  */
 module.exports = function createQuery(globalVars, vars, unit) {
-  let unitVars = selectVars(vars, unit)
+  let unitVars = selectVars(globalVars, unit)
 
   return (path, single = true) => {
     if (!isVar(path)) return path
@@ -51,7 +50,7 @@ function isVarGlobal(path) {
  */
 function toJPath(path, unit) {
   let n = count$(path)
-  let segs = ['$', unit.module(), unit.name()].slice(0, _.clamp(1, 3, 4 - n))
+  let segs = ['$', unit.module(), unit.name()].slice(0, n)
   let prefix = jsonpath.stringify(segs)
   let tail = path.slice(n)
   return prefix + delimiter(tail) + tail
@@ -61,7 +60,7 @@ function delimiter(path) {
   return path[0] === '[' ? '' : '.'
 }
 
-function query(sink, jp, single) {
+function query(source, jp, single) {
   try {
     let result = jsonpath.query(source, jp)
     return single ? result[0] : result

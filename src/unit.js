@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const axios = require('axios')
 const qs = require('querystring')
+const yaml = require('js-yaml')
 
 const utils = require('./utils')
 const DELIMITER = '-'
@@ -54,7 +55,7 @@ class Unit {
    * Get unit's api
    */
   api() {
-    return this._api.name
+    return this._api
   }
 
   /**
@@ -92,13 +93,13 @@ class Unit {
    * Validate req
    */
   _parseReq(req, logger) {
-    let _req = { status: 200 }
+    let _req = {}
     let _req$ = this._maybeObject(req, logger, _req)
     if (Object.is(_req, _req$)) return _req
 
+    _req.body = req.body
     _req.headers = this._maybeObject(req.headers, logger.enter('headers'))
     _req.query = this._maybeObject(req.query, logger.enter('query'))
-    _req.status = this._mayStatus(req.status, logger.enter('status'))
     _req.params = this._parseReqParams(req.params, logger.enter('params'))
     _req.type = this._parseReqType(req.type, logger.enter('type'))
     return _req
@@ -138,7 +139,7 @@ class Unit {
   _parseReqParams(params, logger) {
     if (!this._api) return
 
-    params = this._maybeObject(params)
+    params = this._maybeObject(params, logger)
     if (!params) return
 
     let apiKeys = this._api.keys
@@ -146,14 +147,18 @@ class Unit {
 
     let keys = _.keys(params).sort()
     let excludes = _.difference(keys, apiKeys)
-    if (excludes.length) {
-      debugger
-      logger.log(`no params ${excludes}`)
-    }
     let includes = _.difference(apiKeys, keys)
-    if (includes.length) {
-      logger.log(`extra params ${includes}`)
+    let errMsg = ``
+    if (excludes.length) {
+      errMsg += `, miss params ${JSON.stringify(excludes)}`
     }
+    if (includes.length) {
+      errMsg += `, extra params ${JSON.stringify(includes)}`
+    }
+    if (errMsg) {
+      logger.log(`params different` + errMsg)
+    }
+    return params
   }
 
   /**
@@ -165,8 +170,12 @@ class Unit {
     let _res$ = this._maybeObject(res, logger, _res)
     if (Object.is(_res, _res$)) return _res
 
-    _res.headers = this._maybeObject(res.headers, logger.enter('headers'))
+    _res.body = res.body
     _res.status = this._mayStatus(res.status, logger.enter('status'))
+    let headers = this._maybeObject(res.headers, logger.enter('headers'))
+    if (headers) {
+      _res.headers = headers
+    }
 
     return _res
   }
@@ -180,7 +189,7 @@ class Unit {
    */
   execute(ctx) {
     let req = ctx.resolveReq(this._req)
-    let logger = this._logger.enter('req')
+    let logger = ctx.logger().enter('req')
     return this._request(this._api, req, logger)
       .then(({ status, headers, data: body }) => {
         return { status, headers, body }
@@ -203,30 +212,51 @@ class Unit {
   }
 
   /**
+   * print req and res when debugging
+   */
+  debug(req, res, logger) {
+    let _req, _res
+    let tReq = this._template.req
+    let tRes = this._template.res
+    if (tReq) {
+      _req = { url: this._axios.url, method: this._axios.method }
+      if (tReq.headers) _req.headers = req.headers
+      if (tReq.body) _req.body = req.body
+      logger.enters(['debug', 'req']).log(JSON.stringify(_req))
+    }
+    if (tRes) {
+      _res = { body: res.body }
+      if (tRes.status) _res.status = res.status
+      if (tRes.headers) _res.headers = res.headers
+      logger.enters(['debug', 'res']).log(JSON.stringify(_res))
+    }
+  }
+
+  /**
    * View unit
    */
   view(logger) {
     logger = logger.enters(this.describes().slice(0, -1))
     let describe = this._template.describe
-    let name = this.name()
+    let id = this.id()
     let apiName = this._api.name
-    logger.log([describe, name, apiName].join(' | '))
+    logger.log([describe, id, apiName].join(' | '))
   }
 
   /**
    * Inspect unit
    */
-  inspect(record = {}) {
-    return `name: ${this.name()}
-module: ${this.module()}
-describes: ${this.describes()}
-api:
-  name: ${this.api().name}
-  method: ${this.api().method}
-  url: ${this.api().url}
-req: ${record.req && JSON.stringify(record.req)}
-res: ${record.req && JSON.stringify(record.res)}
-`
+  inspect({ req, res }) {
+    let model = {
+      name: this.name(),
+      module: this.module(),
+      api: this.api(),
+      req,
+      res
+    }
+    return yaml.safeDump(model, {
+      schema: this._config.schema()
+    })
   }
 
   /**
@@ -234,8 +264,7 @@ res: ${record.req && JSON.stringify(record.res)}
    * @returns {Promise}
    */
   _request(api, req, logger) {
-    debugger
-    if (this._dirty) return Promise.reject('have trouble to create request')
+    if (logger.dirty()) return Promise.reject('cannot create request')
 
     let { name, method, url, keys } = api
     let { query, params, headers, type, body } = req
@@ -248,19 +277,19 @@ res: ${record.req && JSON.stringify(record.res)}
     if (body) {
       serializer = this._config.findSerializer(type)
       try {
-        data = serialize.serialize(body, name)
+        data = serializer.serialize(body, name)
       } catch (err) {
-        logger.log(`cannot serialize body, ${err}`)
+        return Promise.reject('cannot serialize body, ${err}')
       }
-      return Promise.reject('have trouble to serialize body')
     }
 
     if (serializer) {
       if (!headers) headers = {}
-      headers['Content-Type'] = serializes.type
+      headers['Content-Type'] = serializer.type
     }
 
-    return axios({ method, url, headers, data })
+    this._axios = { method, url, headers, data }
+    return axios(this._axios)
   }
 }
 

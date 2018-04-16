@@ -1,9 +1,9 @@
 const App = require('../app')
 
 module.exports = {
-  command: ['run [options]', '$0'],
+  command: ['run', '$0'],
   describe: 'run tests',
-  buidler: function(yargs) {
+  builder: function(yargs) {
     return yargs
       .option('amend', { alias: 'a', description: 'whether to continue from last failed unit', boolean: true })
       .option('debug', { alias: 'd', description: 'whether dump req and res when failed', boolean: true })

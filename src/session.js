@@ -87,7 +87,6 @@ class Session {
       records: this.records(),
       cursor: this.cursor()
     }
-    debugger
     fs.writeFileSync(this._file, JSON.stringify(model))
   }
 

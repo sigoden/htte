@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const Logger = require('./logger')
 const Config = require('./config')
 const UnitManager = require('./unit-manager')
@@ -57,8 +59,11 @@ class App {
         return promise
           .then(isContinue => {
             return this._runUnit(isContinue, unit, logger.enters(unit.describes()), options).then(v => {
-              cursor += 1
-              this._session.cursor(cursor)
+              if (v) {
+                cursor += 1
+                if (cursor === this._units.length) cursor = 0
+                this._session.setCursor(cursor)
+              }
               return v
             })
           })
@@ -79,18 +84,20 @@ class App {
     let self = this
     let ctx = new Context(unit, self._session, self._config, logger)
     return unit.execute(ctx).then(({ req, res, pass }) => {
-      if (!pass && options.bail) {
-        if (options.debug) {
-          logger.enters(['debug', 'req']).log(JSON.stringify(req))
-          logger.enters(['debug', 'res']).log(JSON.stringify(res))
-        } else if (res.err) {
+      if (options.debug) {
+        unit.debug(req, res, logger)
+      }
+      if (pass) {
+        logger.log('ok')
+      } else {
+        if (res.err) {
           logger.enter('res').log(res.err)
+          // flat error, or it will throw 'Converting circular structure to JSON' in session.persist
+          res.err = res.err.message
         }
-        return false
       }
       self._session.writeUnit(unit, 'res', res)
-      logger.log('ok')
-      return true
+      return pass || !options.bail
     })
   }
 
@@ -111,7 +118,7 @@ class App {
       }
     }
     let _units = filterFunc(units, u => u.module(), options.module)
-    _units = filterFunc(_units, u => u.api(), options.api)
+    _units = filterFunc(_units, u => u.api().name, options.api)
 
     _units.forEach(u => u.view(logger))
 
@@ -131,7 +138,7 @@ class App {
       if (cursor < 0) {
         throw new Error(`Cannot find unit ${options.unit}`)
       }
-    } else if (options.amend) {
+    } else {
       cursor = this._session.cursor()
     }
 
