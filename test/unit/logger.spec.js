@@ -47,6 +47,15 @@ describe('public function', () => {
       let subLogger2 = logger.enter('b')
       expect(subLogger).toBe(subLogger2)
     })
+    test('should merge opts', () => {
+      let fn = jest.fn()
+      let logger = new Logger('a')
+      let subLogger = logger.enter('b', { logFn: fn })
+      expect(subLogger._opts.logFn).toBe(fn)
+      let fn2 = jest.fn()
+      let subLogger2 = logger.enter('b', { logFn: fn2 })
+      expect(subLogger2._opts.logFn).toBe(fn2)
+    })
   })
   describe('enters', () => {
     test('should work', () => {
@@ -184,7 +193,6 @@ describe('public function', () => {
       let logFn = jest.fn()
       let logger = new Logger('logger', { follow: true, logFunc: logFn })
       let logger1 = logger.enters(['a', 'b', 'c'])
-      debugger
       logger1.log('msg')
       let logger2 = logger.enters(['a', 'd', 'b'])
       logger2.log('msg2')
@@ -199,8 +207,17 @@ describe('public function', () => {
         msg2
     b:
       c:
-        msg3`
-      )
+        msg3`)
+    })
+  })
+  describe('clear', () => {
+    test('should work', () => {
+      let logger1 = new Logger('a')
+      logger1.log('msg')
+      let logger2 = logger1.enter('b')
+      logger2.log('msg')
+      logger1.clear()
+      expect(logger1.dirty()).toBe(false)
     })
   })
 })

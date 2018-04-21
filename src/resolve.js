@@ -13,7 +13,7 @@ function resolve(context, value) {
       try {
         return value(context)
       } catch (err) {
-        return context.error(`cannot resolve, ${err}`)
+        return context.error(`cannot resolve value, ${err}`)
       }
     case 'array':
       return value.map((elem, index) => {

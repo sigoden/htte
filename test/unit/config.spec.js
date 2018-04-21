@@ -298,11 +298,6 @@ describe('Test parse function', () => {
       let result = config._parsePlugins({}, logger)
       expect(logger.toString()).toMatch('must be array')
     })
-    test('break if plugins is undefined', () => {
-      let { config, logger } = init()
-      let result = config._parsePlugins(undefined, logger)
-      expect(logger.dirty()).toBe(false)
-    })
     test('log error if plugin file cannot be required', () => {
       let { config, logger } = init()
       let result = config._parsePlugins([resolveFixtureFile('./config/plugin-notfind')], logger)

@@ -43,8 +43,9 @@ class Context {
    */
   resolveReq(req) {
     if (utils.isTypeOf(req, 'undefined')) return {}
-    let logger = this._logger.enter('req')
+    let logger = this._logger.enter('req', { follow: false })
     let result = resolve(new ContextResolve(this._query, logger), req)
+    logger.print()
     if (!logger.dirty()) return result
   }
 
@@ -54,7 +55,7 @@ class Context {
    * @returns {boolean} - Whether pass the diff
    */
   diffRes(expect, res) {
-    let logger = this._logger.enter('res')
+    let logger = this._logger.enter('res', { follow: false })
     let ctx = new ContextDiff(this._query, logger)
     let [statusDiffed, headersDiffed, bodyDiffed] = [true, true, true]
     if (expect.status) {
@@ -66,6 +67,7 @@ class Context {
     if (expect.body) {
       bodyDiffed = diff(ctx.enter('body'), expect.body, res.body)
     }
+    logger.print()
     return statusDiffed && headersDiffed && bodyDiffed
   }
 }

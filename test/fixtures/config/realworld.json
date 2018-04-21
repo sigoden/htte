@@ -56,9 +56,7 @@
          "uri":"/user"
       }
    },
-   "plugins":[
-      "hest-plugin-builtin"
-   ],
+   "plugins":[],
    "rootDir":".",
    "serializer":"json",
    "sessionFile":"/tmp/realworld.session",
