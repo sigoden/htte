@@ -13,8 +13,8 @@ class Logger {
    * @param {boolean} options.follow - immeridate call logFunc while receiving a new msg
    * @param {function} options.logFunc - function to process the log string
    */
-  constructor(title = '', options) {
-    this._title = title
+  constructor(title, options) {
+    this.setTitle(title)
     this._opts = _.defaultsDeep(options, defaultOptions)
 
     this._msgs = []
@@ -30,7 +30,7 @@ class Logger {
    * @returns {Logger} - this
    */
   setTitle(title) {
-    this._title = title
+    this._title = title || '-'
     return this
   }
 
@@ -153,7 +153,7 @@ class Logger {
 
   // indent title line
   _indentTitle() {
-    return this._opts.indent.repeat(this._level) + this._title
+    return this._opts.indent.repeat(this._level) + (this._title ? this._title + ':' : '')
   }
 
   // indent msg line

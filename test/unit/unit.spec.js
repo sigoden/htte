@@ -123,8 +123,8 @@ describe('public function', () => {
       let { unit, logger, options } = createUnit2()
       unit._axios = { method: unit.api().method, url: unit.api().url }
       unit.debug(options.req, options.res, logger)
-      expect(logger.toString()).toBe(`
-  debug
+      expect(logger.toString()).toBe(`-:
+  debug:
     req:
       url: 'http://localhost:3000/articles/{slug}/comments'
       method: post
@@ -139,12 +139,12 @@ describe('public function', () => {
     
 `)
     })
-    test('print req and res', () => {
+    test('print req and res while req is empty', () => {
       let { unit, logger, options } = createUnit1()
       unit._axios = { method: unit.api().method, url: unit.api().url }
       unit.debug(options.req, { body: { msg: 'ok' }, status: 200 }, logger)
-      expect(logger.toString()).toBe(`
-  debug
+      expect(logger.toString()).toBe(`-:
+  debug:
     req:
       url: 'http://localhost:3000/feed'
       method: get
@@ -155,14 +155,14 @@ describe('public function', () => {
     
 `)
     })
-    test('print req.headers, req.body and res.body if they are show in template', () => {
+    test('print req and res if req.headers, req.body and res.body exists', () => {
       let { unit, logger } = createUnit1()
       unit._axios = { method: unit.api().method, url: unit.api().url }
       unit._template.req = { body: { content: 'awesome' }, headers: { Authorization: 'Bearer balabala' } }
       unit._template.res = { body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' }, status: 200 }
       unit.debug(unit._template.req, unit._template.res, logger)
-      expect(logger.toString()).toBe(`
-  debug
+      expect(logger.toString()).toBe(`-:
+  debug:
     req:
       url: 'http://localhost:3000/feed'
       method: get
@@ -184,16 +184,16 @@ describe('public function', () => {
     test('view unit', () => {
       let { unit, logger } = createUnit1({ name: 'unit1' })
       unit.view(logger)
-      expect(logger.toString()).toBe(`
+      expect(logger.toString()).toBe(`-:
   unit 1 | module1-unit1 | getFeed
 `)
     })
     test('keep unit hireachy', () => {
       let { unit, logger } = createUnit1({ name: 'unit1', scopeDescribes: ['group 1', 'sub group 2', 'unit 1'] })
       unit.view(logger)
-      expect(logger.toString()).toBe(`
-  group 1
-    sub group 2
+      expect(logger.toString()).toBe(`-:
+  group 1:
+    sub group 2:
       unit 1 | module1-unit1 | getFeed
 `)
     })
@@ -395,14 +395,14 @@ describe('private function', () => {
       let { unit, logger } = createUnit1()
       let target = { headers: '', query: '', params: { slug: 'v' }, type: 'xml' }
       let result = unit._parseReq(target, logger)
-      expect(logger.toString()).toBe(`
-  headers
+      expect(logger.toString()).toBe(`-:
+  headers:
     must be object
-  query
+  query:
     must be object
-  params
+  params:
     params diff, extra slug
-  type
+  type:
     unregist type xml
 `)
     })
@@ -436,7 +436,7 @@ describe('private function', () => {
     test('log error if res.headers is not object or undefined', () => {
       let { unit, logger } = createUnit1()
       let result = unit._parseRes({ headers: 'abc' }, logger)
-      expect(logger.toString()).toMatch(/headers\s+must be object/)
+      expect(logger.toString()).toMatch('must be object')
     })
   })
   describe('_request', () => {

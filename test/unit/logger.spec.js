@@ -3,7 +3,7 @@ const Logger = require('../../src/logger')
 describe('Test Logger', () => {
   test('private property', () => {
     let logger = new Logger()
-    expect(logger._title).toBe('')
+    expect(logger._title).toBe('-')
     expect(logger._opts).toEqual({
       follow: false,
       indent: '  ',
@@ -111,12 +111,12 @@ describe('public function', () => {
       let levelBA = levelB.enter('1-b-a')
       levelBA.log('c')
       let levelBAB = levelBA.enter('1-b-a-b')
-      expect(root.toString()).toBe(`root
+      expect(root.toString()).toBe(`root:
   a
-  1-a
+  1-a:
     b
-  1-b
-    1-b-a
+  1-b:
+    1-b-a:
       c
 `)
     })
@@ -125,6 +125,17 @@ describe('public function', () => {
       expect(root.toString()).toBe('')
       root.enters(['a', 'b', 'c'])
       expect(root.toString()).toBe('')
+    })
+    test('should work when title is empty string', () => {
+      let root = new Logger()
+      root.enter('a').log('msg1')
+      root.enter('b').log('msg2')
+      expect(root.toString()).toBe(`-:
+  a:
+    msg1
+  b:
+    msg2
+`)
     })
     test('options indent should affect the result', () => {
       let root = new Logger('root', { indent: '**' })
@@ -135,12 +146,12 @@ describe('public function', () => {
       let levelBA = levelB.enter('1-b-a')
       levelBA.log('c')
       let levelBAB = levelBA.enter('1-b-a-b')
-      expect(root.toString()).toBe(`root
+      expect(root.toString()).toBe(`root:
 **a
-**1-a
+**1-a:
 ****b
-**1-b
-****1-b-a
+**1-b:
+****1-b-a:
 ******c
 `)
     })
@@ -165,9 +176,9 @@ describe('public function', () => {
       let logFn = jest.fn()
       let logger = new Logger('logger', { follow: true, logFunc: logFn })
       logger.log('msg')
-      expect(logFn.mock.calls).toEqual([['logger'], ['  msg']])
+      expect(logFn.mock.calls).toEqual([['logger:'], ['  msg']])
       logger.log('msg2')
-      expect(logFn.mock.calls).toEqual([['logger'], ['  msg'], ['  msg2']])
+      expect(logFn.mock.calls).toEqual([['logger:'], ['  msg'], ['  msg2']])
     })
     test('should take care of title reusing', () => {
       let logFn = jest.fn()
@@ -178,25 +189,18 @@ describe('public function', () => {
       let logger2 = logger.enters(['a', 'd', 'b'])
       logger2.log('msg2')
       logger1.log('msg3')
-      expect(logFn.mock.calls).toEqual([
-        [
-          `logger
-  a
-    b
-      c`
-        ],
-        [`        msg`],
-        [
-          `    d
-      b`
-        ],
-        [`        msg2`],
-        [
-          `    b
-      c`
-        ],
-        [`        msg3`]
-      ])
+      expect(logFn.mock.calls.join('\n')).toBe(`logger:
+  a:
+    b:
+      c:
+        msg
+    d:
+      b:
+        msg2
+    b:
+      c:
+        msg3`
+      )
     })
   })
 })
