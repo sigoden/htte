@@ -16,7 +16,7 @@ const defaultConfig = {
   url: 'http://localhost:3000',
   apis: {},
   variables: {},
-  plugins: ['hest-plugin-builtin']
+  plugins: []
 }
 
 class Config {
@@ -202,8 +202,8 @@ class Config {
    * Parse the plugins option
    */
   _parsePlugins(plugins, logger) {
-    if (!utils.isTypeOf(plugins, ['array', 'undefined'])) return logger.log('must be array')
-    if (!plugins) return
+    if (!utils.isTypeOf(plugins, 'array')) return logger.log('must be array')
+    plugins = ['./plugins'].concat(plugins)
     plugins.forEach(pluginPath => {
       let plugin
       let pluginLogger = logger.enter(pluginPath)

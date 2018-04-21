@@ -135,6 +135,14 @@ class Logger {
   }
 
   /**
+   * Print the msgs
+   */
+  print() {
+    if (!this.dirty()) return
+    this._opts.logFunc(this.toString())
+  }
+
+  /**
    * Merge the msgs and children msgs as an big string
    */
   toString() {
@@ -153,7 +161,7 @@ class Logger {
 
   // indent title line
   _indentTitle() {
-    return this._opts.indent.repeat(this._level) + (this._title ? this._title + ':' : '')
+    return this._opts.indent.repeat(this._level) + this._title + ':'
   }
 
   // indent msg line
@@ -168,17 +176,21 @@ class Logger {
    *
    * @returns {Logger}
    */
-  enter(title) {
+  enter(title, opts = {}) {
     let child = this.findChild(title)
-    if (child) return child
-    return this._createChild(title)
+    if (child) {
+      child._opts = _.defaultsDeep(opts, child._opts)
+      return child
+    }
+    return this._createChild(title, opts)
   }
 
   /**
    * Create child logger
    */
-  _createChild(title) {
-    let child = new Logger(title, this._opts)
+  _createChild(title, opts) {
+    let _opts = _.defaultsDeep(opts, this._opts)
+    let child = new Logger(title, _opts)
     this._children.push(child)
     child._level = this._level + 1
     child._index = this._children.length - 1
@@ -197,9 +209,9 @@ class Logger {
   /**
    * Enter the child logger following the element of titles
    */
-  enters(titles) {
+  enters(titles, opts = {}) {
     return titles.reduce((l, title) => {
-      return l.enter(title)
+      return l.enter(title, opts)
     }, this)
   }
 
@@ -208,6 +220,14 @@ class Logger {
    */
   findChild(_title) {
     return _.find(this._children, { _title })
+  }
+
+  /**
+   * Clear the msg recursivelly
+   */
+  clear() {
+    this._msgs = []
+    this._children.forEach(l => l.clear())
   }
 
   /**

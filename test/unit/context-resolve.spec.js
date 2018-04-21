@@ -17,6 +17,17 @@ describe('Test ContextResolve', () => {
       expect(ctx._logger).toBe(logger)
     })
   })
+  describe('resolve', () => {
+    test('should work', () => {
+      let { logger, ctx } = init()
+      let ctx1 = {}
+      let value = {}
+      let returnValue = {}
+      resolve.mockReturnValueOnce(returnValue)
+      expect(ctx.resolve(ctx1, value)).toBe(returnValue)
+      expect(resolve.mock.calls[0]).toEqual([ctx1, value])
+    })
+  })
   describe('query', () => {
     test('should work', () => {
       let { query, ctx } = init()
@@ -27,30 +38,20 @@ describe('Test ContextResolve', () => {
       expect(query.mock.calls[0]).toEqual([path, true])
     })
   })
-  describe('querys', () => {
-    test('should work', () => {
-      let { query, ctx } = init()
-      let values = [1, 2, 3]
-      query.mockImplementation(v => v + 1)
-      expect(ctx.querys(values)).toEqual([2, 3, 4])
-      expect(query.mock.calls).toHaveLength(3)
-    })
-    test('throw error if input is not array', () => {
-      let { ctx } = init()
-      expect(() => ctx.querys({})).toThrow('must be array')
-    })
-    test('throw error if fail to query some element', () => {
-      let { query, ctx } = init()
-      let values = [1, 2, 3]
-      query.mockImplementation(v => (v % 2 !== 0 ? v : undefined))
-      expect(() => ctx.querys(values)).toThrow('cannot find variables at')
-    })
-  })
   describe('error', () => {
     test('should work', () => {
       let { ctx, logger } = init()
       expect(ctx.error('msg')).toBeUndefined()
       expect(logger._msgs[0]).toBe('msg')
+    })
+  })
+  describe('clearLog', () => {
+    test('should work', () => {
+      let { ctx, logger } = init()
+      ctx.error('msg')
+      expect(logger.dirty()).toBe(true)
+      ctx.clearLog()
+      expect(logger.dirty()).toBe(false)
     })
   })
   describe('enter', () => {

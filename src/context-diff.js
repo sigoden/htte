@@ -21,30 +21,18 @@ class ContextDiff {
   }
 
   /**
-   * Query the element of array for the variable
-   */
-  querys(array, single = true) {
-    if (!Array.isArray(array)) {
-      throw new Error('must be array')
-    }
-    let elems = []
-    let errors = []
-    let values = array.map(elem => {
-      let value = this.query(elem, single)
-      if (single && typeof value === 'undefined') {
-        errors.push(elem)
-      }
-      return value
-    })
-    if (errors.length) throw new Error(`cannot find variables at ${errors.join('|')}`)
-    return values
-  }
-  /**
    * Log the error msg
    */
   error(msg) {
     this._logger.log(msg)
     return false
+  }
+
+  /**
+   * Clear the error msg
+   */
+  clearLog() {
+    return this._logger.clear()
   }
 
   /**

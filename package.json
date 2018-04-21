@@ -56,7 +56,8 @@
     "testEnvironment": "node",
     "rootDir": "./src",
     "roots": [
-      "../test"
+      "../test",
+      "./plugins"
     ]
   },
   "devDependencies": {
