@@ -1,0 +1,4 @@
+sessionFile: /tmp/demo2.session
+apis:
+  getFeed: /feed
+  getArticle: /article

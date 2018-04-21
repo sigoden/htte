@@ -5,32 +5,38 @@ const PLUGIN_MARK = { differ: '@', resolver: '$' }
 const PLUGIN_TYPES = Object.keys(PLUGIN_MARK)
 const PLUGIN_KINDS = ['mapping', 'sequence', 'scalar']
 
-module.exports = (function() {
+const ContextDiff = require('./context-diff')
+const ContextResolve = require('./context-resolve')
+
+module.exports = function() {
   let plugins = []
   let yamlTypes = []
 
   return {
     /**
      * Regist plugin
-     * @param {object} options - options to create plugin
-     * @param {string} options.type - plugin type, one of [differ, resolver]
-     * @param {string} options.kind - yaml kind, one of [mapping, sequence, scalar]
-     * @param {string} options.name - plugin name, will be part of yaml tag name
+     * @param {object} plugin - plugin to create plugin
+     * @param {string} plugin.type - plugin type, one of [differ, resolver]
+     * @param {string} plugin.kind - yaml kind, one of [mapping, sequence, scalar]
+     * @param {string} plugin.name - plugin name, will be part of yaml tag name
      * @param {function} handler - construct function of yaml tag
      */
-    regist(options) {
-      let { type, kind, name, handler } = options
+    regist(plugin) {
+      if (!_.isPlainObject(plugin)) {
+        throw new Error('argument is not valid')
+      }
+      let { type, kind, name, handler } = plugin
       // validate name
-      if (typeof name !== 'string') {
+      if (!name || typeof name !== 'string') {
         throw new Error(`name must be a string`)
       }
-      if (_.find(plugins, { name, type })) {
-        throw new Error(`${name}: plugin conflict`)
-      }
-
       // validate type
       if (PLUGIN_TYPES.indexOf(type) === -1) {
         throw new Error(`${name}: type must be one of ${PLUGIN_TYPES}`)
+      }
+
+      if (_.find(plugins, { name, type })) {
+        throw new Error(`${name}: plugin conflict`)
       }
 
       // validate kind
@@ -43,10 +49,15 @@ module.exports = (function() {
         throw new Error(`${name}: handler must be function`)
       }
 
-      yamlTypes.push(createYamlType(options))
-      plugins.push(options)
+      yamlTypes.push(createYamlType(plugin))
+      plugins.push(plugin)
     },
-
+    /**
+     * List plugin names
+     */
+    names() {
+      return yamlTypes.map(v => v.tag)
+    },
     /**
      * List yaml types
      */
@@ -54,14 +65,29 @@ module.exports = (function() {
       return yamlTypes
     }
   }
-})()
+}
 
 function createYamlType({ type, kind, name, handler }) {
   return new yaml.Type(tag(name, type), {
     kind,
     construct: literal => {
       return (context, actual) => {
-        return handler(context, literal, actual)
+        if (
+          (type === 'resolver' && context instanceof ContextResolve) ||
+          (type === 'differ' && context instanceof ContextDiff)
+        ) {
+          return handler(context, literal, actual)
+        }
+        let errMsg = ''
+        if (type === 'differ') {
+          errMsg = 'use differ plugin in resolver context'
+        } else {
+          errMsg = 'use resolver plugin in differ context'
+        }
+        if (context.error) {
+          return context.error(errMsg)
+        }
+        throw new Error('context is not valid')
       }
     }
   })

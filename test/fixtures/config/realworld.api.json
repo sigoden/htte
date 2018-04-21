@@ -1,0 +1,139 @@
+[
+  {
+    "keys": [],
+    "method": "post",
+    "name": "register",
+    "url": "http://localhost:3000/api/users"
+  },
+  {
+    "keys": [],
+    "method": "post",
+    "name": "login",
+    "url": "http://localhost:3000/api/users/login"
+  },
+  {
+    "keys": [],
+    "method": "get",
+    "name": "getUser",
+    "url": "http://localhost:3000/api/user"
+  },
+  {
+    "keys": [],
+    "method": "put",
+    "name": "updateUser",
+    "url": "http://localhost:3000/api/user"
+  },
+  {
+    "keys": [],
+    "method": "get",
+    "name": "getFeed",
+    "url": "http://localhost:3000/api/articles/feed"
+  },
+  {
+    "keys": [],
+    "method": "get",
+    "name": "listArticles",
+    "url": "http://localhost:3000/api/articles"
+  },
+  {
+    "keys": [],
+    "method": "post",
+    "name": "createArticle",
+    "url": "http://localhost:3000/api/articles"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "get",
+    "name": "getArticle",
+    "url": "http://localhost:3000/api/articles/{slug}"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "put",
+    "name": "updateArticle",
+    "url": "http://localhost:3000/api/articles/{slug}"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "post",
+    "name": "favoriteArticle",
+    "url": "http://localhost:3000/api/articles/{slug}/favorite"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "delete",
+    "name": "unfavoriteArticle",
+    "url": "http://localhost:3000/api/articles/{slug}/favorite"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "get",
+    "name": "listCommentsForActicle",
+    "url": "http://localhost:3000/api/articles/{slug}/comments"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "post",
+    "name": "createComment",
+    "url": "http://localhost:3000/api/articles/{slug}/comments"
+  },
+  {
+    "keys": [
+      "id",
+      "slug"
+    ],
+    "method": "delete",
+    "name": "deleteComment",
+    "url": "http://localhost:3000/api/articles/{slug}/comments/{id}"
+  },
+  {
+    "keys": [
+      "id"
+    ],
+    "method": "get",
+    "name": "getProfile",
+    "url": "http://localhost:3000/api/profiles/{id}"
+  },
+  {
+    "keys": [
+      "id"
+    ],
+    "method": "post",
+    "name": "followProfile",
+    "url": "http://localhost:3000/api/profiles/{id}/follow"
+  },
+  {
+    "keys": [
+      "id"
+    ],
+    "method": "delete",
+    "name": "unfollowProfile",
+    "url": "http://localhost:3000/api/profiles/{id}/follow"
+  },
+  {
+    "keys": [],
+    "method": "get",
+    "name": "listTags",
+    "url": "http://localhost:3000/api/tags"
+  },
+  {
+    "keys": [
+      "slug"
+    ],
+    "method": "delete",
+    "name": "deleteArticle",
+    "url": "http://localhost:3000/api/articles/{slug}"
+  }
+]

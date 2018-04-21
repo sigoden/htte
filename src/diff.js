@@ -10,38 +10,38 @@ function diff(context, expect, actual, isStrict = true) {
     case 'undefined':
       return diffPrimitive(context, expect, actual)
     case 'function':
-      return expect(context, actual)
+      try {
+        return expect(context, actual)
+      } catch (err) {
+        return context.error(`cannot diff, ${err}`)
+      }
     case 'array':
       return diffArray(context, expect, actual, isStrict)
-    case 'object':
-      return diffObject(context, expect, actual, isStrict)
     default:
-      return context.error(`expect invalid: ${JSON.stringify(expect)}`)
+      return diffObject(context, expect, actual, isStrict)
   }
 }
 
 function diffPrimitive(context, expect, actual) {
   if (_.isEqual(expect, actual)) return true
-  return context.error(`value different, expect: ${expect}, actual: ${actual}`)
+  return context.error(`value diff, expect: ${JSON.stringify(expect)}, actual: ${JSON.stringify(actual)}`)
 }
 
 function diffArray(context, expect, actual, isStrict) {
   if (!diffType(context, expect, actual)) return false
   let sameLength = expect.length === actual.length
   if (isStrict && !sameLength) {
-    return context.error(`element different, expect: ${expect.length}, actual: ${actual.length}`)
+    return context.error(`element diff, expect: ${expect.length}, actual: ${actual.length}`)
   }
   return expect.every((elem, index) => {
-    return diff(context.enter(`[${index}]`), item, actual[index])
+    return diff(context.enter(`[${index}]`), elem, actual[index])
   })
 }
 
 function diffType(context, expect, actual) {
-  let typeExpect = typeof expect
-  let typeActual = typeof actual
-  if (typeExpect === typeActual) return true
+  if (utils.isTypeOf(expect, utils.type(actual))) return true
 
-  return context.error(`type different, expect: ${JSON.stringify(expect)}, actual: ${JSON.stringify(actual)}`)
+  return context.error(`type diff, expect: ${JSON.stringify(expect)}, actual: ${JSON.stringify(actual)}`)
 }
 
 function diffObject(context, expect, actual, isStrict) {
@@ -68,17 +68,17 @@ function satifyObjectKeys(context, expect, actual) {
 
   let errMsg = ``
   if (excludes.length) {
-    errMsg += `, miss props ${JSON.stringify(excludes)}`
+    errMsg += `, missed ${excludes.join('|')}`
   }
   if (includes.length) {
-    errMsg += `, extra props ${JSON.stringify(includes)}`
+    errMsg += `, extra ${includes.join('|')}`
   }
 
   if (!errMsg) {
     return true
   }
 
-  errMsg = `property different` + errMsg
+  errMsg = `props diff` + errMsg
   context.error(errMsg)
   return false
 }

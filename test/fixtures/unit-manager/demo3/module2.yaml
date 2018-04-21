@@ -1,0 +1,3 @@
+units:
+  - describe: get article
+    api: getArticle

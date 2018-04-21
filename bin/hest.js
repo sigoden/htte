@@ -2,12 +2,12 @@
 
 require('yargs')
   .usage('Usage: $0 <cmd> [options]')
-  .command(require('../src/cmd/run'))
-  .command(require('../src/cmd/inspect'))
-  .command(require('../src/cmd/view'))
+  .command(require('./cmd/run'))
+  .command(require('./cmd/inspect'))
+  .command(require('./cmd/view'))
   .option('c', {
     description: 'set config file',
     alias: 'config',
-    default: '.dectest.yaml'
+    default: '.hest.yaml'
   })
   .help().argv

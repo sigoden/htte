@@ -10,17 +10,19 @@ function resolve(context, value) {
     case 'undefined':
       return value
     case 'function':
-      return value(context)
+      try {
+        return value(context)
+      } catch (err) {
+        return context.error(`cannot resolve, ${err}`)
+      }
     case 'array':
       return value.map((elem, index) => {
-        return resolve(context.enter(`[${index}]`, elem))
+        return resolve(context.enter(`[${index}]`), elem)
       })
-    case 'object':
+    default:
       return _.mapValues(value, (fieldValue, fieldKey) => {
         return resolve(context.enter(fieldKey), fieldValue)
       })
-    default:
-      return context.error(`value invalid: ${JSON.stringify(value)}`)
   }
 }
 

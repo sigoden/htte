@@ -1,0 +1,7 @@
+units:
+  - describe: getFeed
+    api: getFeed
+    req:
+      query:
+        slug: !badtag
+

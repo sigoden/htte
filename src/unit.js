@@ -85,41 +85,53 @@ class Unit {
   _parseAPI(api, logger) {
     let _api = this._config.findAPI(api)
     if (_api) return _api
-    logger.log(`cannot find api ${value}`)
-    return false
+    logger.log(`cannot find api ${api}`)
   }
 
   /**
    * Validate req
    */
   _parseReq(req, logger) {
+    let type = utils.type(req)
+
     let _req = {}
-    let _req$ = this._maybeObject(req, logger, _req)
-    if (Object.is(_req, _req$)) return _req
 
-    _req.body = req.body
-    _req.headers = this._maybeObject(req.headers, logger.enter('headers'))
-    _req.query = this._maybeObject(req.query, logger.enter('query'))
-    _req.params = this._parseReqParams(req.params, logger.enter('params'))
-    _req.type = this._parseReqType(req.type, logger.enter('type'))
-    return _req
-  }
-
-  /**
-   * Asset value should be undefined or object
-   */
-  _maybeObject(value, logger, defaultValue) {
-    if (!utils.isTypeOf(value, ['object', 'undefined'])) {
-      logger.log('must be an object')
-      return defaultValue
+    if (type === 'undefined') {
+      return _req
+    } else if (type !== 'object') {
+      logger.log(`must be object`)
+      return _req
     }
-    return value ? value : defaultValue
+
+    if (req.body) _req.body = _.clone(req.body)
+    if (!utils.isTypeOf(req.headers, 'undefined')) {
+      if (!utils.isTypeOf(req.headers, 'object')) {
+        logger.enter('headers').log('must be object')
+      } else {
+        _req.headers = _.clone(req.headers)
+      }
+    }
+    if (!utils.isTypeOf(req.query, 'undefined')) {
+      if (!utils.isTypeOf(req.query, 'object')) {
+        logger.enter('query').log('must be object')
+      } else {
+        _req.query = _.clone(req.query)
+      }
+    }
+
+    let params = this._parseReqParams(req.params, logger.enter('params'))
+    if (params) _req.params = _.clone(params)
+
+    let reqType = this._parseReqType(req.type, logger.enter('type'))
+    if (reqType) _req.type = reqType
+
+    return _req
   }
 
   /**
    * Validate req code
    */
-  _mayStatus(status = 200, logger) {
+  _maybeStatus(status = 200, logger) {
     if (!_.isInteger(status)) return logger.log('must be http code')
     return status
   }
@@ -139,24 +151,26 @@ class Unit {
   _parseReqParams(params, logger) {
     if (!this._api) return
 
-    params = this._maybeObject(params, logger)
-    if (!params) return
+    let type = utils.type(params)
+    if (type !== 'undefined' && type !== 'object') {
+      return logger.log('must be object')
+    }
 
     let apiKeys = this._api.keys
     if (!params && apiKeys.length) return logger.log('must have property [params]')
 
     let keys = _.keys(params).sort()
-    let excludes = _.difference(keys, apiKeys)
-    let includes = _.difference(apiKeys, keys)
+    let excludes = _.difference(apiKeys, keys)
+    let includes = _.difference(keys, apiKeys)
     let errMsg = ``
     if (excludes.length) {
-      errMsg += `, miss params ${JSON.stringify(excludes)}`
+      errMsg += `, missed ${excludes.join('|')}`
     }
     if (includes.length) {
-      errMsg += `, extra params ${JSON.stringify(includes)}`
+      errMsg += `, extra ${includes.join('|')}`
     }
     if (errMsg) {
-      logger.log(`params different` + errMsg)
+      return logger.log(`params diff` + errMsg)
     }
     return params
   }
@@ -165,16 +179,27 @@ class Unit {
    * Validate res
    */
   _parseRes(res, logger) {
-    let _res = {}
+    let _res = { status: 200 }
 
-    let _res$ = this._maybeObject(res, logger, _res)
-    if (Object.is(_res, _res$)) return _res
+    let type = utils.type(res)
+    if (type === 'undefined') {
+      return _res
+    } else if (type === 'object') {
+      _res = _.clone(res)
+    } else {
+      return logger.log('must be object')
+    }
 
-    _res.body = res.body
-    _res.status = this._mayStatus(res.status, logger.enter('status'))
-    let headers = this._maybeObject(res.headers, logger.enter('headers'))
-    if (headers) {
-      _res.headers = headers
+    if (res.body) _res.body = res.body
+
+    _res.status = this._maybeStatus(res.status, logger.enter('status'))
+
+    if (res.headers) {
+      if (!utils.isTypeOf(res.headers, 'object')) {
+        logger.enter('headers').log('must be object')
+      } else {
+        _res.headers = res.headers
+      }
     }
 
     return _res
@@ -202,6 +227,7 @@ class Unit {
         return { err }
       })
       .then(res => {
+        res.time = process.hrtime(this._hrstart)[1] / 1000000
         if (res.err) {
           return { req, res, pass: false }
         }
@@ -215,21 +241,26 @@ class Unit {
    * print req and res when debugging
    */
   debug(req, res, logger) {
-    let _req, _res
+    if (!this._axios) {
+      // no request sent, no info to dump
+      return
+    }
+
     let tReq = this._template.req
     let tRes = this._template.res
-    if (tReq) {
-      _req = { url: this._axios.url, method: this._axios.method }
-      if (tReq.headers) _req.headers = req.headers
-      if (tReq.body) _req.body = req.body
-      logger.enters(['debug', 'req']).log(JSON.stringify(_req))
+    let output = {}
+
+    output.req = { url: this._axios.url, method: this._axios.method }
+    if (tReq && tReq.headers) output.req.headers = req.headers
+    if (tReq && tReq.body) output.req.body = req.body
+
+    output.res = {
+      status: res.status,
+      body: res.body
     }
-    if (tRes) {
-      _res = { body: res.body }
-      if (tRes.status) _res.status = res.status
-      if (tRes.headers) _res.headers = res.headers
-      logger.enters(['debug', 'res']).log(JSON.stringify(_res))
-    }
+    if (tRes && tRes.headers) output.res.headers = res.headers
+
+    logger.enter('debug').log(yaml.safeDump(output))
   }
 
   /**
@@ -254,9 +285,7 @@ class Unit {
       req,
       res
     }
-    return yaml.safeDump(model, {
-      schema: this._config.schema()
-    })
+    return yaml.safeDump(model)
   }
 
   /**
@@ -267,28 +296,25 @@ class Unit {
     if (logger.dirty()) return Promise.reject('cannot create request')
 
     let { name, method, url, keys } = api
-    let { query, params, headers, type, body } = req
-    let data, serializer
+    let { query, params, headers = {}, type, body } = req
 
     if (keys.length) url = utils.fillUrlParams(url, params)
 
     if (query) url += '?' + qs.stringify(query)
 
-    if (body) {
-      serializer = this._config.findSerializer(type)
-      try {
-        data = serializer.serialize(body, name)
-      } catch (err) {
-        return Promise.reject('cannot serialize body, ${err}')
-      }
-    }
+    this._axios = { method, url, headers }
 
-    if (serializer) {
-      if (!headers) headers = {}
+    if (body) {
+      let serializer = this._config.findSerializer(type)
+      try {
+        this._axios.data = serializer.serialize(body, name)
+      } catch (err) {
+        return Promise.reject(`cannot serialize body, ${err}`)
+      }
       headers['Content-Type'] = serializer.type
     }
 
-    this._axios = { method, url, headers, data }
+    this._hrstart = process.hrtime()
     return axios(this._axios)
   }
 }

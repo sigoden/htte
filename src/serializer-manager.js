@@ -1,28 +1,31 @@
 const _ = require('lodash')
 
-module.exports = (function() {
+module.exports = function() {
   let serializers = []
 
   return {
     /**
      * Regist serializer
-     * @param {object} options - model of serialize
-     * @param {string} options.name - name of serializer, like json, xml
-     * @param {string} options.type - http content type, like application/json
-     * @param {function} options.serialize
-     * @param {function} options.deserialize
+     * @param {object} plugin - model of serialize
+     * @param {string} plugin.name - name of serializer, like json, xml
+     * @param {string} plugin.type - http content type, like application/json
+     * @param {function} plugin.serialize
+     * @param {function} plugin.deserialize
      */
-    regist({ name, type, serialize, deserialize }) {
+    regist(plugin) {
+      if (!_.isPlainObject(plugin)) {
+        throw new Error('argument is not valid')
+      }
+      let { name, type, serialize, deserialize } = plugin
       // validate name
-      if (typeof name !== 'string') {
+      if (!name || typeof name !== 'string') {
         throw new Error('name must be a string')
       }
       if (this.findByName(name)) {
         throw new Error(`${name}: serializer conflict`)
       }
-
       // validate type
-      if (typeof type !== 'string') {
+      if (!type || typeof type !== 'string') {
         throw new Error('type must be a string')
       }
       if (this.findByType(type)) {
@@ -30,14 +33,11 @@ module.exports = (function() {
       }
 
       // validate serialize and deserialize
-      if (
-        typeof serialize !== 'function' ||
-        typeof deserialize !== 'function'
-      ) {
+      if (typeof serialize !== 'function' || typeof deserialize !== 'function') {
         throw new Error(`${name}: serialize or deserialize must be function`)
       }
 
-      serializers.push({ name, type, serialize, deserialize })
+      serializers.push(plugin)
     },
 
     /**
@@ -64,4 +64,4 @@ module.exports = (function() {
       return _.find(serializers, { type })
     }
   }
-})()
+}

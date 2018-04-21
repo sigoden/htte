@@ -20,13 +20,14 @@ class UnitModule {
 
     this._name = this._moduleName(this._file)
     this._logger.setTitle(this.name())
-    this._template = this._template()
+    this._template = this._load()
     if (!this._template) return
 
     this._dependencies = this._parseDependencies(this._template.dependencies, this._logger.enter('dependencies'))
 
-    let units = this._parseUnits(this._template.units, this._logger.enter('units'), new Scope())
-    this._units = units.filter(u => u.valid())
+    this._units = this._parseUnits(this._template.units, this._logger.enter('units'), new Scope()).filter(u => {
+      return u.valid()
+    })
   }
 
   /**
@@ -65,13 +66,13 @@ class UnitModule {
   /**
    * Load module yaml file
    */
-  _template() {
+  _load() {
     try {
       return utils.loadYamlSync(this._file, {
         schema: this._config.schema()
       })
     } catch (err) {
-      this._logger.log(`fail to load or parse moudle file, ${err}, ${err.stack}`)
+      return this._logger.log(`fail to load or parse moudle file, ${err.message}`)
     }
   }
 
@@ -100,7 +101,7 @@ class UnitModule {
         return _dependencies
       case 'object':
         let func = (r, v, k) => {
-          r.push({ path: v, name: k })
+          r.push({ module: v, name: k })
         }
         _dependencies = _.transform(dependencies, func, [])
         break
@@ -121,7 +122,7 @@ class UnitModule {
     // check the name confliction of dependencies
     let names = utils.duplicateElements(_dependencies.map(v => v.name))
     if (names.length > 0) {
-      logger.log(`name conflict detect: ${duplicatedNames}`)
+      logger.log(`name conflict detect: ${names}`)
       return _dependencies
     }
 
@@ -141,26 +142,26 @@ class UnitModule {
         break
       case 'object':
         let { name, module } = dependency
-        if (!name || !module) {
-          logger.log('must be object have keys [name, moudle]')
-          return false
+        if (!module) {
+          logger.log('must have property module')
+          return
         }
-        _name = name
         _file = this._absoluteFile(module)
+        _name = name
         break
       default:
         logger.log(`must be string or object`)
-        return false
+        return
     }
 
     // check whether dependency exist
     if (!this._manager.isModuleExist(_file)) {
       logger.log(`cannot find dependency at ${_file}`)
-      return false
+      return
     }
 
     _module = this._moduleName(_file)
-    return { name: _name, module: _module }
+    return { name: _name || _module, module: _module }
   }
 
   /**
@@ -170,7 +171,8 @@ class UnitModule {
     let _units = []
 
     if (!_.isArray(units)) {
-      return logger.log(`must be array`) && _units
+      logger.log(`must be array`)
+      return _units
     }
 
     _units = units
@@ -187,10 +189,10 @@ class UnitModule {
    */
   _parseUnit(unit, index, logger, scope) {
     if (!utils.isTypeOf(unit, 'object')) {
-      return logger.log(`must be an object`)
+      return logger.log(`must be object`)
     }
     if (!unit.describe) {
-      return logger.log(`must have property [describe]`)
+      return logger.log(`must have property describe`)
     }
     logger.setTitle(`[${index}](${unit.describe})`)
 
@@ -217,3 +219,4 @@ class Scope {
 }
 
 module.exports = UnitModule
+module.exports.Scope = Scope

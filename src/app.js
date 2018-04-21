@@ -4,8 +4,6 @@ const Logger = require('./logger')
 const Config = require('./config')
 const UnitManager = require('./unit-manager')
 const Session = require('./session')
-const PluginManager = require('./plugin-manager')
-const SerializerManager = require('./serializer-manager')
 const Context = require('./context')
 
 /**
@@ -18,16 +16,23 @@ class App {
    * Create an instance of App.
    *
    * @param {string} file - path config file
+   * @param {function} print -  how to print the info
    *
    * @memberof App
    */
-  constructor(file) {
-    this._loadPlugins()
-    this._loadSerializers()
-    this._config = new Config(file)
-    this._units = new UnitManager(this._config).units()
+  constructor(file, print) {
+    this._ready = false
+    this._print = print || console.log
+
+    try {
+      this._config = new Config(file)
+      this._units = new UnitManager(this._config).units()
+      this._ready = true
+    } catch (err) {
+      this._print(err)
+    }
+
     this._session = new Session(this._config.sessionFile())
-    this._print = console.log
   }
 
   /***
@@ -43,33 +48,34 @@ class App {
    * @returns {Promise}
    */
   run(options) {
+    if (!this._ready) return Promise.resolve()
     let units, cursor
     try {
-      let result = this._activeUnits(options)
-      units = result.units
-      cursor = result.cursor
+      cursor = this._unitCursor(options.unit, options.amend)
     } catch (err) {
       return Promise.reject(err)
     }
+    if (options.shot) {
+      units = [this._units[cursor]]
+    } else {
+      units = this._units.slice(cursor)
+    }
 
-    let logger = new Logger('RunUnits', { follow: true })
+    let logger = new Logger('RunUnits', { follow: true, logFunc: this._print })
 
     return units
       .reduce((promise, unit) => {
-        return promise
-          .then(isContinue => {
-            return this._runUnit(isContinue, unit, logger.enters(unit.describes()), options).then(v => {
-              if (v) {
-                cursor += 1
-                if (cursor === this._units.length) cursor = 0
-                this._session.setCursor(cursor)
-              }
-              return v
-            })
+        return promise.then(isContinue => {
+          let unitLogger = logger.enter(unit.module()).enters(unit.describes())
+          return this._runUnit(isContinue, unit, unitLogger, options).then(v => {
+            if (v) {
+              cursor += 1
+              if (cursor === this._units.length) cursor = 0
+              this._session.setCursor(cursor)
+            }
+            return v
           })
-          .catch(err => {
-            logger.log(err.stack)
-          })
+        })
       }, Promise.resolve(true))
       .then(() => {
         this._session.persist()
@@ -83,28 +89,36 @@ class App {
     if (!isContinue) return Promise.resolve(isContinue)
     let self = this
     let ctx = new Context(unit, self._session, self._config, logger)
-    return unit.execute(ctx).then(({ req, res, pass }) => {
-      if (options.debug) {
-        unit.debug(req, res, logger)
-      }
-      if (pass) {
-        logger.log('ok')
-      } else {
-        if (res.err) {
-          logger.enter('res').log(res.err)
-          // flat error, or it will throw 'Converting circular structure to JSON' in session.persist
-          res.err = res.err.message
+    return unit
+      .execute(ctx)
+      .then(({ req, res, pass }) => {
+        if (options.debug || (options.bail && !pass)) {
+          unit.debug(req, res, logger)
         }
-      }
-      self._session.writeUnit(unit, 'res', res)
-      return pass || !options.bail
-    })
+        if (pass) {
+          logger.log(`ok [${res.time}ms]`)
+        } else {
+          if (res.err) {
+            logger.enter('res').log(res.err)
+            // flat error, or it will throw 'Converting circular structure to JSON' in session.persist
+            res.err = res.err.message
+          }
+        }
+        self._session.writeUnit(unit, 'res', res)
+        return pass || !options.bail
+      })
+      .catch(err => {
+        this._print(err)
+        return false
+      })
   }
 
   /**
    * view the uints
    */
   view(options) {
+    if (!this._ready) return
+
     let units = this._units
     let logger = new Logger('ViewTests')
     let filterFunc = (colletion, valueFunc, candicates) => {
@@ -117,10 +131,10 @@ class App {
         return _.filter(colletion, v => valueFunc(v) === candicates)
       }
     }
-    let _units = filterFunc(units, u => u.module(), options.module)
-    _units = filterFunc(_units, u => u.api().name, options.api)
+    units = filterFunc(units, u => u.module(), options.module)
+    units = filterFunc(units, u => u.api().name, options.api)
 
-    _units.forEach(u => u.view(logger))
+    units.forEach(u => u.view(logger))
 
     this._print(logger.toString())
   }
@@ -129,81 +143,41 @@ class App {
    * inspect specific unit
    */
   inspect(options) {
-    let cursor = 0
-    this._session.restore()
+    if (!this._ready) return
 
-    // get cusor point the start position of units
-    if (options.unit) {
-      cursor = _.findIndex(this._units, unit => unit.id() === options.unit)
-      if (cursor < 0) {
-        throw new Error(`Cannot find unit ${options.unit}`)
-      }
-    } else {
-      cursor = this._session.cursor()
+    let cursor
+    try {
+      cursor = this._unitCursor(options.unit, true)
+    } catch (err) {
+      this._print(err)
+      return
     }
 
     let unit = this._units[cursor]
-    let data = this._session.readUnit(unit)
 
-    this._print(unit.inspect(data))
+    let data = this._session.readUnit(unit)
+    this._print(unit.inspect(data || {}))
   }
 
   /**
-   * Get the tests on schedule
+   * Get unit cursor
    */
-  _activeUnits(options) {
+  _unitCursor(id, useSessionCursor) {
     let cursor = 0
-    // get cusor point the start position of units
-    if (options.unit) {
-      // if unit is set, find it's index
-      cursor = _.findIndex(this._units, unit => unit.id() === options.unit)
+    if (!this._units.length) {
+      throw new Error(`cannot find unit`)
+    }
+    if (id) {
+      cursor = _.findIndex(this._units, unit => unit.id() === id)
       if (cursor < 0) {
-        throw new Error(`Cannot find unit ${options.unit}`)
+        throw new Error(`cannot find unit ${id}`)
       }
-    } else if (options.amend) {
-      // find the last failure test
+    } else if (useSessionCursor) {
       this._session.restore()
       cursor = this._session.cursor()
     }
-
-    let units
-
-    // if shot is set, only run one unit
-    if (options.shot) {
-      units = [this._units[cursor]]
-    }
-
-    units = this._units.slice(cursor)
-    return { units, cursor }
-  }
-
-  /**
-   * Load buildin plugin
-   */
-  _loadPlugins() {
-    let plugins = [
-      'differ/array',
-      'differ/q',
-      'differ/object',
-      'differ/x',
-
-      'resolver/q',
-      'resolver/jwt',
-      'resolver/now'
-    ]
-    plugins.forEach(path => {
-      PluginManager.regist(require(`./plugins/${path}`))
-    })
-  }
-
-  /**
-   * Load buildin serializer
-   */
-  _loadSerializers() {
-    let serializers = ['json']
-    serializers.forEach(path => {
-      SerializerManager.regist(require(`./serializers/${path}`))
-    })
+    if (!this._units[cursor]) cursor = 0
+    return cursor
   }
 }
 

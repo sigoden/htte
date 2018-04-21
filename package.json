@@ -1,28 +1,67 @@
 {
-  "name": "dectest",
+  "name": "hest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Declarative http test framework ",
   "main": "index.js",
   "bin": {
-    "dectest": "dectest.js"
+    "hest": "./bin/hest.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ci": "jest --watch",
+    "coverall": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "deps": "npm-check -u",
+    "lint": "eslint --ext=.js src test",
+    "lint:fix": "eslint --fix --ext=.js src test",
+    "test": "jest --coverage --no-cache",
+    "test:unit": "jest --testMatch \"**/unit/**spec.js\" --coverage --no-cache"
   },
   "prettier": {
     "printWidth": 120,
     "semi": false,
     "singleQuote": true
   },
-  "keywords": [],
+  "keywords": [
+    "hest",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "gabbi",
+    "postman",
+    "framework"
+  ],
   "author": "sigoden huang <sigoden@gmail.com> (https://sigoden.com)",
   "license": "MIT",
+  "engines": {
+    "node": ">= 6.x.x"
+  },
   "dependencies": {
     "axios": "^0.18.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-prettier": "^2.6.0",
     "js-yaml": "^3.11.0",
     "jsonpath": "^1.0.0",
     "lodash": "^4.17.5",
+    "mkdir": "0.0.2",
+    "prettier": "^1.12.1",
     "recursive-readdir-sync": "^1.0.6",
     "yargs": "^11.0.0"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "./test/fixtures/"
+    ],
+    "testEnvironment": "node",
+    "rootDir": "./src",
+    "roots": [
+      "../test"
+    ]
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "jest-cli": "^22.4.3",
+    "rimraf": "^2.6.2"
   }
 }

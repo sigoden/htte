@@ -17,9 +17,6 @@ class Graph {
    * @return {Graph} - this
    */
   add(id, ref) {
-    if (this._nodes.has(id)) {
-      return this
-    }
     this._nodes.set(id, new Node(id, ref))
     this._connected = false
     return this
@@ -28,12 +25,13 @@ class Graph {
   /**
    * Connect the nodes in the graph
    */
-  _connect() {
+  connect() {
     if (this._connected) return
     this._nodes.forEach(node => {
       let ids = this._mapper(node._ref)
       ids.forEach(id => {
-        node.addEdge(this._nodes.get(id))
+        let edgeNode = this._nodes.get(id)
+        if (edgeNode) node.addEdge(edgeNode)
       })
     })
     this._connected = true
@@ -43,7 +41,7 @@ class Graph {
    * List the value of all the nodes, the nodes sort by the edge dependency
    */
   sort() {
-    this._connect()
+    this.connect()
     let nodes = sort(this._nodes)
     return nodes.map(n => n._ref)
   }
@@ -76,7 +74,7 @@ function solve(node, solved, unsolved) {
   for (let edge of node._edges) {
     if (!solved.has(edge._id)) {
       if (unsolved.has(edge._id)) {
-        throw new Error(`circular reference detected, ${node._id} -> ${edge._id}`)
+        throw new Error(`circular dependency detected, ${node._id} -> ${edge._id}`)
       }
       solve(edge, solved, unsolved)
     }

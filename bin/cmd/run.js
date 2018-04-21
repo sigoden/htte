@@ -1,4 +1,4 @@
-const App = require('../app')
+const App = require('../../src/app')
 
 module.exports = {
   command: ['run', '$0'],

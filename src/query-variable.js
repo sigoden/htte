@@ -1,12 +1,13 @@
 const jsonpath = require('jsonpath')
+const utils = require('./utils')
 
 const RE_VAR = /^\${1,4}/
 
 /**
  * Create an query function to query the var by jsonpath
  *
- * @params {object} globalVars - an object for lookuping global var
- * @params {object} vars - an object for lookuping unit var
+ * @params {object} unitVars
+ * @params {object} globalVars
  * @params {Unit} unit
  *
  * Jsonpath pattern:
@@ -17,23 +18,26 @@ const RE_VAR = /^\${1,4}/
  *
  * @returns {function}
  */
-module.exports = function createQuery(globalVars, vars, unit) {
-  let unitVars = selectVars(globalVars, unit)
+module.exports = function createQuery(unitVars, globalVars, unit) {
+  let currentVars = selectVars(unitVars, unit)
 
-  return (path, single = true) => {
-    if (!isVar(path)) return path
-    let jPath = toJPath(path, unit)
-    let vars = isVarGlobal(path) ? globalVars : unitVars
+  return (value, single = true) => {
+    if (!isVar(value)) return value
+    let jPath = toJPath(value, unit)
+    let vars
+    if (isVarGlobal(value)) {
+      vars = globalVars
+    } else {
+      let module = unit.module()
+      currentVars[module] = unitVars[module]
+      vars = currentVars
+    }
     return query(vars, jPath, single)
   }
 }
 
 function isVar(path) {
-  return RE_VAR.test(path)
-}
-
-function isVarGlobal(path) {
-  return count$(path) === 4
+  return utils.isTypeOf(path, 'string') && RE_VAR.test(path)
 }
 
 function count$(path) {
@@ -50,7 +54,7 @@ function isVarGlobal(path) {
  */
 function toJPath(path, unit) {
   let n = count$(path)
-  let segs = ['$', unit.module(), unit.name()].slice(0, n)
+  let segs = isVarGlobal(path) ? ['$'] : ['$', unit.module(), unit.name()].slice(0, n)
   let prefix = jsonpath.stringify(segs)
   let tail = path.slice(n)
   return prefix + delimiter(tail) + tail
@@ -61,26 +65,24 @@ function delimiter(path) {
 }
 
 function query(source, jp, single) {
+  let result
   try {
-    let result = jsonpath.query(source, jp)
-    return single ? result[0] : result
+    result = jsonpath.query(source, jp)
   } catch (err) {
-    return single ? undefined : []
+    result = []
   }
+  return single ? result[0] : result
 }
 
-function selectVars(vars, unit) {
-  let unitVars = {}
-  let module = unit.module()
+function selectVars(unitVars, unit) {
+  let currentVars = {}
 
   unit
     .dependencies()
     .slice()
-    .map(({ name, module }) => ({ name, module }))
-    .concat([{ name: module, module }])
     .forEach(({ name, module }) => {
-      unitVars[name] = vars[module]
+      currentVars[name] = unitVars[module]
     })
 
-  return unitVars
+  return currentVars
 }

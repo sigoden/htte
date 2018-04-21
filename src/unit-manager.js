@@ -23,11 +23,14 @@ class UnitManager {
    */
   files() {
     if (this._files) return this._files
-    let files = listYamlFiles(this._config.rootDir())
-    // omit the config yaml file
-    files = files.filter(f => {
-      return f != this._config.file()
-    })
+
+    let files = utils
+      .recursiveReadSync(this._config.rootDir())
+      .filter(fp => /ya?ml$/.test(fp))
+      .filter(f => {
+        // omit the config yaml file
+        return f != this._config.file()
+      })
     return utils.sortFiles(files)
   }
 
@@ -48,7 +51,11 @@ class UnitManager {
     // sort based on dependency graph
     let graph = new Graph(unit => unit.dependencies().map(v => v.module))
     modules.forEach(module => graph.add(module.name(), module))
-    modules = graph.sort()
+    try {
+      modules = graph.sort()
+    } catch (err) {
+      this._logger.log(err.message)
+    }
 
     return modules
   }
@@ -69,16 +76,6 @@ class UnitManager {
   units() {
     if (this._units) return this._units
     return _.flatMap(this.modules(), module => module.units())
-  }
-}
-
-function listYamlFiles(dir) {
-  let _dir = path.resolve(dir)
-  try {
-    let files = utils.recursiveReadSync(_dir)
-    return files.filter(fp => /ya?ml$/.test(fp))
-  } catch (err) {
-    throw new Error(`Cannot recursive load yaml files at directory ${_dir}`)
   }
 }
 

@@ -3,7 +3,7 @@ const yaml = require('js-yaml')
 const recursiveReadSync = require('recursive-readdir-sync')
 const _ = require('lodash')
 const path = require('path')
-const { URL } = require('url')
+const mkdir = require('mkdir')
 
 module.exports = {
   /**
@@ -32,20 +32,19 @@ module.exports = {
   /**
    * Sort files on alphabet, directory commom fist than file
    */
-  sortFiles: files => {
-    return files
-      .map(elem => elem.split(path.sep))
+  sortFiles: (paths, sep = path.sep) => {
+    return paths
+      .map(el => el.split(sep))
       .sort((a, b) => {
-        let len = Math.max(a.length, b.length)
-        for (let i = 0; i < len; i += 1) {
-          if (!a[i]) return -1
-          if (!b[i]) return +1
+        let l = Math.max(a.length, b.length)
+        for (let i = 0; i < l; i += 1) {
           if (a[i].toUpperCase() > b[i].toUpperCase()) return +1
           if (a[i].toUpperCase() < b[i].toUpperCase()) return -1
+          if (a.length < b.length) return -1
+          if (a.length > b.length) return +1
         }
-        return 0
       })
-      .map(elem => elem.join(path.sep))
+      .map(el => el.join(sep))
   },
 
   /**
@@ -83,16 +82,8 @@ module.exports = {
   /**
    * Collect the param from url, like /post/{id}/comment/{cid} -> [id, cid]
    */
-  collectUrlParams: url => {
+  collectUrlParams: pathname => {
     const RE_URL_PARAM_VAR = /^\{.*\}$/
-    let pathname
-    try {
-      let myUrl = new URL(url)
-      pathname = decodeURIComponent(myUrl.pathname)
-    } catch (e) {
-      console.log(e)
-      return []
-    }
     let varSet = new Set()
     pathname
       .split('/')
@@ -126,7 +117,7 @@ module.exports = {
    * Whether url is valid
    */
   isValidHttpUrl: url => {
-    return /^https?:\/\/[\w\-]+(\.[\w\-]+)*(\/[\w\-]+)*\/?/.test(url)
+    return /^https?:\/\/[\w\-]+(\.[\w\-]+)*(:\d+)?(\/[\w\-]+)*\/?$/.test(url)
   },
 
   /**

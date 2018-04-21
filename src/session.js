@@ -75,7 +75,7 @@ class Session {
   setRecords(records) {
     if (_.isPlainObject(records)) {
       this._records = records
-      return _records
+      return this._records
     }
   }
 
@@ -95,7 +95,6 @@ class Session {
    */
   restore() {
     let content = fs.readFileSync(this._file, 'utf8')
-    if (content.length === 0) return
     try {
       let model = JSON.parse(content)
       this.setCursor(model.cursor)

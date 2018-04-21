@@ -2,11 +2,7 @@ const _ = require('lodash')
 
 const { EOL } = require('os')
 
-const defaultOptions = {
-  follow: false,
-  indent: '  ',
-  logFunc: console.log
-}
+const defaultOptions = { follow: false, indent: '  ', logFunc: console.log }
 
 class Logger {
   /**
@@ -17,7 +13,7 @@ class Logger {
    * @param {boolean} options.follow - immeridate call logFunc while receiving a new msg
    * @param {function} options.logFunc - function to process the log string
    */
-  constructor(title, options) {
+  constructor(title = '', options) {
     this._title = title
     this._opts = _.defaultsDeep(options, defaultOptions)
 
@@ -66,12 +62,21 @@ class Logger {
 
     // print title of chaing loggers
     let chain = this._dirtyChain([])
-    chain.forEach(l => (l._parent._focus = l._index))
-    let titles = chain
-      .reverse()
-      .map(l => l._indentTitle())
-      .join(EOL)
-    if (titles) {
+
+    if (chain.length) {
+      let top = chain[chain.length - 1].exit()
+      top._unfocusChildren()
+
+      chain.forEach(l => {
+        if (l._parent) {
+          l._parent._focus = l._index
+        }
+      })
+      let titles = chain
+        .reverse()
+        .map(l => l._indentTitle())
+        .join(EOL)
+
       this._opts.logFunc(titles)
     }
 
@@ -99,7 +104,8 @@ class Logger {
    */
   _dirtyChain(chain) {
     if (this._isRoot()) {
-      return chain
+      if (this._followed) return chain
+      return chain.concat([this])
     }
 
     let parent = this._parent
@@ -108,6 +114,16 @@ class Logger {
     }
 
     return parent._dirtyChain(chain.concat([this]))
+  }
+
+  /**
+   * Unfocus the children recursivelly
+   */
+  _unfocusChildren() {
+    this._children.forEach(l => {
+      l._focus = -1
+      l._unfocusChildren()
+    })
   }
 
   /**
@@ -142,7 +158,8 @@ class Logger {
 
   // indent msg line
   _indentMsg(msg) {
-    return this._opts.indent.repeat(this._level + 1) + msg
+    let _msg = msg.split(EOL)
+    return _msg.map(v => this._opts.indent.repeat(this._level + 1) + v).join(EOL)
   }
 
   /**
