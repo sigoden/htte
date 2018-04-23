@@ -32,6 +32,13 @@ describe('public function', () => {
       expect(logger._title).toBe('retitle')
     })
   })
+  describe('setOptions', () => {
+    test('should work', () => {
+      let logger = new Logger('test')
+      logger.setOptions({ indent: '**' })
+      expect(logger._opts.indent).toBe('**')
+    })
+  })
   describe('enter', () => {
     test('should work', () => {
       let logger = new Logger('a')
@@ -46,15 +53,6 @@ describe('public function', () => {
       let subLogger = logger.enter('b')
       let subLogger2 = logger.enter('b')
       expect(subLogger).toBe(subLogger2)
-    })
-    test('should merge opts', () => {
-      let fn = jest.fn()
-      let logger = new Logger('a')
-      let subLogger = logger.enter('b', { logFn: fn })
-      expect(subLogger._opts.logFn).toBe(fn)
-      let fn2 = jest.fn()
-      let subLogger2 = logger.enter('b', { logFn: fn2 })
-      expect(subLogger2._opts.logFn).toBe(fn2)
     })
   })
   describe('enters', () => {
@@ -162,6 +160,17 @@ describe('public function', () => {
 **1-b:
 ****1-b-a:
 ******c
+`)
+    })
+    test('should work with custom level', () => {
+      let root = new Logger()
+      let childLogger = root.enter('child')
+      childLogger.log('msg')
+      expect(childLogger.toString()).toBe(`  child:
+    msg
+`)
+      expect(childLogger.toString(0)).toBe(`child:
+  msg
 `)
     })
   })
