@@ -80,11 +80,14 @@ describe('Test PluginManager', () => {
     queryResolver.handler = jest.fn().mockImplementation(v => v)
     manager.regist(queryDiffer)
     manager.regist(queryResolver)
-    let contextDiff = new ContextDiff(() => {}, new Logger())
-    let contextResolve = new ContextResolve(() => {}, new Logger())
     let types = manager.list()
-    let diffHanler = types[0].construct
-    let resolveHanlder = types[1].construct
+    let contextDiff, contextResolve, diffHanler, resolveHanlder
+    beforeEach(() => {
+      contextDiff = new ContextDiff(() => {}, new Logger())
+      contextResolve = new ContextResolve(() => {}, new Logger())
+      diffHanler = types[0].construct
+      resolveHanlder = types[1].construct
+    })
     test('should work', () => {
       let literal = {}
       let actual = {}
@@ -96,7 +99,7 @@ describe('Test PluginManager', () => {
       let resolvResult = resolveHanlder(literal)(contextResolve)
       expect(resolvResult).toBe(contextResolve)
       expect(queryResolver.handler.mock.calls[0][0]).toBe(contextResolve)
-      expect(queryResolver.handler.mock.calls[0][1]).toBe(literal)
+      expect(queryResolver.handler.mock.calls[0][1]).toEqual(contextResolve.resolve(contextResolve, literal))
     })
     test('log error when use differ plugin in resolver context', () => {
       let literal = {}
@@ -104,7 +107,7 @@ describe('Test PluginManager', () => {
       diffHanler(literal)(contextResolve, actual)
       expect(contextResolve._logger.toString()).toMatch('use differ plugin in resolver context')
     })
-    test('log error when use differ plugin in resolver context', () => {
+    test('log error when use resolver plugin in diff context', () => {
       let literal = {}
       resolveHanlder(literal)(contextDiff)
       expect(contextDiff._logger.toString()).toMatch('use resolver plugin in differ context')
@@ -112,6 +115,16 @@ describe('Test PluginManager', () => {
     test('throw error when context is not valid', () => {
       let literal = {}
       expect(() => resolveHanlder(literal)({})).toThrow('context is not valid')
+    })
+    test('log error when resolve literal before call resolver.handler', () => {
+      let literal = [
+        () => {
+          throw new Error()
+        }
+      ]
+      let resolvResult = resolveHanlder(literal)(contextResolve)
+      expect(resolvResult).toBeUndefined()
+      expect(contextResolve.hasError()).toBe(true)
     })
   })
 })

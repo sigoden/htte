@@ -72,10 +72,11 @@ function createYamlType({ type, kind, name, handler }) {
     kind,
     construct: literal => {
       return (context, actual) => {
-        if (
-          (type === 'resolver' && context instanceof ContextResolve) ||
-          (type === 'differ' && context instanceof ContextDiff)
-        ) {
+        if (type === 'resolver' && context instanceof ContextResolve) {
+          let _literal = context.resolve(context, literal)
+          if (context.hasError()) return
+          return handler(context, _literal)
+        } else if (type === 'differ' && context instanceof ContextDiff) {
           return handler(context, literal, actual)
         }
         let errMsg = ''
