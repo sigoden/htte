@@ -55,6 +55,14 @@ describe('Test ContextDiff', () => {
       expect(logger.dirty()).toBe(false)
     })
   })
+  describe('hasError', () => {
+    test('should work', () => {
+      let { ctx, logger } = init()
+      expect(ctx.hasError()).toBe(false)
+      ctx.error('msg')
+      expect(ctx.hasError()).toBe(true)
+    })
+  })
   describe('enter', () => {
     test('should work', () => {
       let { ctx, logger } = init()

@@ -36,6 +36,13 @@ class ContextDiff {
   }
 
   /**
+   * Wheter context has error
+   */
+  hasError() {
+    return this._logger.dirty()
+  }
+
+  /**
    * Enter the scoped logger
    */
   enter(title) {

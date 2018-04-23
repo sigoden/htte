@@ -45,13 +45,6 @@ describe('Test Context', () => {
       expect(context.resolveReq(req)).toBeUndefined()
       expect(logger.toString()).toMatch('something wrong')
     })
-    test('print log if the logger req get dirty', () => {
-      let { context, logger } = init()
-      let req = { a: (context, literal) => context.error('something wrong') }
-      context.resolveReq(req)
-      expect(logger.enter('req')._opts.follow).toBe(false)
-      expect(logger._opts.logFunc).toHaveBeenCalledTimes(1)
-    })
   })
   describe('diffRes', () => {
     test('should work', () => {
@@ -68,14 +61,6 @@ describe('Test Context', () => {
       expect(logger.enters(['res', 'status']).dirty()).toBe(true)
       expect(logger.enters(['res', 'headers']).dirty()).toBe(true)
       expect(logger.enters(['res', 'body']).dirty()).toBe(true)
-    })
-    test('print log if the logger res get dirty', () => {
-      let { context, logger } = init()
-      let exp = { status: 200 }
-      let res = { status: 400 }
-      context.diffRes(exp, res)
-      expect(logger.enter('res')._opts.follow).toBe(false)
-      expect(logger._opts.logFunc).toHaveBeenCalledTimes(1)
     })
     test('return true if omit status, headers and body property of expect', () => {
       let { context, logger } = init()
