@@ -131,7 +131,7 @@ class Unit {
   /**
    * Validate req code
    */
-  _maybeStatus(status = 200, logger) {
+  _maybeStatus(status, logger) {
     if (!_.isInteger(status)) return logger.log('must be http code')
     return status
   }
@@ -179,7 +179,7 @@ class Unit {
    * Validate res
    */
   _parseRes(res, logger) {
-    let _res = { status: 200 }
+    let _res = {}
 
     let type = utils.type(res)
     if (type === 'undefined') {
@@ -192,7 +192,9 @@ class Unit {
 
     if (res.body) _res.body = res.body
 
-    _res.status = this._maybeStatus(res.status, logger.enter('status'))
+    if (res.status) {
+      _res.status = this._maybeStatus(res.status, logger.enter('status'))
+    }
 
     if (res.headers) {
       if (!utils.isTypeOf(res.headers, 'object')) {
@@ -238,7 +240,7 @@ class Unit {
   }
 
   /**
-   * print req and res when debugging
+   * print req and res when debug
    */
   debug(req, res, logger) {
     if (!this._axios) {
@@ -254,10 +256,10 @@ class Unit {
     if (tReq && tReq.headers) output.req.headers = req.headers
     if (tReq && tReq.body) output.req.body = req.body
 
-    output.res = {
-      status: res.status,
-      body: res.body
-    }
+    output.res = {}
+    if (res.status) output.res.status = res.status
+    if (res.body) output.res.body = res.body
+    if (res.err) output.res.err = res.err.toString()
     if (tRes && tRes.headers) output.res.headers = res.headers
 
     logger.enter('debug').log(yaml.safeDump(output))

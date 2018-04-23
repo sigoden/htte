@@ -52,7 +52,7 @@ describe('Test Unit', () => {
     expect(unit._template).toBe(template)
     expect(unit._api).toEqual({ keys: [], name: 'getFeed', url: 'http://localhost:3000/feed', method: 'get' })
     expect(unit._req).toEqual({})
-    expect(unit._res).toEqual({ status: 200 })
+    expect(unit._res).toEqual({})
     expect(logger.toString()).toEqual('')
   })
 })
@@ -176,6 +176,26 @@ describe('public function', () => {
         msg: ok
       headers:
         Content-Type: application/json
+    
+`)
+    })
+    test('print req and res if res.err', () => {
+      let { unit, logger } = createUnit1()
+      unit._axios = { method: unit.api().method, url: unit.api().url }
+      unit._template.req = { body: { content: 'awesome' }, headers: { Authorization: 'Bearer balabala' } }
+      unit._template.res = { err: new Error('connect ECONNREFUSED 127.0.0.1:3000'), time: 10.03 }
+      unit.debug(unit._template.req, unit._template.res, logger)
+      expect(logger.toString()).toBe(`-:
+  debug:
+    req:
+      url: 'http://localhost:3000/feed'
+      method: get
+      headers:
+        Authorization: Bearer balabala
+      body:
+        content: awesome
+    res:
+      err: 'Error: connect ECONNREFUSED 127.0.0.1:3000'
     
 `)
     })
@@ -354,11 +374,11 @@ describe('private function', () => {
     })
   })
   describe('_maybeStatus', () => {
-    test('default status 200', () => {
+    test('should work', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._maybeStatus(undefined, logger)
+      let result = unit._maybeStatus(204, logger)
       expect(logger.toString()).toBe('')
-      expect(result).toBe(200)
+      expect(result).toBe(204)
     })
     test('log error if status is not integer', () => {
       let { unit, logger } = createUnit1()
@@ -411,12 +431,7 @@ describe('private function', () => {
     test('return {} if res is undefined', () => {
       let { unit, logger } = createUnit1()
       let result = unit._parseRes(undefined, logger)
-      expect(result).toEqual({ status: 200 })
-    })
-    test('append property status = 200 if omit', () => {
-      let { unit, logger, options } = createUnit2()
-      let result = unit._parseRes({}, logger)
-      expect(result.status).toBe(200)
+      expect(result).toEqual({})
     })
     test('should work', () => {
       let { unit, logger } = createUnit2()

@@ -24,14 +24,14 @@ function diff(context, expect, actual, isStrict = true) {
 
 function diffPrimitive(context, expect, actual) {
   if (_.isEqual(expect, actual)) return true
-  return context.error(`value diff, expect: ${JSON.stringify(expect)}, actual: ${JSON.stringify(actual)}`)
+  return context.error(`value diff, expect ${JSON.stringify(expect)}, actual ${JSON.stringify(actual)}`)
 }
 
 function diffArray(context, expect, actual, isStrict) {
   if (!diffType(context, expect, actual)) return false
   let sameLength = expect.length === actual.length
   if (isStrict && !sameLength) {
-    return context.error(`element diff, expect: ${expect.length}, actual: ${actual.length}`)
+    return context.error(`element diff, expect ${expect.length}, actual ${actual.length}`)
   }
   return expect.every((elem, index) => {
     return diff(context.enter(`[${index}]`), elem, actual[index])
@@ -41,7 +41,7 @@ function diffArray(context, expect, actual, isStrict) {
 function diffType(context, expect, actual) {
   if (utils.isTypeOf(expect, utils.type(actual))) return true
 
-  return context.error(`type diff, expect: ${JSON.stringify(expect)}, actual: ${JSON.stringify(actual)}`)
+  return context.error(`type diff, expect ${JSON.stringify(expect)}, actual ${JSON.stringify(actual)}`)
 }
 
 function diffObject(context, expect, actual, isStrict) {
