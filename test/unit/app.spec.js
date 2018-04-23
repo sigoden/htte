@@ -69,9 +69,10 @@ describe('Test App', () => {
         ])
       }))
       let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
-      return app.run({ bail: true }).then(() => {
+      return app.run({ bail: true }).then(result => {
         expect(app._units[1].execute).toHaveBeenCalled()
         expect(app._units[2].execute).not.toHaveBeenCalled()
+        expect(result).toBe(1)
       })
     })
     test('continue run when fail the unit but the bail option is disabled', () => {

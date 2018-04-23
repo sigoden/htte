@@ -13,6 +13,8 @@ module.exports = {
       .conflicts('amend', 'unit')
   },
   handler: function(argv) {
-    new App(argv.config).run(argv)
+    new App(argv.config).run(argv).then(exitStatus => {
+      process.exit(exitStatus)
+    })
   }
 }

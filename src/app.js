@@ -63,6 +63,7 @@ class App {
 
     let logger = new Logger('RunUnits', { follow: true, logFunc: this._print })
 
+    let exitStatus = 0
     return units
       .reduce((promise, unit) => {
         return promise.then(isContinue => {
@@ -72,6 +73,8 @@ class App {
               cursor += 1
               if (cursor === this._units.length) cursor = 0
               this._session.setCursor(cursor)
+            } else {
+              exitStatus = 1
             }
             return v
           })
@@ -79,6 +82,7 @@ class App {
       }, Promise.resolve(true))
       .then(() => {
         this._session.persist()
+        return exitStatus
       })
   }
 
