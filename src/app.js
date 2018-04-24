@@ -70,8 +70,10 @@ class App {
           return this._runUnit(isContinue, unit, unitLogger, options).then(v => {
             if (v) {
               cursor += 1
-              if (cursor === this._units.length) cursor = 0
-              this._session.setCursor(cursor)
+              if (!options.shot) {
+                if (cursor === this._units.length) cursor = 0
+                this._session.setCursor(cursor)
+              }
             } else {
               exitStatus = 1
             }

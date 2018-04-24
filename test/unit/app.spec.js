@@ -104,6 +104,22 @@ describe('Test App', () => {
         expect(app._units[2].execute).not.toHaveBeenCalled()
       })
     })
+    test('do not record cursor when shot is enabled', () => {
+      UnitManager.mockImplementation(() => ({
+        units: jest.fn(() => [
+          createMockUnit({ name: 'unit1', describes: ['unit1'] }),
+          createMockUnit({ name: 'unit2', describes: ['unit2'] }),
+          createMockUnit({ name: 'unit3', describes: ['unit3'] })
+        ])
+      }))
+      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      return app.run({ shot: true, unit: 'module-unit2' }).then(() => {
+        expect(app._session.cursor()).toBe(0)
+        expect(app._units[0].execute).not.toHaveBeenCalled()
+        expect(app._units[1].execute).toHaveBeenCalled()
+        expect(app._units[2].execute).not.toHaveBeenCalled()
+      })
+    })
     test('call persist and setCursor', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [

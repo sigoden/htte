@@ -1,0 +1,3 @@
+[submodule "test/fixtures/realworld"]
+	path = test/fixtures/realworld
+	url = https://github.com/sigoden/node-express-realworld-example-app.git
