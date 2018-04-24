@@ -137,4 +137,30 @@ describe('Test utils', () => {
       expect(utils.isTypeOf({}, ['undefined', 'object'])).toBe(true)
     })
   })
+  describe('print', () => {
+    let log$ = console.log
+    afterAll(() => {
+      console.log = log$
+    })
+    test('log error message when dubug is disabled', () => {
+      let err = new Error('ops')
+      console.log = jest.fn()
+      utils.print(false)(err)
+      expect(console.log).toHaveBeenCalledWith(err.message)
+    })
+    test('log error stack when dubug is enable', () => {
+      let $ = console.log
+      let err = new Error('ops')
+      console.log = jest.fn()
+      utils.print(true)(err)
+      expect(console.log).toHaveBeenCalledWith(err)
+    })
+    test('should log normal data', () => {
+      let $ = console.log
+      let msg = 'abc'
+      console.log = jest.fn()
+      utils.print()(msg)
+      expect(console.log).toHaveBeenCalledWith('abc')
+    })
+  })
 })

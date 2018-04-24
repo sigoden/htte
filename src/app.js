@@ -27,12 +27,11 @@ class App {
     try {
       this._config = new Config(file)
       this._units = new UnitManager(this._config).units()
+      this._session = new Session(this._config.sessionFile())
       this._ready = true
     } catch (err) {
       this._print(err)
     }
-
-    this._session = new Session(this._config.sessionFile())
   }
 
   /***
@@ -159,8 +158,8 @@ class App {
 
     let unit = this._units[cursor]
 
-    let data = this._session.readUnit(unit)
-    this._print(unit.inspect(data || {}))
+    let data = this._session.readUnit(unit) || {}
+    this._print(unit.inspect(data))
   }
 
   /**

@@ -1,4 +1,5 @@
 const App = require('../../src/app')
+const { print } = require('../../src/utils')
 
 module.exports = {
   command: ['run', '$0'],
@@ -13,7 +14,7 @@ module.exports = {
       .conflicts('amend', 'unit')
   },
   handler: function(argv) {
-    new App(argv.config).run(argv).then(exitStatus => {
+    new App(argv.config, print(process.env.DEBUG)).run(argv).then(exitStatus => {
       process.exit(exitStatus)
     })
   }

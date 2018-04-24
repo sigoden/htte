@@ -70,7 +70,7 @@ class Config {
       utils.ensureFileSync(_file)
       return _file
     } catch (err) {
-      return logger.log(`must be valid file at ${_file}, ${err}`)
+      return logger.log(`must be valid file at ${_file}, ${err.message}`)
     }
   }
 
@@ -210,7 +210,7 @@ class Config {
       try {
         plugin = require(pluginPath)
       } catch (err) {
-        return pluginLogger.log(`cannot load plugin, ${err}`)
+        return pluginLogger.log(`cannot load plugin, ${err.message}`)
       }
       if (!utils.isTypeOf(plugin, 'object')) {
         return pluginLogger.log('must be object have property differ or resolver')

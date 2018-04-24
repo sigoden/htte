@@ -1,4 +1,5 @@
 const App = require('../../src/app')
+const { print } = require('../../src/utils')
 
 module.exports = {
   command: 'view',
@@ -9,6 +10,6 @@ module.exports = {
       .option('api', { alias: 'a', type: 'array', description: 'filter api' })
   },
   handler: function(argv) {
-    new App(argv.config).view(argv)
+    new App(argv.config, print(process.env.DEBUG)).view(argv)
   }
 }

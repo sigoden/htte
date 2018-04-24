@@ -298,7 +298,7 @@ res:
       let mockAxios = require('axios').mockImplementation(() => Promise.reject(err))
       let { unit, logger } = createUnit2()
       return unit.execute(ctx).then(result => {
-        expect(result.res.err).toBe(err)
+        expect(result.res.err).toBe(err.message)
         expect(result.req).toBeDefined()
         expect(result.pass).toBe(false)
       })

@@ -49,6 +49,8 @@ class Logger {
    * @param {string} msg - The message to append
    */
   log(msg) {
+    msg = msg.toString()
+
     this._msgs.push(msg)
 
     if (this._opts.follow) {

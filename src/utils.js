@@ -132,6 +132,19 @@ module.exports = {
     if (!Array.isArray(types)) types = [types]
     let t = type(value)
     return types.some(type => type === t)
+  },
+
+  /**
+   * Print error stack in debug mode, only print normal message in normal mode
+   */
+  print: debug => {
+    return msg => {
+      if (msg instanceof Error) {
+        console.log(debug ? msg : msg.message)
+        return
+      }
+      console.log(msg)
+    }
   }
 }
 
