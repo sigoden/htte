@@ -60,14 +60,20 @@ class Context {
     let logger = this._logger.enter('res').setOptions({ follow: false })
     let ctx = new ContextDiff(this._query, logger)
     let [statusDiffed, headersDiffed, bodyDiffed] = [true, true, true]
+    let diffStatusOrBody = false
     if (expect.status) {
+      diffStatusOrBody = true
       statusDiffed = diff(ctx.enter('status'), expect.status, res.status)
+    }
+    if (expect.body) {
+      diffStatusOrBody = true
+      bodyDiffed = diff(ctx.enter('body'), expect.body, res.body)
     }
     if (expect.headers) {
       headersDiffed = diff(ctx.enter('headers'), expect.headers, res.headers)
     }
-    if (expect.body) {
-      bodyDiffed = diff(ctx.enter('body'), expect.body, res.body)
+    if (!diffStatusOrBody && res.status > 299) {
+      return ctx.enter('status').error('not good')
     }
     if (logger.dirty()) logger.exit().log(logger.toString(0))
     return statusDiffed && headersDiffed && bodyDiffed

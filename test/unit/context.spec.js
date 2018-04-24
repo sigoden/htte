@@ -68,6 +68,12 @@ describe('Test Context', () => {
       let res = { status: 200, body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' } }
       expect(context.diffRes(exp, res)).toBe(true)
     })
+    test('log error if omit status, headers and body property of expect but status > 299', () => {
+      let { context, logger } = init()
+      let exp = {}
+      let res = { status: 400, body: { error: 'wrong' }, headers: { 'Content-Type': 'application/json' } }
+      expect(context.diffRes(exp, res)).toBe(false)
+    })
   })
 })
 
