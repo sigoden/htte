@@ -1,5 +1,5 @@
-const App = require('../../src/app')
-const { print } = require('../../src/utils')
+const App = require('../../app')
+const { print } = require('../../utils')
 
 module.exports = {
   command: 'inspect [unit]',

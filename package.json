@@ -2,9 +2,9 @@
   "name": "hest",
   "version": "0.1.0",
   "description": "Declarative http test framework ",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "hest": "./bin/hest.js"
+    "hest": "./dist/bin/hest.js"
   },
   "scripts": {
     "ci": "jest --watch",
@@ -14,6 +14,7 @@
     "lint:fix": "eslint --fix --ext=.js src test",
     "test": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "test:all": "jest --coverage --no-cache",
+    "compile": "babel -d ./dist ./src",
     "pretest:integ": "git submodule update --init && [ -d ./test/fixtures/realworld ] || npm --prefix ./test/fixtures/realworld install --production",
     "test:integ": "jest --testPathPattern integration --no-cache"
   },
@@ -34,9 +35,6 @@
   ],
   "author": "sigoden huang <sigoden@gmail.com> (https://sigoden.com)",
   "license": "MIT",
-  "engines": {
-    "node": ">= 6.x.x"
-  },
   "dependencies": {
     "axios": "^0.18.0",
     "js-yaml": "^3.11.0",
@@ -50,7 +48,8 @@
     "coverageDirectory": "../coverage",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "./test/fixtures/"
+      "/test/fixtures/",
+      "/dist/"
     ],
     "testEnvironment": "node",
     "rootDir": "./src",
@@ -59,10 +58,27 @@
       "./plugins"
     ]
   },
+  "babel": {
+    "presets": [
+      ["env", {
+        "targets": {
+          "node": "4"
+        }
+      }]
+    ],
+    "ignore": "__tests__"
+  },
   "engine": {
     "node": ">=4"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "README.zh.md"
+  ],
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "eslint": "^4.19.1",
     "eslint-plugin-prettier": "^2.6.0",
     "jest": "^22.4.3",
