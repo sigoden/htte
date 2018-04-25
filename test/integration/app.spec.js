@@ -2,7 +2,7 @@ const App = require('../../src/app')
 const path = require('path')
 const { start } = require('../fixtures/realworld')
 
-const configFile = path.resolve(__dirname, '../fixtures/realworld/tests/.htte.yaml')
+const configFile = path.resolve(__dirname, '../fixtures/realworld/tests/config.yaml')
 
 describe('test app', () => {
   let print = jest.fn()
