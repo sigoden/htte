@@ -12,7 +12,8 @@ const { URL } = require('url')
 const defaultConfig = {
   rootDir: '.',
   sessionFile: './.session',
-  serializer: 'json',
+  type: 'json',
+  timeout: 1000,
   url: 'http://localhost:3000',
   apis: {},
   variables: {},
@@ -41,11 +42,12 @@ class Config {
   /**
    * Parse the yaml config, generate valid config value
    */
-  _parse({ rootDir, sessionFile, serializer, url, apis, variables, plugins }) {
+  _parse({ rootDir, sessionFile, type, timeout, url, apis, variables, plugins }) {
     let logger = this._logger
     this._rootDir = this._parseRootDir(rootDir, logger.enter('rootDir'))
     this._sessionFile = this._parseSessionFile(sessionFile, logger.enter('sessionFile'))
-    this._serializer = this._parseSerializer(serializer, logger.enter('serializer'))
+    this._type = this._parseType(type, logger.enter('type'))
+    this._timeout = this._parseTimeout(timeout, logger.enter('timeout'))
     this._url = this._parseUrl(url, logger.enter('url'))
     this._apis = this._parseAPIs(apis, logger.enter('apis'))
     this._variables = this._parseVariables(variables, logger.enter('variables'))
@@ -75,12 +77,20 @@ class Config {
   }
 
   /**
-   * Parse and check serializer option
+   * Parse and check type option
    */
-  _parseSerializer(name, logger) {
+  _parseType(name, logger) {
     let serializer = this._serializerM.findByName(name)
-    if (serializer) return serializer
-    return logger.log(`${name} must be one of ${this._serializerM.names()}`)
+    if (serializer) return serializer.name
+    return logger.log(`must be one of ${this._serializerM.names()}`)
+  }
+
+  /**
+   * Parse and check timeout option
+   */
+  _parseTimeout(timeout, logger) {
+    if (_.isInteger(timeout)) return timeout
+    return logger.log(`must be integer`)
   }
 
   /**
@@ -132,9 +142,9 @@ class Config {
           api = { uri: value, name: key }
           break
         case 'object':
-          let { uri, method } = value
+          let { uri, method, type, timeout } = value
           if (!uri) return logger.enter(key).log('must be object have property uri')
-          api = { uri, method, name: key }
+          api = { uri, method, name: key, type, timeout }
           break
         default:
           return logger.enter(key).log('must be string or object')
@@ -153,10 +163,10 @@ class Config {
         return logger.enter(`[${index}]`).log('must be object')
       }
 
-      let { name, uri, method } = api
+      let { name, uri, method, timeout, type } = api
       if (!name) return logger.enter(`[${index}]`).log('must have property name')
       if (!uri) return logger.enter(`[${index}]${name}`).log('must have property uri')
-      return { name, uri, method }
+      return { name, uri, method, type, timeout }
     }
     return _.map(apis, mapFunc).filter(v => !!v)
   }
@@ -173,11 +183,20 @@ class Config {
       _api.url = api.uri
     }
 
+    // check url
     let url
     try {
       url = new URL(_api.url)
     } catch (err) {
       return logger.log(`invalid url at ${_api.uri}`)
+    }
+
+    _api.timeout = api.timeout || this._timeout
+
+    // check type
+    _api.type = api.type || this._type
+    if (!this.findSerializer(_api.type)) {
+      return logger.log(`must be one of ${this._serializerM.names()}`)
     }
 
     _api.keys = utils.collectUrlParams(decodeURIComponent(url.pathname))
@@ -295,7 +314,7 @@ class Config {
    * Find the serializer by type
    */
   findSerializer(type) {
-    if (typeof type === 'undefined') return this._serializer
+    if (typeof type === 'undefined') return this.findSerializer(this._type)
     let m = this._serializerM
     return m.findByName(type) || m.findByType(type)
   }

@@ -122,9 +122,6 @@ class Unit {
     let params = this._parseReqParams(req.params, logger.enter('params'))
     if (params) _req.params = _.clone(params)
 
-    let reqType = this._parseReqType(req.type, logger.enter('type'))
-    if (reqType) _req.type = reqType
-
     return _req
   }
 
@@ -134,15 +131,6 @@ class Unit {
   _maybeStatus(status, logger) {
     if (!_.isInteger(status)) return logger.log('must be http code')
     return status
-  }
-
-  /**
-   * Validate req type
-   */
-  _parseReqType(type, logger) {
-    let serializer = this._config.findSerializer(type)
-    if (!serializer) return logger.log(`unregist type ${type}`)
-    return type
   }
 
   /**
@@ -297,14 +285,14 @@ class Unit {
   _request(api, req, logger) {
     if (logger.dirty()) return Promise.reject('cannot create request')
 
-    let { name, method, url, keys } = api
-    let { query, params, headers = {}, type, body } = req
+    let { name, method, url, keys, type, timeout } = api
+    let { query, params, headers = {}, body } = req
 
     if (keys.length) url = utils.fillUrlParams(url, params)
 
     if (query) url += '?' + qs.stringify(query)
 
-    this._axios = { method, url, headers }
+    this._axios = { method, url, headers, timeout }
 
     if (body) {
       let serializer = this._config.findSerializer(type)

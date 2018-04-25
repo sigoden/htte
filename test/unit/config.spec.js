@@ -15,7 +15,7 @@ describe('Test Config', () => {
     expect(config._serializerM.names()).toEqual(['json'])
     expect(config._rootDir).toEqual(path.dirname(configFile))
     expect(config._sessionFile).toEqual('/tmp/realworld.session')
-    expect(config._serializer.name).toEqual('json')
+    expect(config._type).toEqual('json')
     expect(config._url).toBe('http://localhost:3000/api')
     expect(config._apis).toEqual(require(resolveFixtureFile('./config/realworld.api.json')))
     expect(config._variables).toEqual({})
@@ -95,16 +95,28 @@ describe('Test parse function', () => {
       expect(logger.toString()).toMatch(/must be valid file at/)
     })
   })
-  describe('_parseSerializer', () => {
-    test('default values is json', () => {
+  describe('_parseType', () => {
+    test('default value is json', () => {
       let { config } = init()
-      expect(config._serializer.name).toBe('json')
+      expect(config._type).toBe('json')
     })
-    test('log error if serializer unregisted', () => {
+    test('log error if type unregisted', () => {
       let { config, logger } = init()
-      let serializer = config._parseSerializer('xml', logger)
-      expect(serializer).toBeUndefined()
-      expect(logger.toString()).toMatch(/xml must be one of/)
+      let type = config._parseType('xml', logger)
+      expect(type).toBeUndefined()
+      expect(logger.toString()).toMatch(/must be one of/)
+    })
+  })
+  describe('_parseTimeout', () => {
+    test('default value is 1000', () => {
+      let { config } = init()
+      expect(config._timeout).toBe(1000)
+    })
+    test('log error if timeout is not integer', () => {
+      let { config, logger } = init()
+      let type = config._parseTimeout('300', logger)
+      expect(type).toBeUndefined()
+      expect(logger.toString()).toMatch(/must be integer/)
     })
   })
   describe('_parseUrl', () => {
@@ -155,8 +167,15 @@ describe('Test parse function', () => {
       ]
       let apis = config._parseAPIs(value, logger)
       expect(apis).toEqual([
-        { keys: [], method: 'post', name: 'createFeed', url: 'http://localhost:3000/feed' },
-        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed' }
+        {
+          keys: [],
+          method: 'post',
+          name: 'createFeed',
+          url: 'http://localhost:3000/feed',
+          timeout: 1000,
+          type: 'json'
+        },
+        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 1000, type: 'json' }
       ])
     })
     test('work when value of apis is object', () => {
@@ -167,8 +186,15 @@ describe('Test parse function', () => {
       }
       let apis = config._parseAPIs(value, logger)
       expect(apis).toEqual([
-        { keys: [], method: 'post', name: 'createFeed', url: 'http://localhost:3000/feed' },
-        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed' }
+        {
+          keys: [],
+          method: 'post',
+          name: 'createFeed',
+          url: 'http://localhost:3000/feed',
+          timeout: 1000,
+          type: 'json'
+        },
+        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 1000, type: 'json' }
       ])
     })
     test('filter out the invalid api', () => {
@@ -178,7 +204,17 @@ describe('Test parse function', () => {
         { name: 'getFeed', uri: '/feed', method: 'get' }
       ]
       let apis = config._parseAPIs(value, logger)
-      expect(apis).toEqual([{ keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed' }])
+
+      expect(apis).toEqual([
+        {
+          keys: [],
+          method: 'get',
+          name: 'getFeed',
+          url: 'http://localhost:3000/feed',
+          timeout: 1000,
+          type: 'json'
+        }
+      ])
       expect(logger.dirty()).toBe(true)
     })
   })
@@ -258,6 +294,19 @@ describe('Test parse function', () => {
       let value = { name: 'getFeed', uri: 'feed' }
       let api = config._modifyAPI(value, logger)
       expect(logger.toString()).toMatch('invalid url at')
+    })
+    test('custom timeout', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', timeout: 500 }
+      let api = config._modifyAPI(value, logger)
+      expect(api.timeout).toEqual(500)
+    })
+    test('log error custom type unregisted', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', type: 'xml' }
+      let api = config._modifyAPI(value, logger)
+      expect(logger.toString()).toMatch('must be one of')
+      expect(api).toBeUndefined()
     })
     test('have computed property keys', () => {
       let { config, logger } = init()
@@ -380,7 +429,9 @@ describe('public functions', () => {
         keys: ['id', 'slug'],
         method: 'delete',
         name: 'deleteComment',
-        url: 'http://localhost:3000/api/articles/{slug}/comments/{id}'
+        url: 'http://localhost:3000/api/articles/{slug}/comments/{id}',
+        timeout: 1000,
+        type: 'json'
       })
     })
     test('return undefined if not find', () => {
@@ -388,14 +439,14 @@ describe('public functions', () => {
     })
   })
   describe('#findSerializer', () => {
-    test('return default serializer if no type', () => {
-      expect(config.findSerializer()).toBe(config._serializer)
+    test('return default type', () => {
+      expect(config.findSerializer().name).toBe(config._type)
     })
     test('can find by name', () => {
-      expect(config.findSerializer('json')).toBe(config._serializer)
+      expect(config.findSerializer('json').name).toBe(config._type)
     })
     test('can find by type', () => {
-      expect(config.findSerializer('application/json')).toBe(config._serializer)
+      expect(config.findSerializer('application/json').name).toBe(config._type)
     })
     test('return undefined if not find', () => {
       expect(config.findSerializer('xml')).toBeUndefined()

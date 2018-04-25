@@ -31,7 +31,6 @@ let createUnit2 = (modify = {}) => {
         headers: {
           Authorization: 'Bearer tokenbalabala'
         },
-        type: 'json',
         body: { content: 'awsome' }
       },
       res: {
@@ -50,7 +49,14 @@ describe('Test Unit', () => {
     expect(unit._module).toBe(module)
     expect(unit._scope).toBe(scope)
     expect(unit._template).toBe(template)
-    expect(unit._api).toEqual({ keys: [], name: 'getFeed', url: 'http://localhost:3000/feed', method: 'get' })
+    expect(unit._api).toEqual({
+      keys: [],
+      name: 'getFeed',
+      url: 'http://localhost:3000/feed',
+      method: 'get',
+      type: 'json',
+      timeout: 1000
+    })
     expect(unit._req).toEqual({})
     expect(unit._res).toEqual({})
     expect(logger.toString()).toEqual('')
@@ -229,6 +235,8 @@ api:
   name: createComment
   url: 'http://localhost:3000/articles/{slug}/comments'
   method: post
+  timeout: 1000
+  type: json
 req:
   params:
     slug: how-to-train-your-dragon-axsda
@@ -236,7 +244,6 @@ req:
     upsert: true
   headers:
     Authorization: Bearer tokenbalabala
-  type: json
   body:
     content: awsome
 res:
@@ -310,28 +317,20 @@ describe('private function', () => {
     test('return api object if find', () => {
       let { unit, logger, options } = createUnit1()
       let api = unit._parseAPI(options.api, logger)
-      expect(api).toEqual({ keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed' })
+      expect(api).toEqual({
+        keys: [],
+        method: 'get',
+        name: 'getFeed',
+        url: 'http://localhost:3000/feed',
+        type: 'json',
+        timeout: 1000
+      })
     })
     test('log error if not find', () => {
       let { unit, logger } = createUnit1()
       let api = unit._parseAPI('notfind', logger)
       expect(api).toBeUndefined()
       expect(logger.toString()).toMatch(`cannot find api`)
-    })
-  })
-  describe('_parseReqType', () => {
-    test('return serializer', () => {
-      let { unit, logger } = createUnit1()
-      let type = 'json'
-      let result = unit._parseReqType(type, logger)
-      expect(result).toBe(type)
-    })
-    test('log error if type cannot be found', () => {
-      let { unit, logger } = createUnit1()
-      let type = 'xml'
-      let result = unit._parseReqType(type, logger)
-      expect(result).toBeUndefined()
-      expect(logger.toString()).toMatch(`unregist type`)
     })
   })
   describe('_parseReqParams', () => {
@@ -411,9 +410,9 @@ describe('private function', () => {
       expect(result.query).not.toBe(target.query)
       expect(result.params).not.toBe(target.params)
     })
-    test('log error when any of headers, query, params, type is wrong', () => {
+    test('log error when any of headers, query, params', () => {
       let { unit, logger } = createUnit1()
-      let target = { headers: '', query: '', params: { slug: 'v' }, type: 'xml' }
+      let target = { headers: '', query: '', params: { slug: 'v' } }
       let result = unit._parseReq(target, logger)
       expect(logger.toString()).toBe(`-:
   headers:
@@ -422,8 +421,6 @@ describe('private function', () => {
     must be object
   params:
     params diff, extra slug
-  type:
-    unregist type xml
 `)
     })
   })
@@ -480,6 +477,7 @@ describe('private function', () => {
           data: '{"content":"awsome"}',
           headers: { Authorization: 'Bearer tokenbalabala', 'Content-Type': 'application/json' },
           method: 'post',
+          timeout: 1000,
           url: 'http://localhost:3000/articles/how-to-train-your-dragon-axsda/comments?upsert=true'
         })
       })
@@ -523,7 +521,10 @@ function init(options) {
     res: res
   }
   let config = {
-    findAPI: _api => (_api === api ? { keys: apiKeys, name: api, url: apiUrl, method: apiMethod || 'get' } : undefined),
+    findAPI: _api =>
+      _api === api
+        ? { keys: apiKeys, name: api, url: apiUrl, method: apiMethod || 'get', timeout: 1000, type }
+        : undefined,
     findSerializer: type => (type === 'json' || type === undefined ? JSONSerializer : undefined)
   }
   let logger = new Logger()
