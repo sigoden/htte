@@ -62,6 +62,12 @@ describe('Test Context', () => {
       expect(logger.enters(['res', 'headers']).dirty()).toBe(true)
       expect(logger.enters(['res', 'body']).dirty()).toBe(true)
     })
+    test('partial diff on headers', () => {
+      let { context, logger } = init()
+      let exp = { headers: { H1: 33 } }
+      let res = { status: 200, headers: { 'Content-Type': 'application/json', H1: 33 } }
+      expect(context.diffRes(exp, res)).toBe(true)
+    })
     test('return true if omit status, headers and body property of expect', () => {
       let { context, logger } = init()
       let exp = {}

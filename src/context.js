@@ -70,7 +70,7 @@ class Context {
       bodyDiffed = diff(ctx.enter('body'), expect.body, res.body)
     }
     if (expect.headers) {
-      headersDiffed = diff(ctx.enter('headers'), expect.headers, res.headers)
+      headersDiffed = diff(ctx.enter('headers'), expect.headers, res.headers, false)
     }
     if (!diffStatusOrBody && res.status > 299) {
       return ctx.enter('status').error('not good')
