@@ -1,6 +1,6 @@
-# Hest
+# Htte
 
-Hest 是一款描述式 HTTP 测试框架。
+Htte 是一款描述式 HTTP 测试框架。
 
 > 语言 [English](README.md) | [中文](README.zh.md)
 
@@ -12,13 +12,13 @@ Hest 是一款描述式 HTTP 测试框架。
 
 ## 入门
 
-安装 hest 命令行工具
+安装 htte 命令行工具
 
 ```
-npm i hest -g
+npm i htte -g
 ```
 
-编写项目配置文件 `.hest.yaml`
+编写项目配置文件 `.htte.yaml`
 
 ```
 url: http://localhost:3000/api
@@ -67,7 +67,7 @@ units:
 运行测试
 
 ```
-hest
+htte
 
 RunUnits:
   user:
@@ -82,11 +82,11 @@ RunUnits:
 
 ### 原理
 
-hest 读取测试描述文件 `.hest.yaml`, 得知有两个用例要进行测试 `register user` 和 `update user data`
+htte 读取测试描述文件 `.htte.yaml`, 得知有两个用例要进行测试 `register user` 和 `update user data`
 
-hest 开始执行用例 `register user`, 根据其 api 字段查询配置文件得到请求方法和路径。
+htte 开始执行用例 `register user`, 根据其 api 字段查询配置文件得到请求方法和路径。
 
-hest 会向 `register` 接口发送请求，根据 req 字段生成请求数据。
+htte 会向 `register` 接口发送请求，根据 req 字段生成请求数据。
 
 ```
 url: http://localhost:3000/api/users
@@ -103,7 +103,7 @@ body: |
   }
 ```
 
-hest 接着会检验响应的数据, 根据 res 字段自动进行下列断言。
+htte 接着会检验响应的数据, 根据 res 字段自动进行下列断言。
 
 - 响应数据中存在 user 对象
 - user 对象有且仅有 email, username, token 属性
@@ -115,9 +115,9 @@ hest 接着会检验响应的数据, 根据 res 字段自动进行下列断言�
 
 `!@exist` 是 yaml 标签，实际上是一种由插件系统提供的函数，断言字段存在。
 
-> hest 提供了插件系统允许用户编写响应数据校验方法。例如 `!@regexp` 可以用例正则匹配。
+> htte 提供了插件系统允许用户编写响应数据校验方法。例如 `!@regexp` 可以用例正则匹配。
 
-hest 执行用例 `update user`, 生成请求数据。
+htte 执行用例 `update user`, 生成请求数据。
 
 ```
 url: http://localhost:3000/api/user
@@ -133,17 +133,17 @@ body: |
   }
 ```
 
-`!$query` 也是 yaml 标签，它会进行变量查询。hest 会记录所有用例的请求和响应数据，可以通过该标签获取。
+`!$query` 也是 yaml 标签，它会进行变量查询。htte 会记录所有用例的请求和响应数据，可以通过该标签获取。
 
-> hest 提供了插件系统允许用户自定义请求数据的产生行为。例如 `!$now` 会生成当前时间字符串,
+> htte 提供了插件系统允许用户自定义请求数据的产生行为。例如 `!$now` 会生成当前时间字符串,
 > `!$randstr` 生成随机字符串。
 
-hest 接着同样会检验响应的数据。进行如下断言。
+htte 接着同样会检验响应的数据。进行如下断言。
 
 - 响应数据中存在 user 对象
 - user 属性 username 值为 john
 
-> 如果没有 `!@object`, hest 将对 user 对象进行全属性校验，这意味着属性字段不能多也不能少。
+> 如果没有 `!@object`, htte 将对 user 对象进行全属性校验，这意味着属性字段不能多也不能少。
 > 有时候我们仅关注对象的某个字段，可以使用 `!@object`  比对器进行对象的部分校验。
 
 ### 文档
@@ -156,4 +156,4 @@ hest 接着同样会检验响应的数据。进行如下断言。
  
 ### 许可证
 
-[MIT](https://github.com/sigoden/hest/blob/master/LICENSE)
+[MIT](https://github.com/sigoden/htte/blob/master/LICENSE)

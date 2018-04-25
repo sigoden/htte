@@ -1,6 +1,6 @@
 ## variable
 
-Hest use the variable to access the data of other tests.
+Htte use the variable to access the data of other tests.
 
 ### origin
 
@@ -25,7 +25,7 @@ units:
           token: !@exist
 ```
 
-After executed test, hest will record follow info:
+After executed test, htte will record follow info:
 
 ```
 {
@@ -63,7 +63,7 @@ Any parts of that record can be variable.
 
 ### jsonpath
 
-Hest use [jsonpath](https://github.com/dchester/jsonpath) to select the data.
+Htte use [jsonpath](https://github.com/dchtteer/jsonpath) to select the data.
 
 The jsonpath of the token is `$.auth.registerJohn.res.body.user.token`, the variable to access that value is $auth.registerJohn.res.body.user.token
 

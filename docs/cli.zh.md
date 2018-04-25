@@ -2,11 +2,11 @@
 
 全局选项
 
-- config: 项目配置文件路径，默认 `./.hest.yaml`
+- config: 项目配置文件路径，默认 `./.htte.yaml`
 
 ### run
 
-运行测试, 为默认命令，`hest` 等同于 `hest run`.
+运行测试, 为默认命令，`htte` 等同于 `htte run`.
 
 选项:
 

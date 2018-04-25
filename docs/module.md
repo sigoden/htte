@@ -6,13 +6,13 @@ Each module is realy a yaml file. this module file have two parts: dependencies 
 
 `dependencies` guarantee the order of the tests.
 
-The api test should run in order. A user can not publish an article before he or she registed. Hest load all the files in the `rootDir` as modules, it sorts the modules on the file path first, then sorts the modules by the dependency.
+The api test should run in order. A user can not publish an article before he or she registed. Htte load all the files in the `rootDir` as modules, it sorts the modules on the file path first, then sorts the modules by the dependency.
 
 Considerd there is a `auth` module contains the test about registing and loging, a `article` module contains the test of CRUD about the article. it is obvious that `auth` module should run before `article` module. Adding `auth` module to the dependencies of `article` module guarantees that order. 
 
 What's more, once a module included the other modules in the `dependencies`, the test in that module can use the variable from dependency modules.
 
-each dependency have properties: module(file path relative to the dependent module), name. Hest use the path to generate name when dependency name ommited.
+each dependency have properties: module(file path relative to the dependent module), name. Htte use the path to generate name when dependency name ommited.
 
 `dependencies` in the form of mapping:
 
@@ -56,7 +56,7 @@ The top-level `units` have `feed` test-unit and `article without auth` units. th
 
 ### test-unit
 
-test-unit describe how hest make a request and how hest diff the response.
+test-unit describe how htte make a request and how htte diff the response.
 
 test-unit may have properties:
 ```yaml
@@ -83,6 +83,6 @@ res:
   - headers, the http headers of request
   - body, the body of request
 - res
-  - status, the status of response. If ommited, hest will asset the response between 200 and 299.
+  - status, the status of response. If ommited, htte will asset the response between 200 and 299.
   - headers, the http headers of response
   - body, the body of response

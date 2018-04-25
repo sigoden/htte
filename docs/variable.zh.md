@@ -24,7 +24,7 @@ units:
           username: !@query $$$req.body.user.username
           token: !@exist
 ```
-该测试完成后，hest 会在会话中添加如下一条记录
+该测试完成后，htte 会在会话中添加如下一条记录
 
 ```
 {
@@ -62,7 +62,7 @@ units:
 
 ### 访问路径
 
-hest 使用 [jsonpath](https://github.com/dchester/jsonpath) 定位数据。
+htte 使用 [jsonpath](https://github.com/dchtteer/jsonpath) 定位数据。
 
 上面记录中 token 的 jsonpath: `$.auth.registerJohn.res.body.user.token`, 而其它模块访问该数据的使用的变量: `$auth.registerJohn.res.body.user.token`
 

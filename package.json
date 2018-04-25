@@ -1,10 +1,10 @@
 {
-  "name": "hest",
+  "name": "htte",
   "version": "0.1.0",
   "description": "Declarative http test framework ",
   "main": "./dist/index.js",
   "bin": {
-    "hest": "./dist/bin/hest.js"
+    "htte": "./dist/bin/htte.js"
   },
   "scripts": {
     "coverall": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
@@ -23,7 +23,7 @@
     "singleQuote": true
   },
   "keywords": [
-    "hest",
+    "htte",
     "http",
     "declartive",
     "test",

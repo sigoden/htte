@@ -1,24 +1,24 @@
-# Hest
+# Htte
 
-Hest is a declartive http test framwork.
+Htte is a declartive http test framwork.
 
 > Languge [English](README.md) | [中文](README.zh.md)
 
 ## Features
 
-- Declartive, hest do not couple with any backend language
+- Declartive, htte do not couple with any backend language
 - Plugin system, you can do any you like to generate or process request data, feel free to diff the response data
-- Variables, hest record the request and reponse of tested endpoints, you can use it later. 
+- Variables, htte record the request and reponse of tested endpoints, you can use it later. 
 
 ## Get start
 
 install cli tool
 
 ```
-npm i hest -g
+npm i htte -g
 ```
 
-create the project config file `.hest.yaml`
+create the project config file `.htte.yaml`
 ```
 url: http://localhost:3000/api
 apis:
@@ -65,7 +65,7 @@ units:
 run the test
 
 ```
-hest
+htte
 
 RunUnits:
   user:
@@ -79,11 +79,11 @@ RunUnits:
 
 ## how it work
 
-Hest read the config file `.hest.yaml`, know that there are two units, `register user` and `update user data`.
+Htte read the config file `.htte.yaml`, know that there are two units, `register user` and `update user data`.
 
-Hest start excute the unit `register user`, it lookup the api on the config file to find the request path and http method.
+Htte start excute the unit `register user`, it lookup the api on the config file to find the request path and http method.
 
-Hest send the request to endpoint `register`, the request data is generated based on the req field.
+Htte send the request to endpoint `register`, the request data is generated based on the req field.
 
 ```
 url: http://localhost:3000/api/users
@@ -100,7 +100,7 @@ body: |
   }
 ```
 
-Then hest verify the reponse, it generates some assetion from the res field.
+Then htte verify the reponse, it generates some assetion from the res field.
 
 - response data must have user object
 - user object have properties email, username and token; no more properties nor less.
@@ -112,9 +112,9 @@ any rule fails, the testing of the endpoint also fails.
 
 `!@exist` is a yaml tag, it is an function that the plugin regists, it asset the property existed.
 
-> Hest provide plugin system to enable the user customizing the way to verify the resposne data. there is a builtin plugin named `!@regexp` which verify the value matched the regexp.
+> Htte provide plugin system to enable the user customizing the way to verify the resposne data. there is a builtin plugin named `!@regexp` which verify the value matched the regexp.
 
-Hest execute unit `update user` too, send the request.
+Htte execute unit `update user` too, send the request.
 
 ```
 url: http://localhost:3000/api/user
@@ -130,16 +130,16 @@ body: |
   }
 ```
 
-`!$query` is also a yaml tag and a function, it can query the variable。Hest record the all the request and response data as variable，the data is accesable through the `!$query` tag。
+`!$query` is also a yaml tag and a function, it can query the variable。Htte record the all the request and response data as variable，the data is accesable through the `!$query` tag。
 
-> Hest provide plugin system to enable the user customizing the way to generate the request data. there is a builtin plugin named `!$now` which returns the current time, a plugin named `!$randstr` which returns a random string
+> Htte provide plugin system to enable the user customizing the way to generate the request data. there is a builtin plugin named `!$now` which returns the current time, a plugin named `!$randstr` which returns a random string
 
-Hest also verify the resposne, it use the follow rules:
+Htte also verify the resposne, it use the follow rules:
 
 - response data have user object
 - user have a property named username with value john
 
-> The `!@object` is plugin to verify the value is object. if ommited, Hest will asset the user object have only one property. It enable the verification of the intreset properties other than all properties.
+> The `!@object` is plugin to verify the value is object. if ommited, Htte will asset the user object have only one property. It enable the verification of the intreset properties other than all properties.
 
 ### Documentation
 
@@ -150,4 +150,4 @@ Hest also verify the resposne, it use the follow rules:
 
 ## LICENSE
 
-[MIT](https://github.com/sigoden/hest/blob/master/LICENSE)
+[MIT](https://github.com/sigoden/htte/blob/master/LICENSE)

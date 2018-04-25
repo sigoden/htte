@@ -1,18 +1,18 @@
 ## 配置
 
-配置文件通过命令行参数 `-c` 或 `--config` 指定，是一个 yaml 文件。hest 启动时会读取校验配置文件。 
+配置文件通过命令行参数 `-c` 或 `--config` 指定，是一个 yaml 文件。htte 启动时会读取校验配置文件。 
 
 ### rootDir
 
 其默认值为 `'.'`
 
-`rootDir` 用来指定测试文件所在的根目录，hest 会递归读取该目录下的所有 yaml 文件并将其作为测试模块解析。
+`rootDir` 用来指定测试文件所在的根目录，htte 会递归读取该目录下的所有 yaml 文件并将其作为测试模块解析。
 
 ### sessionFile
 
 其默认值为 `./.session`
 
-`sessionFile` 是一个用来持久化会话的文件，hest 使用该文件记录测试的请求和响应数据以及测试中断位置
+`sessionFile` 是一个用来持久化会话的文件，htte 使用该文件记录测试的请求和响应数据以及测试中断位置
 
 ### url
 
@@ -74,4 +74,4 @@ apis:
 
 其默认值为 `[]`
 
-`plugins` 提供插件列表。在 hest 中插件是一个 npm 模块，详见[插件]('./plugin.zh.md')
+`plugins` 提供插件列表。在 htte 中插件是一个 npm 模块，详见[插件]('./plugin.zh.md')

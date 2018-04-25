@@ -6,7 +6,7 @@ To test an api, we need to make a request, and diff the response with what we ex
 Sometimes we cannot create the data literally. How can you give the current time which changes whenever you run the test?
 As for response data, we canot always sure. Sometimes it may have suffix with random string.
 
-Hest use plugin to solve such problems.
+Htte use plugin to solve such problems.
 
 A plugin is a function essentially. Only function can do anything you expected. The plugin is called by yaml tag. 
 
@@ -119,7 +119,7 @@ res:
     length: 4
 ```
 
-Hest will do full-equal compartion on array. Use the plugin to do partial diff.
+Htte will do full-equal compartion on array. Use the plugin to do partial diff.
 
 ##### !@object
 `!@object`: partial diff on object, parameter type is mapping
@@ -130,6 +130,6 @@ res:
     email: john@jacob
 ```
 If the resposne data have property email and its value is `john@jacob`, pass.
-If ommited the `!@object`, hest will asset the response have only property email.
+If ommited the `!@object`, htte will asset the response have only property email.
 
-Hest wll do full-equal compartion on object. Any extra properties or miss properties will fail.
+Htte wll do full-equal compartion on object. Any extra properties or miss properties will fail.

@@ -1,24 +1,24 @@
 ## Config
 
-Config file is a yaml file, passed to hest through cli options `-c` or `--config`. Hest will read and verify the config file at startup.
+Config file is a yaml file, passed to htte through cli options `-c` or `--config`. Htte will read and verify the config file at startup.
 
 ### rootDir
 
 The default value is `'.'`
 
-`rootDir` is a directory contained module files. Hest load the yaml in that directory recursively, then parse the file as test module.
+`rootDir` is a directory contained module files. Htte load the yaml in that directory recursively, then parse the file as test module.
 
 ### sessionFile
 
 The default value is `./.session`
 
-`sessionFile` is a file path to persist the session. Hest use session to record the request and response data of each test, the position where tests started to fail is also stored.
+`sessionFile` is a file path to persist the session. Htte use session to record the request and response data of each test, the position where tests started to fail is also stored.
 
 ### url 
 
 The default is `http://localhost:3000`
 
-`url` is the base url of all the api. if the api use relative path, hest will get absolute path by prepend that url
+`url` is the base url of all the api. if the api use relative path, htte will get absolute path by prepend that url
 
 ### type
 
