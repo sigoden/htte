@@ -7,14 +7,13 @@
     "hest": "./dist/bin/hest.js"
   },
   "scripts": {
-    "ci": "jest --watch",
     "coverall": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "deps": "npm-check -u",
     "lint": "eslint --ext=.js src test",
     "lint:fix": "eslint --fix --ext=.js src test",
     "test": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "test:all": "jest --coverage --no-cache",
-    "compile": "babel -d ./dist ./src",
+    "compile": "babel -q -d ./dist ./src",
     "pretest:integ": "git submodule update --init && [ -d ./test/fixtures/realworld ] || npm --prefix ./test/fixtures/realworld install --production",
     "test:integ": "jest --testPathPattern integration --no-cache"
   },
@@ -60,11 +59,14 @@
   },
   "babel": {
     "presets": [
-      ["env", {
-        "targets": {
-          "node": "4"
+      [
+        "env",
+        {
+          "targets": {
+            "node": "4"
+          }
         }
-      }]
+      ]
     ],
     "ignore": "__tests__"
   },
