@@ -141,6 +141,13 @@ Hest also verify the resposne, it use the follow rules:
 
 > The `!@object` is plugin to verify the value is object. if ommited, Hest will asset the user object have only one property. It enable the verification of the intreset properties other than all properties.
 
+### Documentation
+
+- [config](./docs/config.md)
+- [module](./docs/module.md)
+- [plugin](./docs/plugin.md)
+- [variable](./docs/variable.md)
+
 ## LICENSE
 
 [MIT](https://github.com/sigoden/hest/blob/master/LICENSE)

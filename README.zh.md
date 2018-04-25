@@ -145,6 +145,14 @@ hest 接着同样会检验响应的数据。进行如下断言。
 
 > 如果没有 `!@object`, hest 将对 user 对象进行全属性校验，这意味着属性字段不能多也不能少。
 > 有时候我们仅关注对象的某个字段，可以使用 `!@object`  比对器进行对象的部分校验。
+
+### 文档
+
+- [配置](./docs/config.zh.md)
+- [模块](./docs/module.zh.md)
+- [插件](./docs/plugin.zh.md)
+- [变量](./docs/variable.zh.md)
+- [命令行](./docs/cli.zh.md)
  
 ### 许可证
 
