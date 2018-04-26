@@ -11,11 +11,15 @@
     "deps": "npm-check -u",
     "lint": "eslint --ext=.js src test",
     "lint:fix": "eslint --fix --ext=.js src test",
-    "test": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
-    "test:all": "jest --coverage --no-cache",
+    "test": "npm run test:unit && npm run test:int",
+    "test:unit": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "compile": "babel -q -d ./dist ./src",
-    "pretest:integ": "git submodule update --init && [ -d ./test/fixtures/realworld ] || npm --prefix ./test/fixtures/realworld install --production",
-    "test:integ": "jest --testPathPattern integration --no-cache"
+    "pretest:int": "git submodule update --init && npm --prefix ./test/fixtures/realworld install --production",
+    "test:int": "jest --testPathPattern integration --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
   },
   "prettier": {
     "printWidth": 120,
@@ -75,12 +79,14 @@
   },
   "files": [
     "dist",
+    "docs",
     "README.md",
     "README.zh.md"
   ],
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-plugin-prettier": "^2.6.0",
     "jest": "^22.4.3",
