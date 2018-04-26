@@ -79,9 +79,7 @@
   },
   "files": [
     "dist",
-    "docs",
-    "README.md",
-    "README.zh.md"
+    "README.md"
   ],
   "devDependencies": {
     "babel-cli": "^6.26.0",

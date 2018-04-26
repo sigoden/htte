@@ -150,10 +150,10 @@ Htte also verify the resposne, it use the follow rules:
 
 ### Documentation
 
-- [config](./docs/config.md)
-- [module](./docs/module.md)
-- [plugin](./docs/plugin.md)
-- [variable](./docs/variable.md)
+- [config](https://github.com/sigoden/htte/blob/master/docs/config.md)
+- [module](https://github.com/sigoden/htte/blob/master/docs/module.md)
+- [plugin](https://github.com/sigoden/htte/blob/master/docs/plugin.md)
+- [variable](https://github.com/sigoden/htte/blob/master/docs/variable.md)
 
 ## LICENSE
 

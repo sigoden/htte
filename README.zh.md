@@ -155,11 +155,11 @@ htte 接着同样会检验响应的数据。进行如下断言。
 
 ### 文档
 
-- [配置](./docs/config.zh.md)
-- [模块](./docs/module.zh.md)
-- [插件](./docs/plugin.zh.md)
-- [变量](./docs/variable.zh.md)
-- [命令行](./docs/cli.zh.md)
+- [配置](https://github.com/sigoden/htte/blob/master/docs/config.zh.md)
+- [模块](https://github.com/sigoden/htte/blob/master/docs/module.zh.md)
+- [插件](https://github.com/sigoden/htte/blob/master/docs/plugin.zh.md)
+- [变量](https://github.com/sigoden/htte/blob/master/docs/variable.zh.md)
+- [命令行](https://github.com/sigoden/htte/blob/master/docs/cli.zh.md)
  
 ### 许可证
 
