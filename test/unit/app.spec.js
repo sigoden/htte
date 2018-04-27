@@ -365,7 +365,7 @@ describe('Test App', () => {
       app._session.writeUnit = jest.fn()
       return app._runUnit(true, unit, logger, {}).then(result => {
         expect(app._session.writeUnit).toHaveBeenCalled()
-        expect(logger.toString()).toMatch(/ok \[\d+ms\]/)
+        expect(logger.toString()).toMatch('✓')
         expect(result).toBe(true)
       })
     })

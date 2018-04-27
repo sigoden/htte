@@ -211,16 +211,20 @@ describe('public function', () => {
       let { unit, logger } = createUnit1({ name: 'unit1' })
       unit.view(logger)
       expect(logger.toString()).toBe(`-:
-  unit 1 | module1-unit1 | getFeed
+  module1:
+    unit 1:
+      unit1
 `)
     })
     test('keep unit hireachy', () => {
       let { unit, logger } = createUnit1({ name: 'unit1', scopeDescribes: ['group 1', 'sub group 2', 'unit 1'] })
       unit.view(logger)
       expect(logger.toString()).toBe(`-:
-  group 1:
-    sub group 2:
-      unit 1 | module1-unit1 | getFeed
+  module1:
+    group 1:
+      sub group 2:
+        unit 1:
+          unit1
 `)
     })
   })
@@ -250,6 +254,21 @@ res:
   status: 200
   body:
     content: awsome
+`)
+    })
+    test('inspect unit if no request nor response data', () => {
+      let { unit, options } = createUnit1()
+      expect(unit.inspect({})).toBe(`name: getFeed-0
+module: module1
+api:
+  keys: []
+  name: getFeed
+  url: 'http://localhost:3000/feed'
+  method: get
+  timeout: 1000
+  type: json
+req: {}
+res: {}
 `)
     })
   })

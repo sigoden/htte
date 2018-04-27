@@ -117,13 +117,12 @@ units:
 ```sh
 $ htte # 执行测试, 如果找不到命令，可以使用 npm i -g htte 安装
 
-
 RunUnits: 
   user:
     regist user:
-      ok [278.416928ms]
+      ✓
     update user data:
-      ok [143.124919ms]
+      ✓
 ```
 
 > 上面的接口截取自 [realworld](https://github.com/sigoden/node-express-realworld-example-app.git)项目。 该项目采用 htte 进行接口测试，可以作为例子学习如何使用 htte。
@@ -611,14 +610,62 @@ htte 执行单元测试时，会生成相关的请求和响应数据, 这些数�
 
 审视特定单元测试，显示该测试相关的所以信息 
 
+```
+$ htte inspect auth-registerJohn
+
+name: registerJohn
+module: auth
+api:
+  name: register
+  method: post
+  url: 'http://localhost:3000/api/users'
+  timeout: 1000
+  type: json
+  keys: []
+req:
+  body:
+    user:
+      email: john@jacob.com
+      password: johnnyjacob
+      username: johnjacob
+res:
+  status: 200
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: '*'
+    vary: X-HTTP-Method-Override
+    content-type: application/json; charset=utf-8
+    content-length: '237'
+    etag: W/"ed-/KWrmVNj/2bN/mK81GyveA"
+    date: 'Fri, 27 Apr 2018 08:41:44 GMT'
+    connection: close
+  body:
+    user:
+      username: johnjacob
+      email: john@jacob.com
+      token: >-
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huamFjb2IiLCJleHAiOjE1MzAwMDI1MDQsImlhdCI6MTUyNDgxODUwNH0.WF-5H8bHNZqMvr8fXZpp6IFCysR0-vQ7T6p1iTQ7tJ0
+  time: 312.791432
+
+ ```
+
 ### view
 
-查看测试, 可以看到所有的测试及其组织架构。
+查看测试, 可以看到所有的测试及其结构。
 
 选项:
 
 - module: 仅显示特定模块下的测试
 - api: 仅显示特点 api 的测试 
+
+```
+ViewUnits: 
+  user:
+    regist user:
+      registerJohn
+    update user data:
+      updateUser-1
+```
  
 ## 许可证
 

@@ -101,7 +101,7 @@ class App {
           unit.debug(req, res, logger)
         }
         if (pass) {
-          logger.log(`ok [${res.time}ms]`)
+          logger.log(`✓`)
         } else {
           if (res.err) {
             logger.enter('res').log(res.err)
@@ -125,7 +125,7 @@ class App {
     if (!this._ready) return
 
     let units = this._units
-    let logger = new Logger('ViewTests')
+    let logger = new Logger('ViewUnits')
     let filterFunc = (colletion, valueFunc, candicates) => {
       if (!candicates || !candicates.length) {
         return colletion
@@ -157,6 +157,8 @@ class App {
       this._print(err)
       return
     }
+
+    this._session.restore()
 
     let unit = this._units[cursor]
 

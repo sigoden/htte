@@ -20,7 +20,7 @@ describe('test app', () => {
   test('should view all the units', () => {
     app.view({})
     // console.log(print.mock.calls[0][0])
-    expect(print.mock.calls[0][0]).toMatch('ViewTests')
+    expect(print.mock.calls[0][0]).toMatch('ViewUnits')
   })
   test('should run all the test success', () => {
     return new Promise((resolve, reject) => {

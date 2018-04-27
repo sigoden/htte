@@ -257,11 +257,8 @@ class Unit {
    * View unit
    */
   view(logger) {
-    logger = logger.enters(this.describes().slice(0, -1))
-    let describe = this._template.describe
-    let id = this.id()
-    let apiName = this._api.name
-    logger.log([describe, id, apiName].join(' | '))
+    let viewLogger = logger.enter(this.module()).enters(this.describes())
+    viewLogger.log(`${this.name()}`)
   }
 
   /**
@@ -272,8 +269,8 @@ class Unit {
       name: this.name(),
       module: this.module(),
       api: this.api(),
-      req,
-      res
+      req: req || {},
+      res: res || {}
     }
     return yaml.safeDump(model)
   }
