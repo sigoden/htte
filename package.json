@@ -1,6 +1,6 @@
 {
   "name": "htte",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Declarative http test framework ",
   "main": "./dist/index.js",
   "bin": {
@@ -14,6 +14,7 @@
     "test": "npm run test:unit && npm run test:int",
     "test:unit": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "compile": "babel -q -d ./dist ./src",
+    "prepublish": "npm run compile",
     "pretest:int": "git submodule update --init && npm --silent --prefix ./test/fixtures/realworld install --production",
     "test:int": "jest --testPathPattern integration --no-cache"
   },
