@@ -162,39 +162,17 @@ Htte gets the infomation from yaml config file Whose path can be provided throug
 
 Here is list of all the options and its explanation.
 
-### rootDir
-
-The default value is `'.'`
-
-`rootDir` is a directory contained module files. Htte load the yaml in that directory recursively, then parse the file as test module.
-
-### sessionFile
-
-The default value is `./.session`
-
-`sessionFile` is a file path to persist the session. Htte use session to record the request and response data of each test, the position where tests started to fail is also stored.
-
-### url 
-
-The default is `http://localhost:3000`
-
-`url` is the base url of all the api. if the api use relative path, htte will get absolute path by prepend that url
-
-### type
-
-The default value is `json`
-
-`type` is used to set the default encoder of request data.
-encoder will set the `Content-Type` header, and encode the request body data.
-
-### timeout
-
-The default value is `1000`
-
-`timeout` specifies the number of milliseconds before the request times out.
-If the request takes longer than `timeout`, the request will be aborted.
-
-### apis
+```yaml
+rootDir: '.' # An directory contained test files. Htte load the yaml in that directory recursively, then parse the file as module.
+sessionFile: ./.session # File to persist the session. Htte use session to record the request and response data of each test.
+url: http://localhost:3000 # Base url of all the api. if the api use relative path, htte will get absolute path by prepend that url.
+serializers: [] # List of npm modules, will regist serializers. Serializer set `Content-Type` header, encode the request body, and decode the response.
+type: json # The default serializer, used when an api omits type.
+timeout: 1000 # Specifies the number of milliseconds before the request times out.
+apis: {} # Define endpoints.
+variables: {} # Provides global variable.
+plugins: [] # List of npm modules, will regist plugins
+```
 
 `apis` is required, and it is made up of a group of endpoints. Each endpoint conatins: name, uri(required), method(default `get`), type(of encoding), timeout.
 
@@ -222,18 +200,6 @@ apis:
   - name: getUser
     uri: /user
 ```
-
-### variables
-
-The default value is `{}`
-
-Variables provides the [global variables](#global-variable)
-
-### plugins
-
-The default value is `[]`
-
-`plugins` is an list of npm modules.
 
 ## Code
 

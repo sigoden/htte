@@ -62,6 +62,7 @@
    "timeout": 1000,
    "sessionFile":"/tmp/realworld.session",
    "url":"http://localhost:3000/api",
+   "serializers": [],
    "variables":{
 
    }

@@ -20,6 +20,7 @@ describe('Test Config', () => {
     expect(config._apis).toEqual(require(resolveFixtureFile('./config/realworld.api.json')))
     expect(config._variables).toEqual({})
     expect(config._plugins).toBeInstanceOf(Array)
+    expect(config._serializers).toBeInstanceOf(Array)
   })
   test('throw error if file nonexist', () => {
     expect(() => new Config(resolveFixtureFile('./config/nofile.yaml'))).toThrow(/can not load config file/)
@@ -396,6 +397,28 @@ describe('Test parse function', () => {
       let result = config._loadPlugins('resolver', resolver, logger)
       expect(result).not.toBe(true)
       expect(logger.toString()).toMatch('cannot regist plugin')
+    })
+  })
+  describe('_parseSerializers', () => {
+    test('should work', () => {
+      let { config, logger } = init()
+      let result = config._parseSerializers([resolveFixtureFile('./config/serializer-test1.js')], logger)
+      expect(result).toContainEqual('test1')
+    })
+    test('log error when serializers is not array or undefined', () => {
+      let { config, logger } = init()
+      let result = config._parseSerializers({}, logger)
+      expect(logger.toString()).toMatch('must be array')
+    })
+    test('log error if serializer file cannot be required', () => {
+      let { config, logger } = init()
+      let result = config._parseSerializers([resolveFixtureFile('./config/serializer-notfind')], logger)
+      expect(logger.toString()).toMatch('cannot load serializer')
+    })
+    test('log error if fail to regist serializer', () => {
+      let { config, logger } = init()
+      let result = config._parseSerializers([resolveFixtureFile('./config/serializer-test3')], logger)
+      expect(logger.toString()).toMatch('cannot regist serializer')
     })
   })
 })

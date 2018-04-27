@@ -17,7 +17,8 @@ const defaultConfig = {
   url: 'http://localhost:3000',
   apis: {},
   variables: {},
-  plugins: []
+  plugins: [],
+  serializers: []
 }
 
 class Config {
@@ -30,8 +31,6 @@ class Config {
     this._pluginM = PluginManager()
     this._serializerM = SerializerManager()
 
-    this._loadSerializers()
-
     this._template = _.defaultsDeep(loadConfig(this._file), defaultConfig)
 
     this._parse(this._template)
@@ -42,16 +41,17 @@ class Config {
   /**
    * Parse the yaml config, generate valid config value
    */
-  _parse({ rootDir, sessionFile, type, timeout, url, apis, variables, plugins }) {
+  _parse({ rootDir, sessionFile, type, timeout, url, apis, variables, plugins, serializers }) {
     let logger = this._logger
     this._rootDir = this._parseRootDir(rootDir, logger.enter('rootDir'))
     this._sessionFile = this._parseSessionFile(sessionFile, logger.enter('sessionFile'))
-    this._type = this._parseType(type, logger.enter('type'))
     this._timeout = this._parseTimeout(timeout, logger.enter('timeout'))
     this._url = this._parseUrl(url, logger.enter('url'))
-    this._apis = this._parseAPIs(apis, logger.enter('apis'))
     this._variables = this._parseVariables(variables, logger.enter('variables'))
     this._plugins = this._parsePlugins(plugins, logger.enter('plugins'))
+    this._serializers = this._parseSerializers(serializers, logger.enter('serializers'))
+    this._type = this._parseType(type, logger.enter('type'))
+    this._apis = this._parseAPIs(apis, logger.enter('apis'))
   }
 
   /**
@@ -229,7 +229,7 @@ class Config {
       try {
         plugin = require(pluginPath)
       } catch (err) {
-        return pluginLogger.log(`cannot load plugin, ${err.message}`)
+        return pluginLogger.log(`cannot load plugin at ${pluginPath}, ${err.message}`)
       }
       if (!utils.isTypeOf(plugin, 'object')) {
         return pluginLogger.log('must be object have property differ or resolver')
@@ -269,13 +269,28 @@ class Config {
   }
 
   /**
-   * Load builtin serializer
+   * Parse serializer options
    */
-  _loadSerializers() {
-    let serializers = ['json']
-    serializers.forEach(path => {
-      this._serializerM.regist(require(`./serializers/${path}`))
+  _parseSerializers(serializers, logger) {
+    if (!utils.isTypeOf(serializers, ['array', 'undefined'])) {
+      return logger.log('must be array')
+    }
+    serializers = ['./serializers/json'].concat(serializers)
+    serializers.forEach(serializerPath => {
+      let serializer
+      let serializerLogger = logger.enter(serializerPath)
+      try {
+        serializer = require(serializerPath)
+      } catch (err) {
+        return serializerLogger.log(`cannot load serializer, ${err.message}`)
+      }
+      try {
+        this._serializerM.regist(serializer)
+      } catch (err) {
+        serializerLogger.log(`cannot regist serializer, ${err.message}`)
+      }
     })
+    return this._serializerM.names()
   }
 
   /**
@@ -314,7 +329,7 @@ class Config {
    * Find the serializer by type
    */
   findSerializer(type) {
-    if (typeof type === 'undefined') return this.findSerializer(this._type)
+    type = type || this._type
     let m = this._serializerM
     return m.findByName(type) || m.findByType(type)
   }
