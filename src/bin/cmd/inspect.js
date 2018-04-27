@@ -3,9 +3,9 @@ const { print } = require('../../utils')
 
 module.exports = {
   command: 'inspect [unit]',
-  describe: 'inspect specific test unit',
+  describe: 'inspect unit',
   builder: function(yargs) {
-    return yargs.positional('unit', { describe: 'unit name', type: 'string' })
+    return yargs.positional('unit', { describe: 'id of unit', type: 'string' })
   },
   handler: function(argv) {
     new App(argv.config, print(process.env.DEBUG)).inspect(argv)
