@@ -7,7 +7,7 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-Htte 是一款声明式 HTTP 测试框架。
+Htte 是一款声明式 HTTP 自动化测试框架, 使用 YAML 编写测试。
 
 > 翻译: [English](README.md) | [中文](README.zh.md)
 
