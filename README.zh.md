@@ -7,7 +7,7 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-Htte 是一款描述式 HTTP 测试框架。
+Htte 是一款声明式 HTTP 测试框架。
 
 > 翻译: [English](README.md) | [中文](README.zh.md)
 
@@ -129,7 +129,7 @@ RunUnits:
 
 ## 特性
 
-- 使用描述式语言 YAML 编写测试
+- 使用声明的方式 (YAML) 编写测试
 - 不与后端开发语言耦合
 - 无技能要求，不需要会编程也能编写测试
 - 直白描述请求需要的数据和响应返回的数据, 简单，易理解，已编写

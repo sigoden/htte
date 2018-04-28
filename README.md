@@ -121,9 +121,9 @@ $ htte # execute the tests, if htte cli could not be found，install it with `np
 RunUnits: 
   user:
     regist user:
-      ok [278.416928ms]
+      ✓
     update user data:
-      ok [143.124919ms]
+      ✓
 ```
 
 > The api is part of [realworld](https://github.com/sigoden/node-express-realworld-example-app.git) project. The project use htte to test its endpoints, You can learn how to use htte from it.
