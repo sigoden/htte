@@ -1,6 +1,18 @@
 /**
- * And differ is compound differ, each element is a independent differ, if they all pass, then and differ
- * is pass, otherwise it will fail
+ * And differ is compound differ, each element is independent differ. if all pass, then the differ
+ * passes, otherwise the differ fails
+ *
+ * e.g.
+ *
+ * value: !@and
+ *   - !@object
+ *     a: !exist
+ *   - !@object
+ *     b: !exist
+ *
+ * { a: '', b: '' } ✓
+ * { a: '' } ✗
+ * { b: '' } ✗
  */
 module.exports = {
   name: 'and',

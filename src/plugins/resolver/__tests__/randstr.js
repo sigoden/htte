@@ -14,7 +14,7 @@ describe('test randstr resolver', () => {
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, 10)).toMatch(/\w{10}/)
   })
-  test('log error if argument length cannot parsed as int', () => {
+  test('log error if length is not integer', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, 'abc')).toBeUndefined()

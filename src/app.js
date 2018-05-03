@@ -15,8 +15,8 @@ class App {
   /**
    * Create an instance of App.
    *
-   * @param {string} file - path config file
-   * @param {function} print -  how to print the info
+   * @param {string} file - config file path
+   * @param {function} print - function to print app log
    *
    * @memberof App
    */
@@ -35,14 +35,14 @@ class App {
   }
 
   /***
-   * Run batch of test uints sequentially
+   * Run tests sequentially
    *
-   * @param {Object} options - Options to control run behavior
-   * @param {boolean} options.bail - Whether to stop at failed unit
-   * @param {boolean} options.amend - Whether to continue from last failed unit
-   * @param {boolean} options.shot - Run only specific unit then stop
-   * @param {boolean} options.dubug - Whether dump req and res when failed
-   * @param {string} options.unit - The name of unit to run
+   * @param {bbject} options - control running behavior
+   * @param {boolean} options.bail - break when failed if true
+   * @param {boolean} options.amend - start running from break position if true
+   * @param {boolean} options.shot - run one unit only if true
+   * @param {boolean} options.dubug - print request and response if true
+   * @param {string} options.unit - start running from specific unit if specified
    *
    * @returns {Promise}
    */
@@ -68,6 +68,7 @@ class App {
         return promise.then(isContinue => {
           let unitLogger = logger.enter(unit.module()).enters(unit.describes())
           return this._runUnit(isContinue, unit, unitLogger, options).then(v => {
+            // test successed
             if (v) {
               cursor += 1
               if (!options.shot) {
@@ -119,7 +120,11 @@ class App {
   }
 
   /**
-   * view the uints
+   * view tests
+   * @param {Object} options - control viewing behavior
+   * @param {array|string} options.module - filter by module
+   * @param {array|string} options.api - filter by api
+   *
    */
   view(options) {
     if (!this._ready) return
@@ -145,7 +150,9 @@ class App {
   }
 
   /**
-   * inspect specific unit
+   * print all relevant information about the unit
+   * @param {Object} options - control inspecting behavior
+   * @param {string} options.unit - the unit to inspect
    */
   inspect(options) {
     if (!this._ready) return
@@ -167,7 +174,10 @@ class App {
   }
 
   /**
-   * Get unit cursor
+   * Get the position where the running start
+   * @param {string} id - the unit id
+   * @param {boolean} useSessionCursor - whether read cursor from session
+   * @returns {integer}
    */
   _unitCursor(id, useSessionCursor) {
     let cursor = 0

@@ -4,6 +4,11 @@ const _ = require('lodash')
 const utils = require('./utils')
 const Unit = require('./unit')
 
+/**
+ * UnitModule parse a test file as module and returns Units
+ *
+ * @class UnitModule
+ */
 class UnitModule {
   /**
    * Create instance of UnitModule
@@ -31,7 +36,7 @@ class UnitModule {
   }
 
   /**
-   * Whether module is valid
+   * Whether the module is valid
    */
   valid() {
     return !this._logger.dirty()
@@ -39,7 +44,7 @@ class UnitModule {
 
   /**
    * Convert module file path to module name
-   * @param {string} file - path of module, can be relative or absolute
+   * @param {string} file - file path of module, can be relative or absolute
    */
   _moduleName(file) {
     file = this._absoluteFile(file)
@@ -47,7 +52,8 @@ class UnitModule {
   }
 
   /**
-   * Get file absolute path
+   * Get file's absolute path
+   * @param {string} file - file path
    */
   _absoluteFile(file) {
     if (!path.isAbsolute(file)) {
@@ -91,14 +97,30 @@ class UnitModule {
   }
 
   /**
-   * Parse the dependencies
+   * Parse the dependencies of module
+   *
+   * e.g. dependencies in mapping form:
+   *
+   * dependencies:
+   *  auth: ./auth.yaml
+   *  article: ./articles-authorized.yaml
+   *
+   * e.g. dependencies in sequence form:
+   *
+   * dependencies:
+   *  - ./auth.yaml
+   *  - name: article
+   *    module: ./articles-authorized.yaml
+   *
+   * @param {Object|Object[]} dependencies - the module dependencies
+   * @param {Logger} logger
    */
   _parseDependencies(dependencies, logger) {
-    let _dependencies = []
+    let _dependencies
 
     switch (utils.type(dependencies)) {
       case 'undefined':
-        return _dependencies
+        return []
       case 'object':
         let func = (r, v, k) => {
           r.push({ module: v, name: k })
@@ -110,7 +132,7 @@ class UnitModule {
         break
       default:
         logger.log('should be object or array')
-        return _dependencies
+        return []
     }
 
     _dependencies = _dependencies
@@ -119,18 +141,17 @@ class UnitModule {
       })
       .filter(v => !!v)
 
-    // check the name confliction of dependencies
+    // detect whether module have name confliction
     let names = utils.duplicateElements(_dependencies.map(v => v.name))
-    if (names.length > 0) {
-      logger.log(`name conflict detect: ${names}`)
-      return _dependencies
-    }
+    if (names.length > 0) logger.log(`must have no conflict names ${names}`)
 
     return _dependencies
   }
 
   /**
-   * Parse the each dependency
+   * Parse the each dependency of module
+   * @param {Object} dependency - module dependency
+   * @param {Logger} logger
    */
   _parseDependency(dependency, logger) {
     let _name, _module, _file
@@ -142,22 +163,17 @@ class UnitModule {
         break
       case 'object':
         let { name, module } = dependency
-        if (!module) {
-          logger.log('must have property module')
-          return
-        }
+        if (!module) return logger.log('must have property module')
         _file = this._absoluteFile(module)
         _name = name
         break
       default:
-        logger.log(`must be string or object`)
-        return
+        return logger.log(`must be string or object`)
     }
 
-    // check whether dependency exist
+    // check whether dependence exists
     if (!this._manager.isModuleExist(_file)) {
-      logger.log(`cannot find dependency at ${_file}`)
-      return
+      return logger.log(`cannot find dependency at ${_file}`)
     }
 
     _module = this._moduleName(_file)
@@ -166,6 +182,22 @@ class UnitModule {
 
   /**
    * Parse units
+   *
+   * e.g. units form:
+   *
+   * units:
+   *  - describe: child unit object
+   *    api: getModel
+   *  - describe: child units
+   *    units:
+   *      - describe: grand child unit object
+   *        api: getModel
+   *
+   * @param {Object[]} units
+   * @param {Logger} logger
+   * @param {Scope} scope
+   *
+   * @returns {Unit[]}
    */
   _parseUnits(units, logger, scope) {
     let _units = []
@@ -185,7 +217,14 @@ class UnitModule {
   }
 
   /**
-   * Parse each unit
+   * Parse single unit
+   *
+   * @param {Object} unit
+   * @param {Integer} index - index of array
+   * @param {Logger} logger
+   * @param {Scope} scope
+   *
+   * @returns {Unit}
    */
   _parseUnit(unit, index, logger, scope) {
     if (!utils.isTypeOf(unit, 'object')) {
@@ -208,6 +247,11 @@ class UnitModule {
   }
 }
 
+/**
+ * Scope record unit indexes and describes
+ *
+ * @class Scope
+ */
 class Scope {
   constructor(indexes = [], describes = []) {
     this._indexes = indexes

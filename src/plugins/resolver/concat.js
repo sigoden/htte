@@ -1,5 +1,16 @@
 /**
- * Concat resolver concat the array
+ * Concat elements
+ *
+ * e.g.
+ *
+ * !$concat [a, b, c]
+ * 'abc'
+ *
+ * !$concat [a, ' ', c]
+ * 'a c'
+ *
+ * !$concat [Bearer, ' ', !$query $auth.login.req.body.token]
+ * 'Bearer <token>'
  */
 module.exports = {
   name: 'concat',

@@ -40,7 +40,7 @@ describe('Test App', () => {
     })
   })
   describe('run', () => {
-    test('break if not ready', () => {
+    test('break if app is not ready', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
@@ -50,7 +50,7 @@ describe('Test App', () => {
       })
       return app.run({}).then(result => expect(result).toBeUndefined())
     })
-    test('reject when cannot get the units', () => {
+    test('reject when error occured', () => {
       let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
       app._unitCursor = jest.fn(() => {
         throw new Error('_unitCursor throw error')
@@ -138,7 +138,7 @@ describe('Test App', () => {
     })
   })
   describe('view', () => {
-    test('break if not ready', () => {
+    test('break if app is not ready', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
@@ -148,7 +148,7 @@ describe('Test App', () => {
       })
       expect(() => app.view()).not.toThrow()
     })
-    test('should work', () => {
+    test('should view units', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -161,7 +161,7 @@ describe('Test App', () => {
       expect(app._print).toHaveBeenCalledTimes(1)
       app._units.map(u => expect(u.view).toHaveBeenCalledTimes(1))
     })
-    test('filter the module', () => {
+    test('filter out the module', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', module: 'module1', describes: ['unit1'] }),
@@ -175,7 +175,7 @@ describe('Test App', () => {
       expect(app._units[1].view).toHaveBeenCalled()
       expect(app._units[2].view).not.toHaveBeenCalled()
     })
-    test('filter the module with array', () => {
+    test('filter out the modules', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', module: 'module1', describes: ['unit1'] }),
@@ -189,7 +189,7 @@ describe('Test App', () => {
       expect(app._units[1].view).toHaveBeenCalled()
       expect(app._units[2].view).toHaveBeenCalled()
     })
-    test('filter the api', () => {
+    test('filter out the api', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', api: 'getModel1', describes: ['unit1'] }),
@@ -203,7 +203,7 @@ describe('Test App', () => {
       expect(app._units[1].view).toHaveBeenCalled()
       expect(app._units[2].view).not.toHaveBeenCalled()
     })
-    test('filter the api with array', () => {
+    test('filter out the apis', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', api: 'getModel1', describes: ['unit1'] }),
@@ -219,7 +219,7 @@ describe('Test App', () => {
     })
   })
   describe('inspect', () => {
-    test('break if not ready', () => {
+    test('break if app is not ready', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
@@ -229,7 +229,7 @@ describe('Test App', () => {
       })
       expect(() => app.inspect()).not.toThrow()
     })
-    test('should work', () => {
+    test('should inspect unit', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -244,7 +244,7 @@ describe('Test App', () => {
       expect(app._units[1].inspect).toHaveBeenCalledWith(data)
       expect(app._print).toHaveBeenCalled()
     })
-    test('should work when not specify the unit', () => {
+    test('should inspect unit when unit option is undefined', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -260,12 +260,12 @@ describe('Test App', () => {
       expect(app._units[1].inspect).toHaveBeenCalledWith(data)
       expect(app._print).toHaveBeenCalled()
     })
-    test('print error if not find', () => {
+    test('print error if unit is not found', () => {
       let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
       app.inspect({})
       expect(app._print).toHaveBeenCalled()
     })
-    test('should work if not find session', () => {
+    test('should work if unit have no req and res data in session', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -282,7 +282,7 @@ describe('Test App', () => {
     })
   })
   describe('_unitCursor', () => {
-    test('should work', () => {
+    test('should get position', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -301,7 +301,7 @@ describe('Test App', () => {
       let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
       expect(() => app._unitCursor('module-unit2')).toThrow('cannot find unit')
     })
-    test('throw error when unit not find', () => {
+    test('throw error when unit is not find', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -312,7 +312,7 @@ describe('Test App', () => {
       let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
       expect(() => app._unitCursor('unit2')).toThrow('cannot find unit')
     })
-    test('should work using session cursor', () => {
+    test('should able to use session cursor', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -324,7 +324,7 @@ describe('Test App', () => {
       app._session.cursor = jest.fn().mockReturnValue(1)
       expect(app._unitCursor(undefined, true)).toBe(1)
     })
-    test('return 0 if session cursor out of boundray', () => {
+    test('return default value 0 if session cursor out of boundray', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),

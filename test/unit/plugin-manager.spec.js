@@ -21,39 +21,39 @@ const queryResolver = {
 describe('Test PluginManager', () => {
   describe('regist', () => {
     let manager = PluginManager()
-    test('should work', () => {
+    test('should regist plugin', () => {
       expect(() => manager.regist(queryDiffer)).not.toThrow()
     })
-    test('argument of plugin must be object', () => {
+    test('throw if plugin is not object', () => {
       expect(() => manager.regist()).toThrow('argument is not valid')
     })
-    test('argument of plugin must have property name and it should be string', () => {
+    test('throw if plugin have no property name', () => {
       expect(() => manager.regist({})).toThrow('name must be a string')
       expect(() => manager.regist({ name: null })).toThrow('name must be a string')
     })
-    test('name conflict', () => {
+    test('throw if plugin name already existed', () => {
       expect(() => manager.regist({ name: 'query', type: 'differ' })).toThrow('query: plugin conflict')
     })
     test('different plugin type can have same name', () => {
       expect(() => manager.regist(queryResolver)).not.toThrow()
     })
-    test('argument of plugin must have property type and it should be one of resover, differ', () => {
+    test('throw if plugin type is undefined or is not one of resolver, differ', () => {
       expect(() => manager.regist({ name: 'object' })).toThrow('type must be one of')
       expect(() => manager.regist({ name: 'object', type: 'diff' })).toThrow('type must be one of')
     })
-    test('argument of plugin must have property kind and it should be one of scalar, mapping, sequence', () => {
+    test('throw if plugin kind is undefined or is not one of scalar, mapping, sequence', () => {
       expect(() => manager.regist({ name: 'object', type: 'differ', kind: 'maping' })).toThrow(
         'object: kind must be one of '
       )
     })
-    test('argument of plugin must have property kind and it should be function', () => {
+    test('throw if plugin handler is undefined or is not function', () => {
       expect(() => manager.regist({ name: 'object', type: 'differ', kind: 'mapping', handler: null })).toThrow(
         'object: handler must be function'
       )
     })
   })
   describe('names', () => {
-    test('should work', () => {
+    test('return names of plugins', () => {
       let manager = PluginManager()
       manager.regist(queryDiffer)
       manager.regist(queryResolver)
@@ -62,7 +62,7 @@ describe('Test PluginManager', () => {
     })
   })
   describe('list', () => {
-    test('should work', () => {
+    test('return array of plugins', () => {
       let manager = PluginManager()
       manager.regist(queryDiffer)
       manager.regist(queryResolver)
@@ -83,12 +83,12 @@ describe('Test PluginManager', () => {
     let types = manager.list()
     let contextDiff, contextResolve, diffHanler, resolveHanlder
     beforeEach(() => {
-      contextDiff = new ContextDiff(() => {}, new Logger())
-      contextResolve = new ContextResolve(() => {}, new Logger())
+      contextDiff = new ContextDiff(() => {}, new Logger('keyToDiff'))
+      contextResolve = new ContextResolve(() => {}, new Logger('keyToResolve'))
       diffHanler = types[0].construct
       resolveHanlder = types[1].construct
     })
-    test('should work', () => {
+    test('should be called with proper arguments', () => {
       let literal = {}
       let actual = {}
       let diffResult = diffHanler(literal)(contextDiff, actual)
@@ -105,18 +105,22 @@ describe('Test PluginManager', () => {
       let literal = {}
       let actual = {}
       diffHanler(literal)(contextResolve, actual)
-      expect(contextResolve._logger.toString()).toMatch('use differ plugin in resolver context')
+      expect(contextResolve._logger.toString()).toBe(`keyToResolve:
+  use differ plugin in resolver context
+`)
     })
     test('log error when use resolver plugin in diff context', () => {
       let literal = {}
       resolveHanlder(literal)(contextDiff)
-      expect(contextDiff._logger.toString()).toMatch('use resolver plugin in differ context')
+      expect(contextDiff._logger.toString()).toBe(`keyToDiff:
+  use resolver plugin in differ context
+`)
     })
     test('throw error when context is not valid', () => {
       let literal = {}
       expect(() => resolveHanlder(literal)({})).toThrow('context is not valid')
     })
-    test('log error when resolve literal before call resolver.handler', () => {
+    test('log error when literal is function and throws error', () => {
       let literal = [
         () => {
           throw new Error()

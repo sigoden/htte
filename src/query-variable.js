@@ -4,66 +4,95 @@ const utils = require('./utils')
 const RE_VAR = /^\${1,4}/
 
 /**
- * Create an query function to query the var by jsonpath
+ * Create query function to query linked data
  *
- * @params {object} unitVars
- * @params {object} globalVars
+ * @params {Object} unitsData - all units req and res data
+ * @params {Object} configData - data from config
  * @params {Unit} unit
  *
- * Jsonpath pattern:
- * - $$$$a.b.c - global vars
- * - $$$res.body.id - current unit (unitVars)
- * - $$signup1.res.body.token - current module (unitVars)
- * - $auth.signup1.res.body.token - cross module (unitVars)
+ * linked-data query pattern:
+ * - $auth.signup1.res.body.token - cross module (unitsData)
+ * - $$signup1.res.body.token - current module (unitsData)
+ * - $$$res.body.id - current unit (unitsData)
+ * - $$$$a.b.c - everywhere (configData)
+ *
  *
  * @returns {function}
  */
-module.exports = function createQuery(unitVars, globalVars, unit) {
-  let currentVars = selectVars(unitVars, unit)
+module.exports = function createQuery(unitsData, configData, unit) {
+  let currentData = selectUnitsData(unitsData, unit)
 
   return (value, single = true) => {
-    if (!isVar(value)) return value
+    if (!isLink(value)) return value
     let jPath = toJPath(value, unit)
-    let vars
-    if (isVarGlobal(value)) {
-      vars = globalVars
+    let data
+    if (isLinkConfigData(value)) {
+      data = configData
     } else {
       let module = unit.module()
-      currentVars[module] = unitVars[module]
-      vars = currentVars
+      currentData[module] = unitsData[module]
+      data = currentData
     }
-    return query(vars, jPath, single)
+    return query(data, jPath, single)
   }
 }
 
-function isVar(path) {
+/**
+ * Whether path is actually a link.
+ * A link is string and start with 1-4 dollar mark, respent a pointer to unitsData or configData
+ *
+ * @param {string} path - path to locate the data
+ *
+ * @returns {boolean}
+ */
+function isLink(path) {
   return utils.isTypeOf(path, 'string') && RE_VAR.test(path)
 }
 
+/**
+ * How many dollar mark the path has
+ * @param {string} path - path to locate the data
+ */
 function count$(path) {
   if (path[0] !== '$') return 0
   return count$(path.slice(1)) + 1
 }
 
-function isVarGlobal(path) {
+/**
+ * Whether path is actually a link to configData.
+ * @param {string} path - path to locate the data
+ *
+ * @returns {boolean}
+ */
+function isLinkConfigData(path) {
   return path.slice(0, 4) === '$$$$'
 }
 
 /**
- * translate path to jsonpath
+ * Wrap the normal path to jsonpath
+ * @param {string} path - path to locate the data
+ * @param {Unit} unit
+ *
+ * @returns {string} - jsonpath to locate data
  */
 function toJPath(path, unit) {
   let n = count$(path)
-  let segs = isVarGlobal(path) ? ['$'] : ['$', unit.module(), unit.name()].slice(0, n)
+  let segs = isLinkConfigData(path) ? ['$'] : ['$', unit.module(), unit.name()].slice(0, n)
   let prefix = jsonpath.stringify(segs)
   let tail = path.slice(n)
   return prefix + delimiter(tail) + tail
 }
 
+/**
+ * Delimiter to concat jsonpath segment
+ */
 function delimiter(path) {
   return path[0] === '[' ? '' : '.'
 }
 
+/**
+ * Use jsonpath to locate the data
+ */
 function query(source, jp, single) {
   let result
   try {
@@ -74,15 +103,18 @@ function query(source, jp, single) {
   return single ? result[0] : result
 }
 
-function selectVars(unitVars, unit) {
-  let currentVars = {}
+/**
+ * Only pick the properties of unitsData which match the unit module name or dependencies
+ */
+function selectUnitsData(unitsData, unit) {
+  let currentData = {}
 
   unit
     .dependencies()
     .slice()
     .forEach(({ name, module }) => {
-      currentVars[name] = unitVars[module]
+      currentData[name] = unitsData[module]
     })
 
-  return currentVars
+  return currentData
 }

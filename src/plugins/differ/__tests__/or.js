@@ -11,19 +11,19 @@ describe('test or differ', () => {
     expect(result).toBe(false)
     expect(logger.toString()).toMatch('arguments must be array')
   })
-  test('return ture if any sub diff passes', () => {
+  test('return ture if any element passes', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let result = Plugin.handler(ctx, ['3', 3], 3)
     expect(result).toBe(true)
   })
-  test('no log if some diff passed and some diff not passed', () => {
+  test('no log if some element passes and some element fails', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let result = Plugin.handler(ctx, ['3', 3], 3)
     expect(logger.dirty()).toBe(false)
   })
-  test('return false if none of sub diff passes', () => {
+  test('return false if none element passes', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let result = Plugin.handler(ctx, [4, '3'], 3)

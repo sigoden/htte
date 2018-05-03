@@ -9,13 +9,13 @@ describe('test now resolver', () => {
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, null)).toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/)
   })
-  test('return offested datetime', () => {
+  test('return datetime with offset', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let timestr = Plugin.handler(ctx, '-86400000')
     expect(Date.now() - Date.parse(timestr) >= 86400000).toBe(true)
   })
-  test('log error if offset can not parsed as integer', () => {
+  test('log error if offset is not integer', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     Plugin.handler(ctx, 'abc')

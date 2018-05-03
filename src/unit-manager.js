@@ -6,7 +6,16 @@ const Graph = require('./graph')
 const Logger = require('./logger')
 const UnitModule = require('./unit-module')
 
+/**
+ * UnitManager read the test files in rootDir and returns Units
+ *
+ * @class UnitManager
+ */
 class UnitManager {
+  /**
+   * Create instance of UnitManager
+   * @param {Config} config
+   */
   constructor(config) {
     this._config = config
     this._logger = new Logger('LoadUnits')
@@ -19,7 +28,7 @@ class UnitManager {
   }
 
   /**
-   * Find the yaml module files recursivelly in the config.rootDir, this function is lazy
+   * Find the yaml module files recursivelly in the config.rootDir
    */
   files() {
     if (this._files) return this._files
@@ -35,7 +44,7 @@ class UnitManager {
   }
 
   /**
-   * Convert the files to test modules, this function is lazy
+   * Convert the files to test modules
    */
   modules() {
     if (this._modules) return this._modules
@@ -61,15 +70,15 @@ class UnitManager {
   }
 
   /**
-   * Check the file path is an module
-   * @param {string} moduleFile - path to the module
+   * Check whether the module exists
+   * @param {string} moduleFile - file path of module
    */
   isModuleExist(moduleFile) {
     return this.files().indexOf(moduleFile) > -1
   }
 
   /**
-   * list the test units, this function is lazy
+   * list Units
    *
    * @returns {Unit[]}
    */

@@ -1,6 +1,19 @@
 /**
- * Or differ is compound differ, each element is a independent differ, if they any of them pass, then and differ
- * is pass
+ * Or differ is compound differ, each element is independent differ, if any passes, then the differ
+ * passes
+ *
+ * e.g.
+ *
+ * value: !@or
+ *  - !@object
+ *    a: !@exist
+ *  - !@object
+ *    b: !@exist
+ *
+ * { a: 3, b: 4 } ✓
+ * { a: 3 } ✓
+ * { b: 4 } ✓
+ * {} ✗
  */
 module.exports = {
   name: 'or',

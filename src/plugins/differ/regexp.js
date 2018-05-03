@@ -1,5 +1,12 @@
 /**
- * Regexpp differ diff the target match the regexp
+ * Regexpp differ asserts the target matchs the regexp
+ *
+ * e.g.
+ *
+ * value: !@regexp /abc/
+ *
+ * abc ✓
+ * aabcc ✓
  */
 module.exports = {
   name: 'regexp',

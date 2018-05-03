@@ -1,7 +1,12 @@
+/**
+ * Graph to resolve and resolve dependencies
+ *
+ * @class Graph
+ */
 class Graph {
   /**
-   * Create an graph
-   * @param {function} mapper - a function to retrive the id of connect edge
+   * Create graph
+   * @param {function} mapper - function to retrive ids of connect edge
    */
   constructor(mapper) {
     this._mapper = mapper
@@ -10,11 +15,11 @@ class Graph {
   }
 
   /**
-   * Add an node to graph
-   * @param {*} id - use to identify the node
-   * @param {*} ref - the data the node curried
+   * Add node to graph
+   * @param {string} id - the identify of the node
+   * @param {*} ref - the data bound to the node
    *
-   * @return {Graph} - this
+   * @return {Graph}
    */
   add(id, ref) {
     this._nodes.set(id, new Node(id, ref))
@@ -23,7 +28,7 @@ class Graph {
   }
 
   /**
-   * Connect the nodes in the graph
+   * Connect all nodes by edges in graph
    */
   connect() {
     if (this._connected) return
@@ -38,7 +43,7 @@ class Graph {
   }
 
   /**
-   * List the value of all the nodes, the nodes sort by the edge dependency
+   * Sort nodes, return array of bound values of nodes
    */
   sort() {
     this.connect()
@@ -47,19 +52,39 @@ class Graph {
   }
 }
 
+/**
+ * Node connected to graph
+ *
+ * @class Node
+ */
 class Node {
+  /**
+   * @param {string} id - the identify of the node
+   * @param {*} ref - the data bound to the node
+   *
+   * @return {Node}
+   */
   constructor(id, ref) {
     this._id = id
     this._ref = ref
     this._edges = []
   }
 
+  /**
+   * @param {Node} node - the edge node
+   */
   addEdge(node) {
     let exist = this._edges.find(n => n._id === node._id)
     if (!exist) this._edges.push(node)
   }
 }
 
+/**
+ * Sort the nodes by edges
+ * @param {Node[]} nodes - nodes to be sorted
+ *
+ * return {Node[]} - sorted nodes
+ */
 function sort(nodes) {
   let solved = new Map()
   let unsolved = new Map()
@@ -69,6 +94,12 @@ function sort(nodes) {
   return Array.from(solved.values())
 }
 
+/**
+ * Solve node dependencies
+ * @param {Node} node - focus node
+ * @param {Map} solved - solved nodes
+ * @param {Map} unsolved - unsolved nodes
+ */
 function solve(node, solved, unsolved) {
   unsolved.set(node._id, node)
   for (let edge of node._edges) {

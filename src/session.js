@@ -2,10 +2,13 @@ const jsonpath = require('jsonpath')
 const fs = require('fs')
 const _ = require('lodash')
 
+/**
+ * Session used to save and persist the req and res data of units
+ */
 class Session {
   /**
    * Create instance of Session
-   * @param {string} sessionFile - file path to save or restore session
+   * @param {string} sessionFile - file to persist session
    */
   constructor(sessionFile) {
     this._file = sessionFile
@@ -16,7 +19,7 @@ class Session {
   /**
    * Write the unit data to session
    *
-   * the struct of records will be:
+   * the data will be records as:
    *
    * _records:
    *    module:

@@ -87,18 +87,18 @@ describe('public function', () => {
       expect(manager.modules()).toHaveLength(2)
       expect(manager.modules()[0]).toBeInstanceOf(UnitModule)
     })
-    test('circular dependency detect', () => {
+    test('circular dependence detect', () => {
       let config = new Config(resolveFixtureFile('./unit-manager/demo2/config.yaml'))
       expect(() => new UnitManager(config)).toThrow('circular dependency detected, module2 -> module1')
     })
-    test('sort by dependency', () => {
+    test('sort by dependence', () => {
       let config = new Config(resolveFixtureFile('./unit-manager/demo3/config.yaml'))
       let manager = new UnitManager(config)
       expect(manager.modules()[0].name()).toEqual('module2')
     })
   })
   describe('isModuleExist', () => {
-    test('should work', () => {
+    test('should detect whether module exists', () => {
       let { manager } = init()
       manager.files = jest.fn().mockImplementation(() => [resolveFixtureFile('./unit-manager/a.yaml')])
       expect(manager.isModuleExist(resolveFixtureFile('./unit-manager/a.yaml'))).toBe(true)

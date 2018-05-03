@@ -1,8 +1,8 @@
 const createQuery = require('../../src/query-variable')
 
 describe('Test query', () => {
-  describe('cross-module variable', () => {
-    test('should work', () => {
+  describe('cross-module linked data', () => {
+    test('should retrive cross-module linked data', () => {
       let unitVars = { module1: { unit1: { req: { body: { msg: 'a' } } } } }
       let unit = {
         module: () => 'module',
@@ -26,8 +26,8 @@ describe('Test query', () => {
       expect(query('$module1.unit1.req.body.msg', false)).toEqual([])
     })
   })
-  describe('module variable', () => {
-    test('should work', () => {
+  describe('crruent-module linked data', () => {
+    test('should retrive crruent-module linked data', () => {
       let unitVars = { module: { unit: { req: { body: { msg: 'a' } } } } }
       let unit = {
         module: () => 'module',
@@ -38,8 +38,8 @@ describe('Test query', () => {
       expect(query('$$unit.req.body.msg')).toBe('a')
     })
   })
-  describe('unit variable', () => {
-    test('should work', () => {
+  describe('current-unit linked data', () => {
+    test('should retrive current-unit linked data', () => {
       let unitVars = { module: { unit: { req: { body: { msg: 'a' } } } } }
       let unit = {
         module: () => 'module',
@@ -50,8 +50,8 @@ describe('Test query', () => {
       expect(query('$$$req.body.msg')).toBe('a')
     })
   })
-  describe('global variable', () => {
-    test('should work', () => {
+  describe('linked configData', () => {
+    test('should retrive linked config data', () => {
       let unit = {
         module: () => 'module',
         name: () => 'unit',
@@ -69,16 +69,16 @@ describe('Test query', () => {
       dependencies: () => []
     }
     let query = createQuery({}, {}, unit)
-    test('return the origin value if not string', () => {
+    test('return the path itself if path is not string', () => {
       ;[3, { a: 3 }, ['a']].forEach(v => {
         expect(query(v)).toEqual(v)
       })
     })
-    test(`return the origin value if string do not match variable regexp`, () => {
+    test(`return the path itself if path is not a link`, () => {
       expect(query('a')).toEqual('a')
       expect(query('[a]')).toEqual('[a]')
     })
-    test('should work with square bracket', () => {
+    test('should retrive data when path has square bracket', () => {
       let unitVars = { module1: { unit1: { req: { body: { '.content': 'a' } } } } }
       let unit = {
         module: () => 'module',
@@ -88,7 +88,7 @@ describe('Test query', () => {
       let query = createQuery(unitVars, {}, unit)
       expect(query('$mymodule.unit1.req.body[".content"]')).toEqual('a')
     })
-    test('should work when module name do not match variable regexp', () => {
+    test('should retrive data when module name is complex', () => {
       let unitVars = { module1: { unit1: { req: { body: { '.content': 'a' } } } } }
       let unit = {
         module: () => 'module',
@@ -98,7 +98,7 @@ describe('Test query', () => {
       let query = createQuery(unitVars, {}, unit)
       expect(query('$["mymodule.a"].unit1.req.body[".content"]')).toEqual('a')
     })
-    test('return undefined if jsonpath is not valid', () => {
+    test('return undefined if path is not valid', () => {
       let unitVars = { module1: { unit1: { req: { body: { '.content': 'a' } } } } }
       let unit = {
         module: () => 'module',

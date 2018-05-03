@@ -18,7 +18,7 @@ describe('Test ContextDiff', () => {
     })
   })
   describe('diff', () => {
-    test('should work', () => {
+    test('should diff the expect and actual value', () => {
       let { logger, ctx } = init()
       let ctx1 = {}
       let value = {}
@@ -30,7 +30,7 @@ describe('Test ContextDiff', () => {
     })
   })
   describe('query', () => {
-    test('should work', () => {
+    test('should query the linked data', () => {
       let { query, ctx } = init()
       let path = '$$$$abc'
       let returnValue = {}
@@ -40,14 +40,14 @@ describe('Test ContextDiff', () => {
     })
   })
   describe('error', () => {
-    test('should work', () => {
+    test('should log the error msg', () => {
       let { ctx, logger } = init()
       expect(ctx.error('msg')).toBe(false)
       expect(logger._msgs[0]).toBe('msg')
     })
   })
   describe('clearLog', () => {
-    test('should work', () => {
+    test('should clear all error msgs', () => {
       let { ctx, logger } = init()
       ctx.error('msg')
       expect(logger.dirty()).toBe(true)
@@ -56,7 +56,7 @@ describe('Test ContextDiff', () => {
     })
   })
   describe('hasError', () => {
-    test('should work', () => {
+    test('should detect whether context has error', () => {
       let { ctx, logger } = init()
       expect(ctx.hasError()).toBe(false)
       ctx.error('msg')
@@ -64,7 +64,7 @@ describe('Test ContextDiff', () => {
     })
   })
   describe('enter', () => {
-    test('should work', () => {
+    test('should enter scoped child context', () => {
       let { ctx, logger } = init()
       let scopedCtx = ctx.enter('scoped')
       expect(scopedCtx).toBeInstanceOf(ContextDiff)

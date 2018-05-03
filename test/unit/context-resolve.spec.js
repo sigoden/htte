@@ -18,7 +18,7 @@ describe('Test ContextResolve', () => {
     })
   })
   describe('resolve', () => {
-    test('should work', () => {
+    test('should resolve the expect value', () => {
       let { logger, ctx } = init()
       let ctx1 = {}
       let value = {}
@@ -29,7 +29,7 @@ describe('Test ContextResolve', () => {
     })
   })
   describe('query', () => {
-    test('should work', () => {
+    test('should query the linked data', () => {
       let { query, ctx } = init()
       let path = '$$$$abc'
       let returnValue = {}
@@ -39,14 +39,14 @@ describe('Test ContextResolve', () => {
     })
   })
   describe('error', () => {
-    test('should work', () => {
+    test('should log the error msg', () => {
       let { ctx, logger } = init()
       expect(ctx.error('msg')).toBeUndefined()
       expect(logger._msgs[0]).toBe('msg')
     })
   })
   describe('clearLog', () => {
-    test('should work', () => {
+    test('should clear all error msgs', () => {
       let { ctx, logger } = init()
       ctx.error('msg')
       expect(logger.dirty()).toBe(true)
@@ -55,7 +55,7 @@ describe('Test ContextResolve', () => {
     })
   })
   describe('hasError', () => {
-    test('should work', () => {
+    test('should detect wheter context has error', () => {
       let { ctx, logger } = init()
       expect(ctx.hasError()).toBe(false)
       ctx.error('msg')
@@ -63,7 +63,7 @@ describe('Test ContextResolve', () => {
     })
   })
   describe('enter', () => {
-    test('should work', () => {
+    test('should enter the scoped context', () => {
       let { ctx, logger } = init()
       let scopedCtx = ctx.enter('scoped')
       expect(scopedCtx).toBeInstanceOf(ContextResolve)

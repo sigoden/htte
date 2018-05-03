@@ -66,7 +66,7 @@ describe('Test Unit', () => {
 describe('public function', () => {
   describe('#valid', () => {
     let { unit } = createUnit1()
-    test('return true when logger is not dirty', () => {
+    test('return true when logger is clean', () => {
       expect(unit.valid()).toBe(true)
       expect(unit._logger.toString()).toBe('')
     })
@@ -76,35 +76,35 @@ describe('public function', () => {
     })
   })
   describe('#name', () => {
-    test('return unit name if name exists', () => {
+    test('return unit name if unit data object has property name', () => {
       let { unit, options } = createUnit1({ name: 'unit1' })
       expect(unit.name()).toBe(options.name)
     })
-    test('return generated name if unit have no property name', () => {
+    test('return generated name if unit data object has no property name', () => {
       let { unit, options } = createUnit1({ scopeIndexes: [1, 2, 3] })
       expect(unit.name()).toBe(options.api + '-' + options.scopeIndexes.join('-'))
     })
   })
   describe('#module', () => {
-    test('return module name', () => {
+    test('return name of module of unit', () => {
       let { unit, module } = createUnit1()
       expect(unit.module()).toBe(module.name())
     })
   })
   describe('#api', () => {
-    test('return this._api', () => {
+    test('return APIObject', () => {
       let { unit } = createUnit1()
       expect(unit.api()).toBe(unit._api)
     })
   })
   describe('#id', () => {
-    test('return id, created by join module() and name() with -', () => {
+    test('return id of unit', () => {
       let { unit } = createUnit1({ name: 'unit1' })
       expect(unit.id()).toBe(unit.module() + '-' + unit.name())
     })
   })
   describe('#dependencies', () => {
-    test('return module dependencies', () => {
+    test('return dependencies', () => {
       let { unit, module } = createUnit1({
         dependencies: [{ name: 'module2', module: 'module2' }]
       })
@@ -112,7 +112,7 @@ describe('public function', () => {
     })
   })
   describe('#describes', () => {
-    test('return scope._describes', () => {
+    test('return describes', () => {
       let { unit, scope } = createUnit1({
         scopeDescribes: ['group 1', 'unit 1']
       })
@@ -120,106 +120,128 @@ describe('public function', () => {
     })
   })
   describe('debug', () => {
-    test('return empty string if unit have not executed', () => {
+    test(`return '' if unit have not been execute`, () => {
       let { unit, logger } = createUnit1()
       unit.debug({}, {}, logger)
       expect(logger.toString()).toBe('')
     })
     test('print req and res', () => {
-      let { unit, logger, options } = createUnit2()
+      let { unit, options } = createUnit2()
+      let debugLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
-      unit.debug(options.req, options.res, logger)
-      expect(logger.toString()).toBe(`-:
-  debug:
-    req:
-      url: 'http://localhost:3000/articles/{slug}/comments'
-      method: post
-      headers:
-        Authorization: Bearer tokenbalabala
-      body:
-        content: awsome
-    res:
-      status: 200
-      body:
-        content: awsome
-    
+      unit.debug(options.req, options.res, debugLogger)
+      expect(debugLogger.toString()).toBe(`      unit 1:
+        debug:
+          req:
+            url: 'http://localhost:3000/articles/{slug}/comments'
+            method: post
+            headers:
+              Authorization: Bearer tokenbalabala
+            body:
+              content: awsome
+          res:
+            status: 200
+            body:
+              content: awsome
+          
 `)
     })
     test('print req and res while req is empty', () => {
-      let { unit, logger, options } = createUnit1()
+      let { unit, options } = createUnit1()
+      let debugLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
-      unit.debug(options.req, { body: { msg: 'ok' }, status: 200 }, logger)
-      expect(logger.toString()).toBe(`-:
-  debug:
-    req:
-      url: 'http://localhost:3000/feed'
-      method: get
-    res:
-      status: 200
-      body:
-        msg: ok
-    
+      unit.debug(options.req, { body: { msg: 'ok' }, status: 200 }, debugLogger)
+      expect(debugLogger.toString()).toBe(`      unit 1:
+        debug:
+          req:
+            url: 'http://localhost:3000/feed'
+            method: get
+          res:
+            status: 200
+            body:
+              msg: ok
+          
 `)
     })
     test('print req and res if req.headers, req.body and res.body exists', () => {
-      let { unit, logger } = createUnit1()
+      let { unit } = createUnit1()
+      let debugLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
       unit._template.req = { body: { content: 'awesome' }, headers: { Authorization: 'Bearer balabala' } }
       unit._template.res = { body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' }, status: 200 }
-      unit.debug(unit._template.req, unit._template.res, logger)
-      expect(logger.toString()).toBe(`-:
-  debug:
-    req:
-      url: 'http://localhost:3000/feed'
-      method: get
-      headers:
-        Authorization: Bearer balabala
-      body:
-        content: awesome
-    res:
-      status: 200
-      body:
-        msg: ok
-      headers:
-        Content-Type: application/json
-    
+      unit.debug(unit._template.req, unit._template.res, debugLogger)
+      expect(debugLogger.toString()).toBe(`      unit 1:
+        debug:
+          req:
+            url: 'http://localhost:3000/feed'
+            method: get
+            headers:
+              Authorization: Bearer balabala
+            body:
+              content: awesome
+          res:
+            status: 200
+            body:
+              msg: ok
+            headers:
+              Content-Type: application/json
+          
 `)
     })
     test('print req and res if res.err', () => {
-      let { unit, logger } = createUnit1()
+      let { unit } = createUnit1()
+      let debugLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
       unit._template.req = { body: { content: 'awesome' }, headers: { Authorization: 'Bearer balabala' } }
       unit._template.res = { err: new Error('connect ECONNREFUSED 127.0.0.1:3000'), time: 10.03 }
-      unit.debug(unit._template.req, unit._template.res, logger)
-      expect(logger.toString()).toBe(`-:
-  debug:
-    req:
-      url: 'http://localhost:3000/feed'
-      method: get
-      headers:
-        Authorization: Bearer balabala
-      body:
-        content: awesome
-    res:
-      err: 'Error: connect ECONNREFUSED 127.0.0.1:3000'
-    
+      unit.debug(unit._template.req, unit._template.res, debugLogger)
+      expect(debugLogger.toString()).toBe(`      unit 1:
+        debug:
+          req:
+            url: 'http://localhost:3000/feed'
+            method: get
+            headers:
+              Authorization: Bearer balabala
+            body:
+              content: awesome
+          res:
+            err: 'Error: connect ECONNREFUSED 127.0.0.1:3000'
+          
 `)
     })
   })
   describe('#view', () => {
     test('view unit', () => {
-      let { unit, logger } = createUnit1({ name: 'unit1' })
-      unit.view(logger)
-      expect(logger.toString()).toBe(`-:
+      let { unit } = createUnit1({ name: 'unit1' })
+      let viewLogger = new Logger('ViewUnits')
+      unit.view(viewLogger)
+      expect(viewLogger.toString()).toBe(`ViewUnits:
   module1:
     unit 1:
       unit1
 `)
     })
     test('keep unit hireachy', () => {
-      let { unit, logger } = createUnit1({ name: 'unit1', scopeDescribes: ['group 1', 'sub group 2', 'unit 1'] })
-      unit.view(logger)
-      expect(logger.toString()).toBe(`-:
+      let { unit } = createUnit1({
+        name: 'unit1',
+        scopeDescribes: ['group 1', 'sub group 2', 'unit 1'],
+        scopeIndexes: [0, 0, 0]
+      })
+      let viewLogger = new Logger('ViewUnits')
+      unit.view(viewLogger)
+      expect(viewLogger.toString()).toBe(`ViewUnits:
   module1:
     group 1:
       sub group 2:
@@ -333,9 +355,10 @@ res: {}
 })
 describe('private function', () => {
   describe('_parseAPI', () => {
-    test('return api object if find', () => {
+    test('return api object', () => {
       let { unit, logger, options } = createUnit1()
-      let api = unit._parseAPI(options.api, logger)
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI(options.api, scopedLogger)
       expect(api).toEqual({
         keys: [],
         method: 'get',
@@ -345,111 +368,152 @@ describe('private function', () => {
         timeout: 1000
       })
     })
-    test('log error if not find', () => {
+    test('log error if api is not found', () => {
       let { unit, logger } = createUnit1()
-      let api = unit._parseAPI('notfind', logger)
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI('notfind', scopedLogger)
       expect(api).toBeUndefined()
-      expect(logger.toString()).toMatch(`cannot find api`)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      api:
+        cannot find api notfind
+`)
     })
   })
   describe('_parseReqParams', () => {
-    test('return params', () => {
+    test('should return parsed params', () => {
       let { unit, logger, options } = createUnit2()
+      let scopedLogger = logger.enter('req').enter('params')
       let target = options.req.params
-      let result = unit._parseReqParams(target, logger)
+      let result = unit._parseReqParams(target, scopedLogger)
       expect(result).toBe(target)
     })
-    test('return undefined if _api is undefined', () => {
+    test('return undefined if APIObject of unit have not been found', () => {
       let { unit, logger, options } = createUnit2()
+      let scopedLogger = logger.enter('req').enter('params')
       let target = options.req.params
       unit._api = undefined
-      let result = unit._parseReqParams(target, logger)
+      let result = unit._parseReqParams(target, scopedLogger)
       expect(result).toBeUndefined()
     })
-    test('log error if params is not object or undefined', () => {
+    test('log error if params is not object nor undefined', () => {
       let { unit, logger, options } = createUnit2()
-      let result = unit._parseReqParams('abc', logger)
-      expect(logger.toString()).toMatch('must be object')
+      let scopedLogger = logger.enter('req').enter('params')
+      let result = unit._parseReqParams('abc', scopedLogger)
       expect(result).toBeUndefined()
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        params:
+          must be object
+`)
     })
-    test('log error when api have keys but req have no params', () => {
+    test('log error when api has url params but req has no params', () => {
       let { unit, logger, options } = createUnit2()
-      let result = unit._parseReqParams(undefined, logger)
-      expect(logger.toString()).toMatch('must have property [params]')
+      let scopedLogger = logger.enter('req').enter('params')
+      let result = unit._parseReqParams(undefined, scopedLogger)
       expect(result).toBeUndefined()
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        params:
+          must have property params
+`)
     })
     test('log error when params have extra fields', () => {
       let { unit, logger, options } = createUnit2()
-      let result = unit._parseReqParams({ slug: 'a', id: 'b' }, logger)
-      expect(logger.toString()).toMatch('params diff, extra')
+      let scopedLogger = logger.enter('req').enter('params')
+      let result = unit._parseReqParams({ slug: 'a', id: 'b' }, scopedLogger)
       expect(result).toBeUndefined()
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        params:
+          params diff, extra id
+`)
     })
-    test('log error when params miss fields', () => {
+    test('log error when params have less fields', () => {
       let { unit, logger, options } = createUnit2()
-      let result = unit._parseReqParams({}, logger)
-      expect(logger.toString()).toMatch('params diff, miss')
+      let scopedLogger = logger.enter('req').enter('params')
+      let result = unit._parseReqParams({}, scopedLogger)
       expect(result).toBeUndefined()
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        params:
+          params diff, need slug
+`)
     })
   })
   describe('_maybeStatus', () => {
-    test('should work', () => {
+    test('should parse status code', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._maybeStatus(204, logger)
+      let scopedLogger = logger.enter('res').enter('status')
+      let result = unit._maybeStatus(204, scopedLogger)
       expect(logger.toString()).toBe('')
       expect(result).toBe(204)
     })
-    test('log error if status is not integer', () => {
+    test('log error if status code is not integer', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._maybeStatus('ok', logger)
-      expect(logger.toString()).toMatch('must be http code')
+      let scopedLogger = logger.enter('res').enter('status')
+      let result = unit._maybeStatus('ok', scopedLogger)
       expect(result).toBeUndefined()
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      res:
+        status:
+          must be valid http code
+`)
     })
   })
   describe('_parseReq', () => {
     test('return {} if req is undefined', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._parseReq(undefined, logger)
-      expect(logger.toString()).toBe('')
+      let scopedLogger = logger.enter('req')
+      let result = unit._parseReq(undefined, scopedLogger)
       expect(result).toEqual({})
+      expect(logger.dirty()).toBe(false)
     })
     test('log error if req is not object or undefined', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._parseReq('abc', logger)
-      expect(logger.toString()).toMatch('must be object')
+      let scopedLogger = logger.enter('req')
+      let result = unit._parseReq('abc', scopedLogger)
       expect(result).toEqual({})
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        must be object
+`)
     })
-    test('should work', () => {
+    test('should validate and parse request data object', () => {
       let { unit, logger, options } = createUnit2()
       let target = options.req
-      let result = unit._parseReq(target, logger)
-      expect(logger.toString()).toBe('')
+      let scopedLogger = logger.enter('req')
+      let result = unit._parseReq(target, scopedLogger)
+      expect(logger.dirty()).toBe(false)
       expect(result).toEqual(target)
       expect(result.body).not.toBe(target.body)
       expect(result.headers).not.toBe(target.headers)
       expect(result.query).not.toBe(target.query)
       expect(result.params).not.toBe(target.params)
     })
-    test('log error when any of headers, query, params', () => {
+    test('log error when headers, query, params have something wrong', () => {
       let { unit, logger } = createUnit1()
+      let scopedLogger = logger.enter('req')
       let target = { headers: '', query: '', params: { slug: 'v' } }
-      let result = unit._parseReq(target, logger)
-      expect(logger.toString()).toBe(`-:
-  headers:
-    must be object
-  query:
-    must be object
-  params:
-    params diff, extra slug
+      let result = unit._parseReq(target, scopedLogger)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      req:
+        headers:
+          must be object
+        query:
+          must be object
+        params:
+          params diff, extra slug
 `)
     })
   })
   describe('_parseRes', () => {
     test('return {} if res is undefined', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._parseRes(undefined, logger)
+      let scopedLogger = logger.enter('res')
+      let result = unit._parseRes(undefined, scopedLogger)
       expect(result).toEqual({})
     })
-    test('should work', () => {
+    test('should validate and parse response data object', () => {
       let { unit, logger } = createUnit2()
       let target = {
         status: 204,
@@ -461,13 +525,22 @@ describe('private function', () => {
     })
     test('log error if req is not object or undefined', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._parseRes('abc', logger)
-      expect(logger.toString()).toMatch('must be object')
+      let scopedLogger = logger.enter('res')
+      let result = unit._parseRes('abc', scopedLogger)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      res:
+        must be object
+`)
     })
     test('log error if res.headers is not object or undefined', () => {
       let { unit, logger } = createUnit1()
-      let result = unit._parseRes({ headers: 'abc' }, logger)
-      expect(logger.toString()).toMatch('must be object')
+      let scopedLogger = logger.enter('res')
+      let result = unit._parseRes({ headers: 'abc' }, scopedLogger)
+      expect(logger.toString()).toMatch(`    [0](unit 1):
+      res:
+        headers:
+          must be object
+`)
     })
   })
   describe('_request', () => {
@@ -476,22 +549,37 @@ describe('private function', () => {
     })
     test('reject if logger is dirty', () => {
       let { unit, logger } = createUnit2()
-      logger.log('dirty')
-      return unit._request(unit._api, unit._req, logger).catch(msg => {
+      let executeLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
+        .enter('req')
+      executeLogger.log('error')
+      return unit._request(unit._api, unit._req, executeLogger).catch(msg => {
         expect(msg).toBe('cannot create request')
       })
     })
     test('req have no body, axios send no data', () => {
       require('axios').mockImplementation(v => Promise.resolve(v))
       let { unit, logger } = createUnit1({ req: { headers: { Authorization: 'Bearer balaba' } } })
-      return unit._request(unit._api, unit._req, logger).then(result => {
+      let executeLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
+        .enter('req')
+      return unit._request(unit._api, unit._req, executeLogger).then(result => {
         expect(result.data).toBeUndefined()
       })
     })
-    test('should work', () => {
+    test('should make axios request object', () => {
       require('axios').mockImplementation(v => Promise.resolve(v))
       let { unit, logger } = createUnit2()
-      return unit._request(unit._api, unit._req, logger).then(result => {
+      let executeLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
+        .enter('req')
+      return unit._request(unit._api, unit._req, executeLogger).then(result => {
         expect(result).toEqual({
           data: '{"content":"awsome"}',
           headers: { Authorization: 'Bearer tokenbalabala', 'Content-Type': 'application/json' },
@@ -508,7 +596,12 @@ describe('private function', () => {
           throw new Error('encode ...')
         }
       })
-      return unit._request(unit._api, unit._req, logger).catch(result => {
+      let executeLogger = new Logger()
+        .enter('RunUnits')
+        .enter(unit.module())
+        .enters(unit.describes())
+        .enter('req')
+      return unit._request(unit._api, unit._req, executeLogger).catch(result => {
         expect(result).toMatch('cannot serialize body')
       })
     })
@@ -546,13 +639,16 @@ function init(options) {
         : undefined,
     findSerializer: type => (type === 'json' || type === undefined ? JSONSerializer : undefined)
   }
-  let logger = new Logger()
+  let logger = new Logger('LoadUnits').enter(moduleName)
+  let scopedLogger = scopeDescribes.reduce((logger, describe, index) => {
+    return logger.enter(`[${scopeIndexes[index]}](${describe})`)
+  }, logger)
   let scope = { _describes: scopeDescribes, _indexes: scopeIndexes }
   let module = {
     name: () => moduleName,
     dependencies: () => dependencies || []
   }
-  let unit = new Unit(template, config, logger, scope, module)
+  let unit = new Unit(template, config, scopedLogger, scope, module)
   logger.tryThrow()
-  return { options, template, config, logger, scope, module, unit }
+  return { options, template, config, logger: scopedLogger, scope, module, unit }
 }

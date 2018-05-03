@@ -1,16 +1,19 @@
 const _ = require('lodash')
 
+/**
+ * Manage serializers
+ */
 module.exports = function() {
   let serializers = []
 
   return {
     /**
      * Regist serializer
-     * @param {object} plugin - model of serialize
+     * @param {Object} plugin - model of serialize
      * @param {string} plugin.name - name of serializer, like json, xml
      * @param {string} plugin.type - http content type, like application/json
-     * @param {function} plugin.serialize
-     * @param {function} plugin.deserialize
+     * @param {function} plugin.serialize - function to encode the object to specific data format
+     * @param {function} plugin.deserialize - function to decode formated data to the object
      */
     regist(plugin) {
       if (!_.isPlainObject(plugin)) {
@@ -41,7 +44,7 @@ module.exports = function() {
     },
 
     /**
-     * List all the name of serializer
+     * List all names of serializers
      * returns {string[]}
      */
     names() {

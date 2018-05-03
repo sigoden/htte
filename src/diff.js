@@ -1,6 +1,15 @@
 const _ = require('lodash')
 const utils = require('./utils')
 
+/**
+ * Diff the expect and the actual
+ * @param {ContextDiff} context - the context to run diffing
+ * @param {*} expect - the expect value
+ * @param {*} actual - the actual value
+ * @param {boolean} isStrict - whether enables strict mode
+ *
+ * @returns {boolean} - whether pass the diffing
+ */
 function diff(context, expect, actual, isStrict = true) {
   switch (utils.type(expect)) {
     case 'number':
@@ -13,7 +22,7 @@ function diff(context, expect, actual, isStrict = true) {
       try {
         return expect(context, actual)
       } catch (err) {
-        return context.error(`cannot diff, ${err}`)
+        return context.error(`cannot diff, ${err.message}`)
       }
     case 'array':
       return diffArray(context, expect, actual, isStrict)
@@ -22,16 +31,22 @@ function diff(context, expect, actual, isStrict = true) {
   }
 }
 
+/**
+ * Diff the expect and the actual when the expect is primitive
+ */
 function diffPrimitive(context, expect, actual) {
   if (_.isEqual(expect, actual)) return true
   return context.error(`value diff, expect ${JSON.stringify(expect)}, actual ${JSON.stringify(actual)}`)
 }
 
+/*
+ * Diff the expect and the actual when the expect is primitive
+ */
 function diffArray(context, expect, actual, isStrict) {
   if (!diffType(context, expect, actual)) return false
   let sameLength = expect.length === actual.length
   if (isStrict && !sameLength) {
-    return context.error(`element diff, expect ${expect.length}, actual ${actual.length}`)
+    return context.error(`size diff, expect ${expect.length}, actual ${actual.length}`)
   }
   return expect.every((elem, index) => {
     return diff(context.enter(`[${index}]`), elem, actual[index])
@@ -44,6 +59,9 @@ function diffType(context, expect, actual) {
   return context.error(`type diff, expect ${JSON.stringify(expect)}, actual ${JSON.stringify(actual)}`)
 }
 
+/*
+ * Diff the expect and the actual when the expect is object
+ */
 function diffObject(context, expect, actual, isStrict) {
   if (!diffType(context, expect, actual)) {
     return false
@@ -62,13 +80,16 @@ function diffObject(context, expect, actual, isStrict) {
   })
 }
 
+/**
+ * Wheter the expect and the actual have same properties
+ */
 function satifyObjectKeys(context, expect, actual) {
   let excludes = _.difference(expect, actual)
   let includes = _.difference(actual, expect)
 
   let errMsg = ``
   if (excludes.length) {
-    errMsg += `, missed ${excludes.join('|')}`
+    errMsg += `, need ${excludes.join('|')}`
   }
   if (includes.length) {
     errMsg += `, extra ${includes.join('|')}`
@@ -78,9 +99,7 @@ function satifyObjectKeys(context, expect, actual) {
     return true
   }
 
-  errMsg = `props diff` + errMsg
-  context.error(errMsg)
-  return false
+  return context.error(`props diff` + errMsg)
 }
 
 module.exports = diff

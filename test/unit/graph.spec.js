@@ -9,21 +9,21 @@ describe('Test Graph', () => {
     expect(graph._connected).toBe(false)
   })
   describe('add', () => {
-    test('should work', () => {
+    test('should add node', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: [] })
       let ids = Array.from(graph._nodes.entries()).map(([id]) => id)
       expect(ids).toEqual(['a', 'b'])
     })
-    test('should override exists node', () => {
+    test('should override node already existed', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: [] })
       graph.add('a', { id: 'a', edges: ['b'] })
       expect(graph._nodes.get('a')._ref.edges).toEqual(['b'])
     })
-    test('should disable connected state when add new node', () => {
+    test('should mark unconnected when add new node', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: [] })
@@ -34,7 +34,7 @@ describe('Test Graph', () => {
     })
   })
   describe('connect', () => {
-    test('should work', () => {
+    test('should connect nodes by edges', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: ['a'] })
@@ -42,7 +42,7 @@ describe('Test Graph', () => {
       expect(graph._connected).toBe(true)
       expect(graph._nodes.get('b')._edges).toEqual([graph._nodes.get('a')])
     })
-    test('result is cached', () => {
+    test('should cache connected state', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: ['a'] })
@@ -52,7 +52,7 @@ describe('Test Graph', () => {
       }
       graph.connect()
     })
-    test('ignore edge if not find or duplicate', () => {
+    test('ignore edge node if the edge cannot be found or already be connected', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: [] })
       graph.add('b', { id: 'b', edges: ['a', 'c', 'a'] })
@@ -61,7 +61,7 @@ describe('Test Graph', () => {
     })
   })
   describe('sort', () => {
-    test('should work', () => {
+    test('should sort nodes', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: ['b'] })
       graph.add('b', { id: 'b', edges: [] })
@@ -69,7 +69,7 @@ describe('Test Graph', () => {
       expect(Array.from(graph._nodes.values()).map(v => v._ref.id)).toEqual(['a', 'b', 'c'])
       expect(graph.sort().map(v => v.id)).toEqual(['b', 'a', 'c'])
     })
-    test('throw error if circular dependency', () => {
+    test('throw error if nodes have circular dependency', () => {
       let graph = new Graph(v => v.edges)
       graph.add('a', { id: 'a', edges: ['b'] })
       graph.add('b', { id: 'b', edges: ['a'] })

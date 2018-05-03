@@ -12,17 +12,17 @@ describe('Test resolve', () => {
     expect(resolve(context, null)).toBeNull()
     expect(resolve(context, undefined)).toBeUndefined()
   })
-  test('execute value if value is function', () => {
+  test('execute function if value is function', () => {
     let value = jest.fn().mockImplementation(v => v)
     expect(resolve(context, value)).toBe(context)
     expect(value.mock.calls[0][0]).toBe(context)
   })
   test('log error if value fail to execute', () => {
     let value = jest.fn().mockImplementation(v => {
-      throw new Error()
+      throw new Error('something wrong')
     })
     expect(resolve(context, value)).toBeUndefined()
-    expect(context.error.mock.calls[0][0]).toMatch('cannot resolve value')
+    expect(context.error.mock.calls[0][0]).toBe('cannot resolve value, something wrong')
   })
   test('map each element if value is array', () => {
     let value = ['a', 'b', 'c']

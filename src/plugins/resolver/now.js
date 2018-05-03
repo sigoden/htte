@@ -1,5 +1,18 @@
 /**
- * Generate current datetime string
+ * Current datetime in string
+ *
+ * @argument {Integer} offset - offset current time in millisecond
+ *
+ * e.g.
+ *
+ * !$now
+ * 2018-05-02T03:03:06.330Z
+ *
+ * !$now 86400000
+ * 2018-05-03T03:03:06.330Z
+ *
+ * !$now -86400000
+ * 2018-05-01T03:03:06.330Z
  */
 module.exports = {
   name: 'now',

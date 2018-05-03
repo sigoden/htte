@@ -29,28 +29,34 @@ describe('Test UnitModule', () => {
 
 describe('private function', () => {
   describe('_load', () => {
-    test('should work', () => {
+    test('should load object from yaml file', () => {
       let { module, logger } = init({
         file: resolveFixtureFile('./unit-module/module.yaml')
       })
       let result = module._load()
       expect(result).toEqual({ units: [] })
     })
-    test('log error if file nonexist', () => {
-      let { module, logger } = init({
-        file: resolveFixtureFile('./unit-module/notfound.yaml')
+    test('log error if file does not exist', () => {
+      let { module, logger, file } = init({
+        file: resolveFixtureFile('./unit-module/404.yaml')
       })
       let result = module._load()
       expect(result).toBeUndefined()
-      expect(logger.toString()).toMatch('fail to load or parse moudle file')
+      expect(logger.toString()).toBe(`  404:
+    fail to load or parse moudle file, ENOENT: no such file or directory, open '${file}'
+`)
     })
-    test('log error if fail to parse yaml file', () => {
+    test('log error if file is not valid yaml file', () => {
       let { module, logger } = init({
         file: resolveFixtureFile('./unit-module/error.yaml')
       })
       let result = module._load()
       expect(result).toBeUndefined()
-      expect(logger.toString()).toMatch('fail to load or parse moudle file')
+      expect(logger.toString()).toBe(`  error:
+    fail to load or parse moudle file, unknown tag !<!badtag> at line 8, column 1:
+        
+        ^
+`)
     })
   })
   describe('_absoluteFile', () => {
@@ -81,92 +87,127 @@ describe('private function', () => {
     })
   })
   describe('_parseDependencies', () => {
-    test('should work when value is array', () => {
+    test('should parse dependencies when value is array', () => {
       let { module, logger } = init()
       let target = ['./module1.yaml', { name: 'auth', module: './module2.yaml' }]
       let result = module._parseDependencies(target, logger)
       expect(result).toEqual([{ name: 'module1', module: 'module1' }, { name: 'auth', module: 'module2' }])
     })
-    test('should work when value is object', () => {
+    test('should parse dependencies when value is object', () => {
       let { module, logger } = init()
       let target = { auth: './module1.yaml', user: './module2.yaml' }
       let result = module._parseDependencies(target, logger)
       expect(result).toEqual([{ name: 'auth', module: 'module1' }, { name: 'user', module: 'module2' }])
     })
-    test('return [] when value of dependencies is undefined', () => {
+    test('return [] when there is no dependencies value', () => {
       let { module, logger } = init()
-      let result = module._parseDependencies(undefined, logger)
+      let scopedLogger = logger.enter('dependencies')
+      let result = module._parseDependencies(undefined, scopedLogger)
       expect(result).toEqual([])
     })
     test('log error when value is not object or undefined', () => {
       let { module, logger } = init()
-      let result = module._parseDependencies('abc', logger)
-      expect(logger.toString()).toMatch('should be object or array')
+      let scopedLogger = logger.enter('dependencies')
+      let result = module._parseDependencies('abc', scopedLogger)
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      should be object or array
+`)
     })
-    test('omit invalid parsed dependency', () => {
+    test('omit invalid dependencies', () => {
       let { module, logger } = init()
       let target = [{ name: 'feed', module: './feed.yaml' }, { name: 'invalid' }]
-      let result = module._parseDependencies(target, logger)
+      let scopedLogger = logger.enter('dependencies')
+      let result = module._parseDependencies(target, scopedLogger)
       expect(result).toHaveLength(1)
-      expect(logger.toString()).toMatch('must have property module')
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      [1]:
+        must have property module
+`)
     })
-    test('log error name conflict', () => {
+    test('log error when there is conflicted names', () => {
       let { module, logger } = init()
       let target = [{ name: 'feed', module: './feed.yaml' }, { name: 'feed', module: './feed-auth.yaml' }]
-      let result = module._parseDependencies(target, logger)
-      expect(logger.toString()).toMatch('name conflict detect')
+      let scopedLogger = logger.enter('dependencies')
+      let result = module._parseDependencies(target, scopedLogger)
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      must have no conflict names feed
+`)
     })
   })
   describe('_parseDependency', () => {
-    test('work when value is string', () => {
+    test('should parse dependency when value is string', () => {
       let { module, logger } = init()
       let target = './feed.yaml'
-      let result = module._parseDependency(target, logger)
-      expect(logger.toString()).toBe('')
+      let scopedLogger = logger.enter('dependencies').enter('[0]')
+      let result = module._parseDependency(target, scopedLogger)
       expect(result).toEqual({ module: 'feed', name: 'feed' })
     })
     test('log error when value is not object or string', () => {
       let { module, logger } = init()
       let target = []
-      let result = module._parseDependency(target, logger)
-      expect(logger.toString()).toMatch('must be string or object')
+      let scopedLogger = logger.enter('dependencies').enter('[0]')
+      let result = module._parseDependency(target, scopedLogger)
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      [0]:
+        must be string or object
+`)
     })
     test('log error if value is object and have no property module', () => {
       let { module, logger } = init()
       let target = { name: 'feed' }
-      let result = module._parseDependency(target, logger)
-      expect(logger.toString()).toMatch('must have property module')
+      let scopedLogger = logger.enter('dependencies').enter('[0]')
+      let result = module._parseDependency(target, scopedLogger)
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      [0]:
+        must have property module
+`)
     })
-    test('log error if dependency module file is nonexist', () => {
+    test('log error if dependency file doest not exist', () => {
       let { module, logger } = init({
         isModuleExist: () => false
       })
       let target = './feed.yaml'
-      let result = module._parseDependency(target, logger)
-      expect(logger.toString()).toMatch('cannot find dependency')
+      let scopedLogger = logger.enter('dependencies').enter('[0]')
+      let result = module._parseDependency(target, scopedLogger)
+      expect(logger.toString()).toBe(`  module:
+    dependencies:
+      [0]:
+        cannot find dependency at ${resolveFixtureFile('/unit-module/feed.yaml')}
+`)
     })
   })
   describe('_parseUnits', () => {
-    test('should work', () => {
+    test('should parse unit', () => {
       let { module, logger } = init()
       let target = [{ describe: 'feed', api: 'getFeed' }, { describe: 'article', api: 'getArticle' }]
       let scope = new UnitModule.Scope()
-      let result = module._parseUnits(target, logger, scope)
+      let scopedLogger = logger.enter('units')
+      let result = module._parseUnits(target, scopedLogger, scope)
       expect(result).toHaveLength(2)
     })
     test('log error when value is not array', () => {
       let { module, logger } = init()
       let target = {}
       let scope = new UnitModule.Scope()
-      let result = module._parseUnits(target, logger, scope)
+      let scopedLogger = logger.enter('units')
+      let result = module._parseUnits(target, scopedLogger, scope)
       expect(result).toEqual([])
-      expect(logger.toString()).toMatch('must be array')
+      expect(logger.toString()).toBe(`  module:
+    units:
+      must be array
+`)
     })
-    test('omit invalid unit', () => {
+    test('omit invalid units', () => {
       let { module, logger } = init()
       let target = [{ describe: 'feed', api: 'getFeed' }, { api: 'getArticle' }]
       let scope = new UnitModule.Scope()
-      let result = module._parseUnits(target, logger, scope)
+      let scopedLogger = logger.enter('units')
+      let result = module._parseUnits(target, scopedLogger, scope)
       expect(result).toHaveLength(1)
     })
     test('flat when there is nested units', () => {
@@ -182,42 +223,55 @@ describe('private function', () => {
         }
       ]
       let scope = new UnitModule.Scope()
-      let result = module._parseUnits(target, logger, scope)
+      let scopedLogger = logger.enter('units')
+      let result = module._parseUnits(target, scopedLogger, scope)
       expect(result).toHaveLength(4)
     })
   })
   describe('_parseUnit', () => {
-    test('should work', () => {
+    test('should parse unit', () => {
       let { module, logger } = init()
       let target = { describe: 'feed', api: 'getFeed' }
       let scope = new UnitModule.Scope()
-      let result = module._parseUnit(target, 0, logger, scope)
+      let scopedLogger = logger.enter('units').enter('[0]')
+      let result = module._parseUnit(target, 0, scopedLogger, scope)
       expect(result).toBeInstanceOf(Unit)
       expect(result._scope._indexes).toEqual([0])
       expect(result._scope._describes).toEqual(['feed'])
-      expect(logger._title).toBe('[0](feed)')
+      expect(scopedLogger._title).toBe('[0](feed)')
     })
     test('log error if value is not object', () => {
       let { module, logger } = init()
       let target = [{ describe: 'feed', api: 'getFeed' }]
       let scope = new UnitModule.Scope()
-      let result = module._parseUnit(target, 0, logger, scope)
+      let scopedLogger = logger.enter('units').enter('[0]')
+      let result = module._parseUnit(target, 0, scopedLogger, scope)
       expect(result).toBeUndefined
-      expect(logger.toString()).toMatch('must be object')
+      expect(logger.toString()).toBe(`  module:
+    units:
+      [0]:
+        must be object
+`)
     })
     test('log error when value have no property describe', () => {
       let { module, logger } = init()
       let target = { descripe: 'feed', api: 'getFeed' }
       let scope = new UnitModule.Scope()
-      let result = module._parseUnit(target, 0, logger, scope)
+      let scopedLogger = logger.enter('units').enter('[0]')
+      let result = module._parseUnit(target, 0, scopedLogger, scope)
       expect(result).toBeUndefined
-      expect(logger.toString()).toMatch('must have property describe')
+      expect(logger.toString()).toBe(`  module:
+    units:
+      [0]:
+        must have property describe
+`)
     })
     test('unit group', () => {
       let { module, logger } = init()
       let target = { describe: 'group1', units: [{ describe: 'feed', api: 'getFeed' }] }
       let scope = new UnitModule.Scope()
-      let result = module._parseUnit(target, 0, logger, scope)
+      let scopedLogger = logger.enter('units').enter('[0]')
+      let result = module._parseUnit(target, 0, scopedLogger, scope)
       expect(result).toHaveLength(1)
       expect(result[0]).toBeInstanceOf(Unit)
     })
@@ -225,7 +279,7 @@ describe('private function', () => {
 })
 describe('public function', () => {
   describe('#valid', () => {
-    test('return true when logger is not dirty', () => {
+    test('return true when logger is clean', () => {
       let { module, logger } = init()
       expect(module.valid()).toBe(true)
     })
@@ -265,7 +319,7 @@ function init(options = {}) {
     template = { units: [] },
     isModuleExist = () => true
   } = options
-  let logger = new Logger()
+  let logger = new Logger('LoadUnits').enter(file)
   let config = new Config(resolveFixtureFile('./unit-module/config.yaml'))
   config.findAPI = v => ({ method: 'get', name: v, url: `http://localhost:3000/` + v })
   let manager = { isModuleExist }

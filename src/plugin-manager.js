@@ -8,6 +8,9 @@ const PLUGIN_KINDS = ['mapping', 'sequence', 'scalar']
 const ContextDiff = require('./context-diff')
 const ContextResolve = require('./context-resolve')
 
+/**
+ * Manage plugins
+ */
 module.exports = function() {
   let plugins = []
   let yamlTypes = []
@@ -15,11 +18,11 @@ module.exports = function() {
   return {
     /**
      * Regist plugin
-     * @param {object} plugin - plugin to create plugin
+     * @param {Object} plugin - plugin to create plugin
+     * @param {string} plugin.name - plugin name, will be part of yaml tag name
      * @param {string} plugin.type - plugin type, one of [differ, resolver]
      * @param {string} plugin.kind - yaml kind, one of [mapping, sequence, scalar]
-     * @param {string} plugin.name - plugin name, will be part of yaml tag name
-     * @param {function} handler - construct function of yaml tag
+     * @param {function} plugin.handler - construct function of yaml tag
      */
     regist(plugin) {
       if (!_.isPlainObject(plugin)) {
@@ -67,11 +70,13 @@ module.exports = function() {
   }
 }
 
+// Convert plugin object to yaml tag object
 function createYamlType({ type, kind, name, handler }) {
   return new yaml.Type(tag(name, type), {
     kind,
     construct: literal => {
       return (context, actual) => {
+        // differ plugin use diff context, resolve plugin use resolve context
         if (type === 'resolver' && context instanceof ContextResolve) {
           let _literal = context.resolve(context, literal)
           if (context.hasError()) return
@@ -94,6 +99,7 @@ function createYamlType({ type, kind, name, handler }) {
   })
 }
 
+// Get yaml tag name from plugin name and type
 function tag(name, type) {
   return `!${PLUGIN_MARK[type]}${name}`
 }

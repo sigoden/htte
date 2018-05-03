@@ -11,7 +11,7 @@ class Context {
   /**
    * Create instance of Context
    *
-   * @param {Unit} unit
+   * @param {Unit} unit - test case
    * @param {Session} session
    * @param {Config} config
    * @param {Logger} logger
@@ -32,29 +32,46 @@ class Context {
   }
 
   /**
-   * Record the value to the session
+   * Record key-value pairs of unit into session
+   * @param {string} key - the key to store value
+   * @param {*} value - the value will be stored
+   *
+   * if unit.id() is auth.login, record(req, { body: { username: 'john', token: '...' } })
+   * will store below object to session
+   * {
+   *   auth: {
+   *     login: {
+   *       req: {
+   *         body: {
+   *           username: 'john',
+   *           token: '...'
+   *         }
+   *       }
+   *     }
+   *   }
+   * }
    */
   record(key, value) {
     this._session.writeUnit(this._unit, key, value)
   }
 
   /**
-   * resolve the requst object
+   * resolve the request
+   * @param {Object} req - the request object
    */
   resolveReq(req) {
     if (utils.isTypeOf(req, 'undefined')) return {}
     let logger = this._logger.enter('req').setOptions({ follow: false })
     let result = resolve(new ContextResolve(this._query, logger), req)
-    if (logger.dirty()) {
-      return logger.exit().log(logger.toString(0))
-    }
+    if (logger.dirty()) return compactLog(logger)
     return result
   }
 
   /**
-   * diff the response object
+   * diff the response
+   * @param {Object} res - the response object
    *
-   * @returns {boolean} - Whether pass the diff
+   * @returns {boolean} - Whether pass
    */
   diffRes(expect, res) {
     let logger = this._logger.enter('res').setOptions({ follow: false })
@@ -75,9 +92,15 @@ class Context {
     if (!diffStatusOrBody && res.status > 299) {
       return ctx.enter('status').error('not good')
     }
-    if (logger.dirty()) logger.exit().log(logger.toString(0))
+    if (logger.dirty()) compactLog(logger)
     return statusDiffed && headersDiffed && bodyDiffed
   }
+}
+
+function compactLog(logger) {
+  let errMsg = logger.toString(0)
+  logger.clear()
+  return logger.exit().log(errMsg.trim())
 }
 
 module.exports = Context

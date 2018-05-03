@@ -16,13 +16,13 @@ describe('Test Context', () => {
     })
   })
   describe('logger', () => {
-    test('should work', () => {
+    test('should return logger', () => {
       let { context, logger } = init()
       expect(context.logger()).toBe(logger)
     })
   })
   describe('record', () => {
-    test('should work', () => {
+    test('should record key-value pairs', () => {
       let { context, session, unit } = init()
       context.record('req', { body: { msg: 'ok' } })
       expect(session.writeUnit.mock.calls).toHaveLength(1)
@@ -30,51 +30,61 @@ describe('Test Context', () => {
     })
   })
   describe('resolveReq', () => {
-    test('should work', () => {
+    test('should resolve the request', () => {
       let { context } = init()
       let req = { a: 3 }
       expect(context.resolveReq(req)).toEqual(req)
     })
-    test('return {} when undefined', () => {
+    test('return {} when has no request', () => {
       let { context } = init()
       expect(context.resolveReq()).toEqual({})
     })
-    test('return undefined if resolve runing into error', () => {
+    test('log error when resolving', () => {
       let { context, logger } = init()
       let req = { a: (context, literal) => context.error('something wrong') }
       expect(context.resolveReq(req)).toBeUndefined()
-      expect(logger.toString()).toMatch('something wrong')
+      expect(logger.toString()).toBe(`  test1:
+    req:
+      a:
+        something wrong
+`)
     })
   })
   describe('diffRes', () => {
-    test('should work', () => {
+    test('should diff the response', () => {
       let { context } = init()
       let exp = { status: 200, body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' } }
       let res = { status: 200, body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' } }
       expect(context.diffRes(exp, res)).toBe(true)
     })
-    test('log error', () => {
+    test('log error when diffing', () => {
       let { context, logger } = init()
       let exp = { status: 200, body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' } }
       let res = {}
       expect(context.diffRes(exp, res)).toBe(false)
-      expect(logger.enters(['res', 'status']).dirty()).toBe(true)
-      expect(logger.enters(['res', 'headers']).dirty()).toBe(true)
-      expect(logger.enters(['res', 'body']).dirty()).toBe(true)
+      expect(logger.toString()).toBe(`  test1:
+    res:
+      status:
+        value diff, expect 200, actual undefined
+      body:
+        type diff, expect {\"msg\":\"ok\"}, actual undefined
+      headers:
+        type diff, expect {\"Content-Type\":\"application/json\"}, actual undefined
+`)
     })
-    test('partial diff on headers', () => {
+    test('only diff the properties the expect value have when diffing headers', () => {
       let { context, logger } = init()
       let exp = { headers: { H1: 33 } }
       let res = { status: 200, headers: { 'Content-Type': 'application/json', H1: 33 } }
       expect(context.diffRes(exp, res)).toBe(true)
     })
-    test('return true if omit status, headers and body property of expect', () => {
+    test('return true if the expect have no status, headers and body properties', () => {
       let { context, logger } = init()
       let exp = {}
       let res = { status: 200, body: { msg: 'ok' }, headers: { 'Content-Type': 'application/json' } }
       expect(context.diffRes(exp, res)).toBe(true)
     })
-    test('log error if omit status, headers and body property of expect but status > 299', () => {
+    test('log error if the expect have no status, headers and body properties but the actual have status > 299', () => {
       let { context, logger } = init()
       let exp = {}
       let res = { status: 400, body: { error: 'wrong' }, headers: { 'Content-Type': 'application/json' } }
@@ -87,7 +97,7 @@ function init() {
   let unit = {}
   let session = { records: jest.fn(), writeUnit: jest.fn() }
   let config = { variables: jest.fn() }
-  let logger = new Logger('', { follow: true, logFunc: jest.fn() })
+  let logger = new Logger('RunUnits', { follow: true, logFunc: jest.fn() }).enter('test1')
   let context = new Context(unit, session, config, logger)
   return { unit, session, config, logger, context }
 }

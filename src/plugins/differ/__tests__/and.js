@@ -11,13 +11,13 @@ describe('test and differ', () => {
     expect(result).toBe(false)
     expect(logger.toString()).toMatch('arguments must be array')
   })
-  test('return ture if all sub diff passed', () => {
+  test('return ture if all element diff passes', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let result = Plugin.handler(ctx, [3, 3], 3)
     expect(result).toBe(true)
   })
-  test('return false if any diff not passed', () => {
+  test('return false if any element diff fails', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     let result = Plugin.handler(ctx, [3, '3'], 3)

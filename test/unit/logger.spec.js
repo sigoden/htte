@@ -3,7 +3,7 @@ const Logger = require('../../src/logger')
 describe('Test Logger', () => {
   test('private property', () => {
     let logger = new Logger()
-    expect(logger._title).toBe('-')
+    expect(logger._title).toMatch(/^\w{6}$/)
     expect(logger._opts).toEqual({
       follow: false,
       indent: '  ',
@@ -26,21 +26,26 @@ describe('Test Logger', () => {
 
 describe('public function', () => {
   describe('setTitle', () => {
-    test('should work', () => {
+    test('should change title', () => {
       let logger = new Logger('test')
       expect(logger.setTitle('retitle')).toBe(logger)
       expect(logger._title).toBe('retitle')
     })
+    test('should set random string as title if title argument is omitted', () => {
+      let logger = new Logger('test')
+      expect(logger.setTitle()).toBe(logger)
+      expect(logger._title).toMatch(/^\w{6}$/)
+    })
   })
   describe('setOptions', () => {
-    test('should work', () => {
+    test('should change options', () => {
       let logger = new Logger('test')
       logger.setOptions({ indent: '**' })
       expect(logger._opts.indent).toBe('**')
     })
   })
   describe('enter', () => {
-    test('should work', () => {
+    test('should create child logger', () => {
       let logger = new Logger('a')
       let subLogger = logger.enter('b')
       expect(subLogger._opts).toEqual(logger._opts)
@@ -48,7 +53,7 @@ describe('public function', () => {
       expect(subLogger._parent).toBe(logger)
       expect(logger._children[0]).toBe(subLogger)
     })
-    test('return child logger if find', () => {
+    test('return child logger if it exists', () => {
       let logger = new Logger('a')
       let subLogger = logger.enter('b')
       let subLogger2 = logger.enter('b')
@@ -56,30 +61,30 @@ describe('public function', () => {
     })
   })
   describe('enters', () => {
-    test('should work', () => {
+    test('should create child logger recursivelly', () => {
       let logger = new Logger('a').enter('b').enter('c')
       let logger2 = new Logger('a').enters(['b', 'c'])
       expect(logger).toEqual(logger2)
     })
   })
   describe('exit', () => {
-    test('should work', () => {
+    test('should select parent logger', () => {
       let parent = new Logger('a')
       let child = parent.enter('b')
       expect(child.exit()).toBe(parent)
     })
-    test('return root logger if exit in root logger', () => {
+    test('should return logger itself if it has no parent', () => {
       let root = new Logger('a')
       expect(root.exit()).toBe(root)
     })
   })
   describe('findChild', () => {
-    test('should work', () => {
+    test('should find child', () => {
       let parent = new Logger('a')
       let child = parent.enter('b')
       expect(parent.findChild('b')).toBe(child)
     })
-    test('return undefined if not find', () => {
+    test('return undefined if the child can not be found', () => {
       let parent = new Logger('a')
       parent.enter('b')
       expect(parent.findChild('bb')).toBeUndefined()
@@ -109,7 +114,7 @@ describe('public function', () => {
     })
   })
   describe('toString', () => {
-    test('should work', () => {
+    test('should concat the msgs and children msgs to string', () => {
       let root = new Logger('root')
       root.log('a')
       let levelA = root.enter('1-a')
@@ -127,24 +132,13 @@ describe('public function', () => {
       c
 `)
     })
-    test('return empty string if logger is not dirty', () => {
+    test('return empty string if logger is clean', () => {
       let root = new Logger('root')
       expect(root.toString()).toBe('')
       root.enters(['a', 'b', 'c'])
       expect(root.toString()).toBe('')
     })
-    test('should work when title is empty string', () => {
-      let root = new Logger()
-      root.enter('a').log('msg1')
-      root.enter('b').log('msg2')
-      expect(root.toString()).toBe(`-:
-  a:
-    msg1
-  b:
-    msg2
-`)
-    })
-    test('options indent should affect the result', () => {
+    test('options indent should affect the result string', () => {
       let root = new Logger('root', { indent: '**' })
       root.log('a')
       let levelA = root.enter('1-a')
@@ -162,7 +156,7 @@ describe('public function', () => {
 ******c
 `)
     })
-    test('should work with custom level', () => {
+    test('should change indent with custom level', () => {
       let root = new Logger()
       let childLogger = root.enter('child')
       childLogger.log('msg')
@@ -180,17 +174,17 @@ describe('public function', () => {
       logger.log('msg')
       expect(() => logger.tryThrow()).toThrow(logger.toString())
     })
-    test('should not throw if logger is not dirty', () => {
+    test('should not throw if logger is clean', () => {
       let logger = new Logger('logger')
       expect(() => logger.tryThrow()).not.toThrow()
     })
   })
   describe('log', () => {
-    test('should work', () => {
+    test('should log the message', () => {
       let logger = new Logger('logger')
       expect(logger.log('msg')).toBeUndefined()
     })
-    test('should work when follow is enabled', () => {
+    test('should log the message when option `follow` is enabled', () => {
       let logFn = jest.fn()
       let logger = new Logger('logger', { follow: true, logFunc: logFn })
       logger.log('msg')
@@ -220,7 +214,7 @@ describe('public function', () => {
     })
   })
   describe('clear', () => {
-    test('should work', () => {
+    test('should clear the msgs', () => {
       let logger1 = new Logger('a')
       logger1.log('msg')
       let logger2 = logger1.enter('b')

@@ -4,7 +4,7 @@ const Logger = require('../../../logger')
 const Plugin = require('../regexp')
 
 describe('test regexp differ', () => {
-  test('return true if actual match regexp', () => {
+  test('return true if actual matchs regexp', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, 'abc', 'abc')).toBe(true)
@@ -19,7 +19,7 @@ describe('test regexp differ', () => {
     expect(Plugin.handler(ctx, '333', 333)).toBe(false)
     expect(logger.toString()).toMatch('target must be string')
   })
-  test('log error if actual not match regexp', () => {
+  test('log error if actual does not match regexp', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, 'ac', 'abc')).toBe(false)

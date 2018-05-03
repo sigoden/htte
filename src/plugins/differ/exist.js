@@ -1,5 +1,14 @@
 /**
- * Exist differ assert the field exist
+ * Exist differ asserts the property of object exists
+ *
+ * e.g.
+ *
+ * value: !@object
+ *   a: !@exist
+ *
+ * { a: true }  ✓
+ * { a: 3 }  ✓
+ * {} ✗
  */
 module.exports = {
   name: 'exist',

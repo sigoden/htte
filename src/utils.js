@@ -5,12 +5,14 @@ const _ = require('lodash')
 const path = require('path')
 const mkdir = require('mkdir')
 
+/**
+ * Help functions
+ */
 module.exports = {
   /**
    * load yaml file
    * @param {string} filePath - yaml file path
-   * @param {object} options - options to load yaml
-   * @returns {*} - object repersent yaml content
+   * @param {Object} options - options to load yaml
    */
   loadYamlSync: (filePath, options) => {
     let content = fs.readFileSync(filePath, 'utf8')
@@ -18,7 +20,8 @@ module.exports = {
   },
 
   /**
-   * Check Whether exist directory, sync
+   * Check Whether the directory exists, make directory if it does not
+   * @param {string} directoryPath - path of directory
    */
   directoryExistsSync: directoryPath => {
     try {
@@ -30,7 +33,9 @@ module.exports = {
   },
 
   /**
-   * Sort files on alphabet, directory commom fist than file
+   * Sort files on alphabet, directory in front of file
+   * @param {string[]} paths - array of file paths
+   * @param {string} sep - path seperator
    */
   sortFiles: (paths, sep = path.sep) => {
     return paths
@@ -48,7 +53,8 @@ module.exports = {
   },
 
   /**
-   * Make sure file exist on dist
+   * Ensure file existed
+   * @param {string} file - which file path
    */
   ensureFileSync: file => {
     let stats
@@ -71,7 +77,11 @@ module.exports = {
   recursiveReadSync,
 
   /**
-   * Convert an file path to relative path, and remove the ext
+   * Get the relative file path, then remove extension
+   * e.g. filePath is /tmp/a/b.yaml, directoryPath is /tmp/a, result is b
+   *
+   * @param {string} directoryPath - the path of directory of file
+   * @param {string} filePath - the path of file
    */
   shortenFilePath: (directoryPath, filePath) => {
     let relativePath = path.relative(directoryPath, filePath)
@@ -80,7 +90,10 @@ module.exports = {
   },
 
   /**
-   * Collect the param from url, like /post/{id}/comment/{cid} -> [id, cid]
+   * Collect url params from url
+   * e.g. /post/{id}/comment/{cid} -> [id, cid]
+   *
+   * @param {string} pathname - pathname of url
    */
   collectUrlParams: pathname => {
     const RE_URL_PARAM_VAR = /^\{.*\}$/
@@ -95,7 +108,10 @@ module.exports = {
   },
 
   /**
-   * Fill the params in url
+   * Fill the url params
+   * e.g. uri is /post/{id}/comment/{cid}, params is { id: 33, cid: 42}, result is /post/33/comment/42
+   * @param {string} uri - uri had hole
+   * @param {Object} params - parmas value
    */
   fillUrlParams: (uri, params) => {
     for (let k in params) {
@@ -118,6 +134,18 @@ module.exports = {
    */
   isValidHttpUrl: url => {
     return /^https?:\/\/[\w\-]+(\.[\w\-]+)*(:\d+)?(\/[\w\-]+)*\/?$/.test(url)
+  },
+
+  /**
+   * Generate random string
+   */
+  randomString: (length = 6) => {
+    let result = ''
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (let i = 0; i < length; i++) {
+      result += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return result
   },
 
   /**

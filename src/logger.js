@@ -1,15 +1,22 @@
 const _ = require('lodash')
-
 const { EOL } = require('os')
 
+const utils = require('./utils')
+
 const defaultOptions = { follow: false, indent: '  ', logFunc: console.log }
+
+/**
+ * Logger control how to print info
+ *
+ * @class Logger
+ */
 
 class Logger {
   /**
    * Create instance of Logger
    *
    * @param {string} title - title of logger
-   * @param {object} options - options of logger
+   * @param {Object} options - options of logger
    * @param {boolean} options.follow - immeridate call logFunc while receiving a new msg
    * @param {function} options.logFunc - function to process the log string
    */
@@ -26,17 +33,17 @@ class Logger {
 
   /**
    * Rename the title
-   * @param {string} title - The title of logger
+   * @param {string} title
    * @returns {Logger} - this
    */
   setTitle(title) {
-    this._title = title || '-'
+    this._title = title || utils.randomString()
     return this
   }
 
   /**
    * Override the options
-   * @param {object} opts - The options
+   * @param {Object} opts - The options
    * @returns {Logger} - this
    */
   setOptions(opts) {
@@ -60,6 +67,7 @@ class Logger {
 
   /**
    * Follow the msg when options follow is true
+   * @param {string} msg - The message to follow
    */
   _follow(msg) {
     if (this._isRoot()) {
@@ -95,14 +103,14 @@ class Logger {
   }
 
   /**
-   * Whether is a root logger
+   * Whether the logger is root
    */
   _isRoot() {
     return !this._parent
   }
 
   /**
-   * Get the chain of affected loggers when the focus changed
+   * Get the chain of affected loggers when changed focus
    *
    * a
    * +--b
@@ -128,7 +136,7 @@ class Logger {
   }
 
   /**
-   * Unfocus the children recursivelly
+   * Clear the cached focus recursivelly
    */
   _unfocusChildren() {
     this._children.forEach(l => {
@@ -138,7 +146,7 @@ class Logger {
   }
 
   /**
-   * Throw the msgs and children msgs as an error msg if any
+   * If logger have any message, then throw
    */
   tryThrow() {
     if (!this.dirty()) return
@@ -146,9 +154,8 @@ class Logger {
   }
 
   /**
-   * Merge the msgs and children msgs as an big string
-   *
-   * @param {boolean} collapse - indent to the root or indent to the current logger
+   * Concat the msgs and children msgs to string
+   * @param {Integer} level - how many level to indent
    */
   toString(level = this._level) {
     if (!this.dirty()) return ''
@@ -164,20 +171,26 @@ class Logger {
     return result
   }
 
-  // indent title line
+  /**
+   * Indent title line
+   * @param {Integer} level - how many level to indent
+   */
   _indentTitle(level = this._level) {
     if (this._isRoot()) this._followedRoot = true
     return this._opts.indent.repeat(level) + this._title + ':'
   }
 
-  // indent msg line
+  /**
+   * Indent msg line
+   * @param {Integer} level - how many level to indent
+   */
   _indentMsg(msg, level = this._level) {
     let _msg = msg.split(EOL)
     return _msg.map(v => this._opts.indent.repeat(level + 1) + v).join(EOL)
   }
 
   /**
-   * Select the child logger, if not find, create new one and enter
+   * Select the child logger, if it is not found, creates new one and returns it
    * @param {string} title - same as constructor
    *
    * @returns {Logger}
@@ -190,6 +203,7 @@ class Logger {
 
   /**
    * Create child logger
+   * @param {string} title - title of child logger
    */
   _createChild(title) {
     let child = new Logger(title, this._opts)
@@ -201,7 +215,7 @@ class Logger {
   }
 
   /**
-   * Select the parent logger
+   * Select parent logger, if the parent does not exist, returns it.
    */
   exit() {
     if (this._isRoot()) return this
@@ -209,7 +223,8 @@ class Logger {
   }
 
   /**
-   * Enter the child logger following the element of titles
+   * Enter logger sequentially
+   * @param {string[]} titles - chain of titles
    */
   enters(titles) {
     return titles.reduce((l, title) => {
@@ -219,13 +234,14 @@ class Logger {
 
   /**
    * Find the child by title
+   * @param {string} title  - title of child logger
    */
-  findChild(_title) {
-    return _.find(this._children, { _title })
+  findChild(title) {
+    return _.find(this._children, { _title: title })
   }
 
   /**
-   * Clear the msg recursivelly
+   * Clear the msgs recursivelly
    */
   clear() {
     this._msgs = []
@@ -233,7 +249,7 @@ class Logger {
   }
 
   /**
-   * Whether the logger have any msg or child has any msg recursivelly
+   * Whether the logger have any msg or children has any msg
    */
   dirty() {
     return !(this._msgs.length === 0 && this._children.every(child => !child.dirty()))

@@ -9,6 +9,9 @@ const SerializerManager = require('./serializer-manager')
 const HTTP_METHODS = ['get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'patch']
 const { URL } = require('url')
 
+const BUILTIN_SERIALIZERS = ['./serializers/json']
+const BUILTIN_PLUGINS = ['./plugins']
+
 const defaultConfig = {
   rootDir: '.',
   sessionFile: './.session',
@@ -21,9 +24,15 @@ const defaultConfig = {
   serializers: []
 }
 
+/**
+ * Main Config class
+ *
+ * @class Config
+ */
 class Config {
   /**
    * Create instance of Config
+   * @param {string} file - config file path
    */
   constructor(file) {
     this._file = path.resolve(file)
@@ -39,23 +48,37 @@ class Config {
   }
 
   /**
-   * Parse the yaml config, generate valid config value
+   * Parse the yaml file, generate configuration
+   * @param {Object} options - the raw config object
+   * @param {string} options.rootDir - the root directory of test files
+   * @param {string} options.sessionFile - the file to write session to
+   * @param {string} options.type - the type of default serializer
+   * @param {Integer} options.timeout - the timeout in millisecond of request
+   * @param {string} options.url - the base url of all endpoints
+   * @param {object|object[]} options.apis - the apis which describe endpoints
+   * @param {Object} options.variables - provide global linked data
+   * @param {string[]} options.plugins  - the plugins to regist
+   * @param {string[]} options.serializers  - the serializers to regist
    */
   _parse({ rootDir, sessionFile, type, timeout, url, apis, variables, plugins, serializers }) {
-    let logger = this._logger
-    this._rootDir = this._parseRootDir(rootDir, logger.enter('rootDir'))
-    this._sessionFile = this._parseSessionFile(sessionFile, logger.enter('sessionFile'))
-    this._timeout = this._parseTimeout(timeout, logger.enter('timeout'))
-    this._url = this._parseUrl(url, logger.enter('url'))
-    this._variables = this._parseVariables(variables, logger.enter('variables'))
-    this._plugins = this._parsePlugins(plugins, logger.enter('plugins'))
-    this._serializers = this._parseSerializers(serializers, logger.enter('serializers'))
-    this._type = this._parseType(type, logger.enter('type'))
-    this._apis = this._parseAPIs(apis, logger.enter('apis'))
+    let log = scope => this._logger.enter(scope)
+    this._rootDir = this._parseRootDir(rootDir, log('rootDir'))
+    this._sessionFile = this._parseSessionFile(sessionFile, log('sessionFile'))
+    this._timeout = this._parseTimeout(timeout, log('timeout'))
+    this._url = this._parseUrl(url, log('url'))
+    this._variables = this._parseVariables(variables, log('variables'))
+    this._plugins = this._parsePlugins(plugins, log('plugins'))
+    this._serializers = this._parseSerializers(serializers, log('serializers'))
+    this._type = this._parseType(type, log('type'))
+    this._apis = this._parseAPIs(apis, log('apis'))
   }
 
   /**
-   * Parse and check rootDir option
+   * Check `rootDir` options
+   * @param {string} rootDir - the rootDir directory of test files
+   * @param {Logger} logger
+   *
+   * @returns {string} - absolute directory path
    */
   _parseRootDir(rootDir, logger) {
     const _rootDir = path.resolve(path.dirname(this._file), rootDir)
@@ -64,7 +87,11 @@ class Config {
   }
 
   /**
-   * Parse and check sessionFile option
+   * Check `sessionFile` options, create if file does not exist
+   * @param {string} sessionFile - the rootDir directory of test files
+   * @param {Logger} logger
+   *
+   * @returns {string} - absolute session file path
    */
   _parseSessionFile(sessionFile, logger) {
     const _file = path.resolve(path.dirname(this._file), sessionFile)
@@ -77,7 +104,11 @@ class Config {
   }
 
   /**
-   * Parse and check type option
+   * Check `type` options
+   * @param {string} type - the type of default serializer
+   * @param {Logger} logger
+   *
+   * @returns {string} - the type of default serializer
    */
   _parseType(name, logger) {
     let serializer = this._serializerM.findByName(name)
@@ -86,7 +117,11 @@ class Config {
   }
 
   /**
-   * Parse and check timeout option
+   * Check `timeout` options
+   * @param {Integer} timeout - the timeout in millisecond of request
+   * @param {Logger} logger
+   *
+   * @returns {Integer} - the timeout in millisecond of request
    */
   _parseTimeout(timeout, logger) {
     if (_.isInteger(timeout)) return timeout
@@ -94,23 +129,41 @@ class Config {
   }
 
   /**
-   * Parse and check url option
+   * Check `url` options, prepend `http://` if it omits
+   * @param {string} url - the base url of all endpoints
+   * @param {Logger} logger
+   *
+   * @returns {string} - the base url of all endpoints
    */
   _parseUrl(url, logger) {
-    if (utils.isValidHttpUrl(url)) return url
-    let _url = 'http://' + url
+    let _url = /https?:\/\//.test(url) ? url : 'http://' + url
     if (utils.isValidHttpUrl(_url)) return _url
-    return logger.log(`${url} must be valid web url`)
+    return logger.log(`must be valid web url, not ${url}`)
   }
 
   /**
-   * Parse and check apis option
+   * Check `apis` options, normalize it to array of api object
+   * @param {object|object[]} apis - the apis which describe endpoints
+   * @param {Logger} logger
+   *
+   * apis:
+   *  login:
+   *    method: post
+   *    uri: /users/login
+   *  getUser: /user
+   *
+   * apis:
+   *  - name: login
+   *    method: post
+   *    uri: /users/login
+   *  - name: getUser
+   *    uri: /user
+   *
+   * @returns {APIObject[]} - array of api object
    */
   _parseAPIs(apis, logger) {
-    if (!this._url) {
-      logger.log('cannot parse apis because url is not correct')
-      return []
-    }
+    // url must be checked and valid
+    if (!this._url) return []
 
     let _apis
     switch (utils.type(apis)) {
@@ -124,15 +177,20 @@ class Config {
         return logger.log('must be array or object')
     }
 
-    // check name conflict of apis
+    // check whether two APIObject have same name
     let names = utils.duplicateElements(_apis.map(v => v.name))
-    if (names.length) return logger.log(`name conflict, ${names.join('|')}`)
+    if (names.length) return logger.log(`must have no conflict names ${names}`)
 
+    // filter out invalid APIObjects
     return _apis.map(v => this._modifyAPI(v, logger.enter(v.name))).filter(v => !!v)
   }
 
   /**
-   * Parse apis when apis options is object
+   * Normalize `apis` object to array of api object
+   * @param {Object} apis - the apis which describe endpoints
+   * @param {Logger} logger
+   *
+   * @returns {APIObject[]} - array of api object
    */
   _parseAPIsObject(apis, logger) {
     let func = (acc, value, key) => {
@@ -143,7 +201,7 @@ class Config {
           break
         case 'object':
           let { uri, method, type, timeout } = value
-          if (!uri) return logger.enter(key).log('must be object have property uri')
+          if (!uri) return logger.enter(key).log('must be object with property uri')
           api = { uri, method, name: key, type, timeout }
           break
         default:
@@ -155,7 +213,11 @@ class Config {
   }
 
   /**
-   * Parse apis when apis options is array
+   * Normalize `apis` array to array of api object
+   * @param {object[]} apis - the apis which describe endpoints
+   * @param {Logger} logger
+   *
+   * @returns {APIObject[]} - array of api object
    */
   _parseAPIsArray(apis, logger) {
     let mapFunc = (api, index) => {
@@ -165,129 +227,171 @@ class Config {
 
       let { name, uri, method, timeout, type } = api
       if (!name) return logger.enter(`[${index}]`).log('must have property name')
-      if (!uri) return logger.enter(`[${index}]${name}`).log('must have property uri')
+      if (!uri) return logger.enter(`[${index}](${name})`).log('must have property uri')
       return { name, uri, method, type, timeout }
     }
     return _.map(apis, mapFunc).filter(v => !!v)
   }
 
   /**
-   * Modify parsed api
+   * An object describes endpoint
+   * @typedef {Object} APIObject
+   * @property {string} url - the url of endpoint
+   * @property {string} method - the http method of endpoint
+   * @property {string} type - the serializer of endpoint
+   * @property {string} timeout - the timeout of request on the endpoint
+   * @property {string[]} keys - the params of url
+   */
+
+  /**
+   * Normalize api object
+   * @param {object} api - the raw api object
+   * @param {string} api.uri - the uri of endpoint
+   * @param {string|undefined} api.method - the http method of endpoint
+   * @param {string|undefined} api.type - the serializer of endpoint
+   * @param {string|undefined} api.timeout - the timeout of request on the endpoint
+   * @param {Logger} logger
+   *
+   * @returns {APIObject} - the normalized api object
    */
   _modifyAPI(api, logger) {
-    let _api = _.pick(api, ['name', 'method'])
-    // add property url, it's absolute url
-    if (api.uri.startsWith('/')) {
-      _api.url = this._url + api.uri
-    } else {
-      _api.url = api.uri
-    }
+    let _api = {}
 
-    // check url
-    let url
-    try {
-      url = new URL(_api.url)
-    } catch (err) {
-      return logger.log(`invalid url at ${_api.uri}`)
-    }
+    _api.name = api.name
 
-    _api.timeout = api.timeout || this._timeout
-
-    // check type
-    _api.type = api.type || this._type
-    if (!this.findSerializer(_api.type)) {
-      return logger.log(`must be one of ${this._serializerM.names()}`)
-    }
-
-    _api.keys = utils.collectUrlParams(decodeURIComponent(url.pathname))
-    // default http method
-    _api.method = _api.method || 'get'
-
+    _api.method = (api.method || 'get').toLowerCase()
     if (HTTP_METHODS.indexOf(_api.method) < 0) {
-      return logger.log(`invalid http method ${_api.method}`)
+      return logger.enter('method').log(`must be valid http method, not ${_api.method}`)
     }
+
+    let urlObject
+    try {
+      urlObject = checkUrl(api.uri, this._url)
+      _api.url = decodeURIComponent(urlObject.href)
+      // collect url params
+      // e.g. localhost/articles/{slug}/comments/{id} => ['slug', 'id']
+      _api.keys = utils.collectUrlParams(decodeURIComponent(urlObject.pathname))
+    } catch (err) {
+      logger.enter('url').log(err.message)
+    }
+
+    _api.timeout = this._parseTimeout(api.timeout || this._timeout, logger.enter('timeout'))
+
+    _api.type = this._parseType(api.type || this._type, logger.enter('type'))
+
     return _api
   }
 
   /**
-   * Parse and check variables option
+   * Check `variables` options
+   * @param {Object} variables - provide global linked data
+   * @param {Logger} logger
+   *
+   * @returns {Object} - an object which provides global linked data
    */
   _parseVariables(variables, logger) {
-    if (!utils.isTypeOf(variables, ['object', 'undefined'])) return logger.log('must be object')
+    if (!utils.isTypeOf(variables, 'object')) return logger.log('must be object')
     return variables
   }
 
   /**
-   * Parse the plugins option
+   * Check `plugins` option
+   * @param {string[]} plugins  - the plugins to regist
+   * @param {Logger} logger
+   *
+   * plugins is a list of node modules, each module exports
+   * an object like this:
+   *
+   * {
+   *   differ: [
+   *     { name: 'query', kind: 'scalar', handler: (context, literal, actual) { ... } }
+   *     ...
+   *   ],
+   *   resolver: [
+   *     { name: 'query', kind: 'scalar', handler: (context, literal) { ... } }
+   *     ...
+   *   ]
+   * }
+   *
+   * @returns {string[]} - the name of registed plugins
    */
   _parsePlugins(plugins, logger) {
     if (!utils.isTypeOf(plugins, 'array')) return logger.log('must be array')
-    plugins = ['./plugins'].concat(plugins)
-    plugins.forEach(pluginPath => {
-      let plugin
-      let pluginLogger = logger.enter(pluginPath)
+    plugins = BUILTIN_PLUGINS.concat(plugins)
+    plugins.forEach(path => {
+      let pluginModule
+      let scopedLogger = logger.enter(path)
       try {
-        plugin = require(pluginPath)
+        pluginModule = require(path)
       } catch (err) {
-        return pluginLogger.log(`cannot load plugin at ${pluginPath}, ${err.message}`)
+        return scopedLogger.log(`cannot be required`)
       }
-      if (!utils.isTypeOf(plugin, 'object')) {
-        return pluginLogger.log('must be object have property differ or resolver')
+      if (!utils.isTypeOf(pluginModule, 'object')) {
+        return scopedLogger.log('must be object')
       }
-      let doRegistDiffer = this._loadPlugins('differ', plugin.differ, pluginLogger.enter('differ'))
-      let doRegistResolver = this._loadPlugins('resolver', plugin.resolver, pluginLogger.enter('resolver'))
-      if (!doRegistDiffer && !doRegistResolver) {
-        return pluginLogger.log('cannot regist any plugin')
-      }
+      this._registPlugins('differ', pluginModule.differ, scopedLogger.enter('differ'))
+      this._registPlugins('resolver', pluginModule.resolver, scopedLogger.enter('resolver'))
     })
     return this._pluginM.names()
   }
 
   /**
-   * Load each plugin
+   * Regist plugins
+   * @param {string} type - type of plugins, one of [differ, resolver]
+   * @param {object[]} plugins  - array of plugins to regist
+   * @param {Logger} logger
    */
-  _loadPlugins(type, plugins, logger) {
-    if (!utils.isTypeOf(plugins, ['array', 'undefined'])) {
-      return logger.log('must be array')
-    }
-    if (!plugins) return
-    let registed
+  _registPlugins(type, plugins = [], logger) {
+    if (!utils.isTypeOf(plugins, 'array')) return logger.log('must be array')
+
     plugins.forEach((plugin, index) => {
-      let pluginLogger = logger.enter(`[${index}]`)
+      let scopedLogger = logger.enter(`[${index}]`)
       if (!utils.isTypeOf(plugin, 'object')) {
-        return pluginLogger.log('must be object')
+        return scopedLogger.log('must be object')
       }
       plugin.type = type
       try {
         this._pluginM.regist(plugin)
-        registed = true
       } catch (err) {
-        pluginLogger.log(`cannot regist plugin, ${err.message}`)
+        scopedLogger.log(err.message)
       }
     })
-    return registed
   }
 
   /**
-   * Parse serializer options
+   * Check `serializers` options
+   * @param {string[]} serializers  - the serializers to regist
+   * @param {Logger} logger
+   *
+   * serializers is a list of node modules, each module exports
+   * an object like this:
+   *
+   * {
+   *   name: 'json', // name of plugin
+   *   type: 'application/json', // mime type of serializer
+   *   serialize: (object, apiName) => {...}, // method to serialize object
+   *   deserialize: (data, apiName) => {...} // method to deserialize data
+   * }
+   *
+   * @returns {string[]} - the name of registed serializers
    */
   _parseSerializers(serializers, logger) {
-    if (!utils.isTypeOf(serializers, ['array', 'undefined'])) {
+    if (!utils.isTypeOf(serializers, ['array'])) {
       return logger.log('must be array')
     }
-    serializers = ['./serializers/json'].concat(serializers)
-    serializers.forEach(serializerPath => {
-      let serializer
-      let serializerLogger = logger.enter(serializerPath)
+    serializers = BUILTIN_SERIALIZERS.concat(serializers)
+    serializers.forEach(path => {
+      let serializerModule
+      let scopedLogger = logger.enter(path)
       try {
-        serializer = require(serializerPath)
+        serializerModule = require(path)
       } catch (err) {
-        return serializerLogger.log(`cannot load serializer, ${err.message}`)
+        return scopedLogger.log(`cannot be required`)
       }
       try {
-        this._serializerM.regist(serializer)
+        this._serializerM.regist(serializerModule)
       } catch (err) {
-        serializerLogger.log(`cannot regist serializer, ${err.message}`)
+        scopedLogger.log(err.message)
       }
     })
     return this._serializerM.names()
@@ -295,47 +399,62 @@ class Config {
 
   /**
    * Get the config file path
+   *
+   * @returns {string}
    */
   file() {
     return this._file
   }
 
   /**
-   * Get the parsed rootDir option
+   * Get the root directory of test files
+   *
+   * @returns {string}
    */
   rootDir() {
     return this._rootDir
   }
 
   /**
-   * Get the parsed variables option
+   * Get the variables to query global linked data
+   *
+   * @returns {Object}
    */
   variables() {
     return this._variables
   }
 
+  /**
+   * Get the session file path
+   *
+   * @returns {string}
+   */
   sessionFile() {
     return this._sessionFile
   }
 
   /**
    * Find the api object by name
+   * @param {string} name - the name of APIObject
+   *
+   * @returns {APIObject}
    */
   findAPI(name) {
     return _.find(this._apis, { name })
   }
 
   /**
-   * Find the serializer by type
+   * Find the serializer by name or type
+   * @param {string} nameOrType - name or type of serializer
    */
-  findSerializer(type) {
-    type = type || this._type
-    let m = this._serializerM
-    return m.findByName(type) || m.findByType(type)
+  findSerializer(nameOrType) {
+    nameOrType = nameOrType || this._type
+    let manager = this._serializerM
+    return manager.findByName(nameOrType) || manager.findByType(nameOrType)
   }
 
   /**
-   * Get the schema for loading yaml
+   * Get the yaml schema used to load test files
    */
   schema() {
     if (this._schema) return this._schema
@@ -349,12 +468,23 @@ class Config {
   }
 }
 
+// load config object from yaml file
 function loadConfig(configFile) {
   try {
     return utils.loadYamlSync(configFile)
   } catch (err) {
     err.message = `can not load config file ${configFile}, ${err.message}`
     throw err
+  }
+}
+
+// concat baseUrl if uri is relative and check wheter url is valid
+function checkUrl(uri, baseUrl) {
+  let url = uri.startsWith('/') ? baseUrl + uri : uri
+  try {
+    return new URL(url)
+  } catch (err) {
+    throw new Error(`must be valid web url, not ${url}`)
   }
 }
 

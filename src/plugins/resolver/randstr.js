@@ -1,5 +1,17 @@
 /**
  * Generate random string
+ * @argument {Integer} length - length of random string
+ *
+ * e.g.
+ *
+ * !$randstr
+ * 8asVsd
+ *
+ * !$randstr
+ * Adsf7v
+ *
+ * !$randstr 8
+ * bnYdsf7s
  */
 module.exports = {
   name: 'randstr',

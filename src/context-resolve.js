@@ -1,20 +1,34 @@
 const resolve = require('./resolve')
 
+/**
+ * Context used to resolve value
+ *
+ * @class ContextResolve
+ */
 class ContextResolve {
+  /**
+   * Create instance of ContextResolve
+   * @param {function} query - function to query linked data
+   * @param {Logger} logger
+   */
   constructor(query, logger) {
     this._query = query
     this._logger = logger
   }
 
   /**
-   * Resolve the literal value
+   * Resolve the expect value
+   * @param {ContextResolve} context - scoped context
+   * @param {*} expect - expect value
    */
   resolve(context, expect) {
     return resolve(context, expect)
   }
 
   /**
-   * Query the variable
+   * Query the linked data
+   * @param {string|*} path - jsonpath to linked data or any value
+   * @param {boolean} single - whether returns single value or array
    */
   query(path, single = true) {
     return this._query(path, single)
@@ -28,7 +42,7 @@ class ContextResolve {
   }
 
   /**
-   * Clear the error msg
+   * Clear all error msgs
    */
   clearLog() {
     return this._logger.clear()
@@ -42,7 +56,7 @@ class ContextResolve {
   }
 
   /**
-   * Enter the scoped logger
+   * Enter the scoped context
    */
   enter(title) {
     return new ContextResolve(this._query, this._logger.enter(title))

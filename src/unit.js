@@ -6,9 +6,41 @@ const yaml = require('js-yaml')
 const utils = require('./utils')
 const DELIMITER = '-'
 
+/**
+ * UnitModule parse a unit data object as Unit instance
+ *
+ * unit data object is:
+ *
+ * describe: test unit
+ * api: getModel
+ * name: unitName
+ * req:
+ *  headers:
+ *    Authorization: Bearer ...
+ *  query:
+ *    page: 3
+ *    size: 20
+ *  params:
+ *    id: 33
+ *  body:
+ *    key: value
+ * res:
+ *  status: 200
+ *  headers:
+ *    Content-Type: application/json
+ *  body:
+ *    key: value
+ *
+ * @class Unit
+ */
 class Unit {
   /**
    * Create instance of unit
+   * @param {Object} template - data to be parsed
+   * @param {Config} config
+   * @param {Logger} logger
+   * @param {Scope} scope
+   * @param {UnitModule} module
    */
   constructor(template, config, logger, scope, module) {
     this._config = config
@@ -24,14 +56,14 @@ class Unit {
   }
 
   /**
-   * Whether unit model is valid
+   * Whether unit instance is valid
    */
   valid() {
     return !this._logger.dirty()
   }
 
   /**
-   * Get unit name
+   * Get unit's name
    */
   name() {
     if (!this._name) {
@@ -52,21 +84,21 @@ class Unit {
   }
 
   /**
-   * Get unit's api
+   * Get unit's APIObject
    */
   api() {
     return this._api
   }
 
   /**
-   * Get unit's qualified name, global unique
+   * Get unit's qualified name, unique in htte project
    */
   id() {
     return this.module() + DELIMITER + this.name()
   }
 
   /**
-   * Get dependencies of unit, inherit from module
+   * Get unit's dependencies, inherited from module
    */
   dependencies() {
     return this._module.dependencies()
@@ -80,16 +112,20 @@ class Unit {
   }
 
   /**
-   * Validate api
+   * Check and retrive APIObject
+   * @param {string} api - name of APIObject
+   * @param {Logger} logger
    */
   _parseAPI(api, logger) {
     let _api = this._config.findAPI(api)
-    if (_api) return _api
-    logger.log(`cannot find api ${api}`)
+    if (!_api) return logger.log(`cannot find api ${api}`)
+    return _api
   }
 
   /**
-   * Validate req
+   * Check and parse request data object
+   * @param {Object} req - data to generate request object
+   * @param {Logger} logger
    */
   _parseReq(req, logger) {
     let type = utils.type(req)
@@ -126,15 +162,23 @@ class Unit {
   }
 
   /**
-   * Validate req code
+   * Validate http status code
+   * @param {Integer} status - http status code
+   * @param {Logger} logger
    */
   _maybeStatus(status, logger) {
-    if (!_.isInteger(status)) return logger.log('must be http code')
+    if (!_.isInteger(status)) return logger.log('must be valid http code')
     return status
   }
 
   /**
-   * Validate req params, params sholud match url params
+   * Validate url params then complete the url
+   *
+   * if url is http://localhost:3000/articles/{slug}/comments/{id}, params is { slug: how-to, id: 33 },
+   * the completed url will be http://localhost:3000/articles/how-to/comments/33
+   *
+   * @param {Object} params - http status code
+   * @param {Logger} logger
    */
   _parseReqParams(params, logger) {
     if (!this._api) return
@@ -145,14 +189,14 @@ class Unit {
     }
 
     let apiKeys = this._api.keys
-    if (!params && apiKeys.length) return logger.log('must have property [params]')
+    if (!params && apiKeys.length) return logger.log('must have property params')
 
     let keys = _.keys(params).sort()
     let excludes = _.difference(apiKeys, keys)
     let includes = _.difference(keys, apiKeys)
     let errMsg = ``
     if (excludes.length) {
-      errMsg += `, missed ${excludes.join('|')}`
+      errMsg += `, need ${excludes.join('|')}`
     }
     if (includes.length) {
       errMsg += `, extra ${includes.join('|')}`
@@ -164,7 +208,9 @@ class Unit {
   }
 
   /**
-   * Validate res
+   * Check and parse expected response data object
+   * @param {Object} req - data used to diff response
+   * @param {Logger} logger
    */
   _parseRes(res, logger) {
     let _res = {}
@@ -196,7 +242,7 @@ class Unit {
   }
 
   /**
-   * Execute the test case
+   * Execute the test, make request and collect response
    *
    * @param {Context} ctx - execution environment
    *
@@ -228,7 +274,10 @@ class Unit {
   }
 
   /**
-   * print req and res when debug
+   * Print req and res data
+   * @param {*} req - req data of the unit
+   * @param {*} res - res data of the unit
+   * @param {Logger} logger
    */
   debug(req, res, logger) {
     if (!this._axios) {
@@ -255,6 +304,7 @@ class Unit {
 
   /**
    * View unit
+   * @param {Logger} logger
    */
   view(logger) {
     let viewLogger = logger.enter(this.module()).enters(this.describes())

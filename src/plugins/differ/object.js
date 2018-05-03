@@ -1,5 +1,14 @@
 /**
- * Object differ assert the target is object, and diff the property provided
+ * Object differ asserts the target is object, and specific properties match
+ *
+ * e.g.
+ *
+ * value: !@object
+ *  a: 3
+ *
+ * { a: 3, b: 4 }  ✓
+ * { a: 3 }  ✓
+ * {}  ✗
  */
 module.exports = {
   name: 'object',
