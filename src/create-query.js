@@ -7,19 +7,19 @@ const RE_VAR = /^\${1,4}/
  * Create query function to query linked data
  *
  * @params {Object} unitsData - all units req and res data
- * @params {Object} configData - data from config
+ * @params {Object} configExports - data from config
  * @params {Unit} unit
  *
  * linked-data query pattern:
  * - $auth.signup1.res.body.token - cross module (unitsData)
  * - $$signup1.res.body.token - current module (unitsData)
  * - $$$res.body.id - current unit (unitsData)
- * - $$$$a.b.c - everywhere (configData)
+ * - $$$$a.b.c - everywhere (configExports)
  *
  *
  * @returns {function}
  */
-module.exports = function createQuery(unitsData, configData, unit) {
+module.exports = function createQuery(unitsData, configExports, unit) {
   let currentData = selectUnitsData(unitsData, unit)
 
   return (value, single = true) => {
@@ -27,7 +27,7 @@ module.exports = function createQuery(unitsData, configData, unit) {
     let jPath = toJPath(value, unit)
     let data
     if (isLinkConfigData(value)) {
-      data = configData
+      data = configExports
     } else {
       let module = unit.module()
       currentData[module] = unitsData[module]
@@ -39,7 +39,7 @@ module.exports = function createQuery(unitsData, configData, unit) {
 
 /**
  * Whether path is actually a link.
- * A link is string and start with 1-4 dollar mark, respent a pointer to unitsData or configData
+ * A link is string and start with 1-4 dollar mark, respent a pointer to unitsData or configExports
  *
  * @param {string} path - path to locate the data
  *
@@ -59,7 +59,7 @@ function count$(path) {
 }
 
 /**
- * Whether path is actually a link to configData.
+ * Whether path is actually a link to configExports.
  * @param {string} path - path to locate the data
  *
  * @returns {boolean}

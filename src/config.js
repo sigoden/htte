@@ -19,7 +19,7 @@ const defaultConfig = {
   timeout: 1000,
   url: 'http://localhost:3000',
   apis: {},
-  variables: {},
+  exports: {},
   plugins: [],
   serializers: []
 }
@@ -56,17 +56,17 @@ class Config {
    * @param {Integer} options.timeout - the timeout in millisecond of request
    * @param {string} options.url - the base url of all endpoints
    * @param {object|object[]} options.apis - the apis which describe endpoints
-   * @param {Object} options.variables - provide global linked data
+   * @param {Object} options.exports - exports data
    * @param {string[]} options.plugins  - the plugins to regist
    * @param {string[]} options.serializers  - the serializers to regist
    */
-  _parse({ rootDir, sessionFile, type, timeout, url, apis, variables, plugins, serializers }) {
+  _parse({ rootDir, sessionFile, type, timeout, url, apis, exports, plugins, serializers }) {
     let log = scope => this._logger.enter(scope)
     this._rootDir = this._parseRootDir(rootDir, log('rootDir'))
     this._sessionFile = this._parseSessionFile(sessionFile, log('sessionFile'))
     this._timeout = this._parseTimeout(timeout, log('timeout'))
     this._url = this._parseUrl(url, log('url'))
-    this._variables = this._parseVariables(variables, log('variables'))
+    this._exports = this._parseExports(exports, log('exports'))
     this._plugins = this._parsePlugins(plugins, log('plugins'))
     this._serializers = this._parseSerializers(serializers, log('serializers'))
     this._type = this._parseType(type, log('type'))
@@ -283,15 +283,13 @@ class Config {
   }
 
   /**
-   * Check `variables` options
-   * @param {Object} variables - provide global linked data
+   * Check `exports` options
+   * @param {Object} data - exports data
    * @param {Logger} logger
-   *
-   * @returns {Object} - an object which provides global linked data
    */
-  _parseVariables(variables, logger) {
-    if (!utils.isTypeOf(variables, 'object')) return logger.log('must be object')
-    return variables
+  _parseExports(data, logger) {
+    if (!utils.isTypeOf(data, 'object')) return logger.log('must be object')
+    return data
   }
 
   /**
@@ -416,12 +414,12 @@ class Config {
   }
 
   /**
-   * Get the variables to query global linked data
+   * Get the exports to query global linked data
    *
    * @returns {Object}
    */
-  variables() {
-    return this._variables
+  exports() {
+    return this._exports
   }
 
   /**

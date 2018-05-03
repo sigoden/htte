@@ -3,7 +3,7 @@ const jsonpath = require('jsonpath')
 const utils = require('./utils')
 const diff = require('./diff')
 const resolve = require('./resolve')
-const createQuery = require('./query-variable')
+const createQuery = require('./create-query')
 const ContextDiff = require('./context-diff')
 const ContextResolve = require('./context-resolve')
 
@@ -21,7 +21,7 @@ class Context {
     this._session = session
     this._config = config
     this._logger = logger
-    this._query = createQuery(this._session.records(), this._config.variables(), this._unit)
+    this._query = createQuery(this._session.records(), this._config.exports(), this._unit)
   }
 
   /**

@@ -1,4 +1,4 @@
-const createQuery = require('../../src/query-variable')
+const createQuery = require('../../src/create-query')
 
 describe('Test query', () => {
   describe('cross-module linked data', () => {

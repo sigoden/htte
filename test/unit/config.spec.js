@@ -20,7 +20,7 @@ describe('Test Config', () => {
     expect(config._type).toEqual('json')
     expect(config._url).toBe('http://localhost:3000/api')
     expect(config._apis).toEqual(require(resolveFixtureFile('./config/realworld.api.json')))
-    expect(config._variables).toEqual({})
+    expect(config._exports).toEqual({})
     expect(config._plugins).toBeInstanceOf(Array)
     expect(config._serializers).toBeInstanceOf(Array)
   })
@@ -404,19 +404,19 @@ describe('Test parse function', () => {
       expect(api.keys).toEqual(['id', 'slug'])
     })
   })
-  describe('_parseVariables', () => {
+  describe('_parseExports', () => {
     test('should return {} when omitted', () => {
       let { config, logger } = init()
       let value = {}
-      let variables = config._parseVariables(value, logger)
-      expect(variables).toBe(value)
+      let exportsData = config._parseExports(value, logger)
+      expect(exportsData).toBe(value)
     })
-    test('log error when variables is not object', () => {
+    test('log error when exports is not object', () => {
       let { config, logger } = init()
       let value = null
-      let scopedLogger = logger.enter('variables')
-      let variables = config._parseVariables(value, scopedLogger)
-      expect(scopedLogger.toString()).toBe(`  variables:
+      let scopedLogger = logger.enter('exports')
+      let exportsData = config._parseExports(value, scopedLogger)
+      expect(scopedLogger.toString()).toBe(`  exports:
     must be object
 `)
     })
@@ -564,9 +564,9 @@ describe('public functions', () => {
       expect(config.sessionFile()).toEqual('/tmp/realworld.session')
     })
   })
-  describe('#variables', () => {
-    test('return object which provides global linked data', () => {
-      expect(config.variables()).toEqual({})
+  describe('#exports', () => {
+    test('return exports data object', () => {
+      expect(config.exports()).toEqual({})
     })
   })
   describe('#findAPI', () => {

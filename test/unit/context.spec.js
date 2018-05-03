@@ -1,7 +1,7 @@
 const Context = require('../../src/context')
 const Logger = require('../../src/logger')
 
-jest.mock('../../src/query-variable', () => jest.fn().mockReturnValue(jest.fn()))
+jest.mock('../../src/create-query', () => jest.fn().mockReturnValue(jest.fn()))
 
 describe('Test Context', () => {
   describe('constructor', () => {
@@ -12,7 +12,7 @@ describe('Test Context', () => {
       expect(context._config).toBe(config)
       expect(context._logger).toBe(logger)
       expect(session.records.mock.calls).toHaveLength(1)
-      expect(config.variables.mock.calls).toHaveLength(1)
+      expect(config.exports.mock.calls).toHaveLength(1)
     })
   })
   describe('logger', () => {
@@ -96,7 +96,7 @@ describe('Test Context', () => {
 function init() {
   let unit = {}
   let session = { records: jest.fn(), writeUnit: jest.fn() }
-  let config = { variables: jest.fn() }
+  let config = { exports: jest.fn() }
   let logger = new Logger('RunUnits', { follow: true, logFunc: jest.fn() }).enter('test1')
   let context = new Context(unit, session, config, logger)
   return { unit, session, config, logger, context }
