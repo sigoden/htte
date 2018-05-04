@@ -8,6 +8,6 @@ require('yargs')
   .option('c', {
     description: 'set config file',
     alias: 'config',
-    default: '.htte.yaml'
+    default: 'htte.yaml'
   })
   .help().argv
