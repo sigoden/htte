@@ -305,7 +305,7 @@ res: {}
         logger: () => new Logger(),
         diffRes: () => true
       }
-      let response = { status: 200, headers: {}, data: { content: 'good!' } }
+      let response = { status: 200, headers: { 'content-type': 'application/json' }, data: { content: 'good!' } }
       let mockAxios = require('axios').mockImplementation(() => Promise.resolve(response))
       let { unit, logger } = createUnit2()
       return unit.execute(ctx).then(result => {
@@ -326,7 +326,11 @@ res: {}
         logger: () => new Logger(),
         diffRes: () => true
       }
-      let response = { status: 400, headers: {}, data: { code: 'NOT AUTHORIZATION' } }
+      let response = {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
+        data: { code: 'NOT AUTHORIZATION' }
+      }
       let mockAxios = require('axios').mockImplementation(() => Promise.reject({ response }))
       let { unit, logger } = createUnit2()
       return unit.execute(ctx).then(result => {
@@ -606,6 +610,35 @@ describe('private function', () => {
       })
     })
   })
+  describe('_deserialize', () => {
+    test('should return data if serializer did not regist', () => {
+      let { unit } = createUnit1()
+      let data = 'content: good'
+      unit._config.findSerializer = jest.fn().mockImplementation(() => {})
+      let result = unit._deserialize(data, 'application/yaml')
+      expect(result).toBe(data)
+    })
+    test('should return data if serializer is json', () => {
+      let { unit } = createUnit1()
+      let data = { content: 'good' }
+      let result = unit._deserialize(data, 'application/json')
+      expect(result).toBe(data)
+    })
+    test('should deserialize data if serializer registed', () => {
+      let { unit } = createUnit1()
+      let data = 'content: good'
+      let mockDeserializedData = { content: 'good' }
+      let deserializeFunc = jest.fn().mockImplementation(() => mockDeserializedData)
+      unit._config.findSerializer = jest.fn().mockImplementation(() => {
+        return {
+          deserialize: deserializeFunc
+        }
+      })
+      let result = unit._deserialize(data, 'application/yaml')
+      expect(result).toBe(mockDeserializedData)
+      expect(deserializeFunc).toHaveBeenCalledWith(data, unit._api.name)
+    })
+  })
 })
 
 function init(options) {
@@ -637,7 +670,9 @@ function init(options) {
       _api === api
         ? { keys: apiKeys, name: api, url: apiUrl, method: apiMethod || 'get', timeout: 1000, type }
         : undefined,
-    findSerializer: type => (type === 'json' || type === undefined ? JSONSerializer : undefined)
+    findSerializer: type => {
+      return type === 'json' || type === 'application/json' || type === undefined ? JSONSerializer : undefined
+    }
   }
   let logger = new Logger('LoadUnits').enter(moduleName)
   let scopedLogger = scopeDescribes.reduce((logger, describe, index) => {
