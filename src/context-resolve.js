@@ -17,12 +17,12 @@ class ContextResolve {
   }
 
   /**
-   * Resolve the expect value
+   * Resolve the literal value
    * @param {ContextResolve} context - scoped context
-   * @param {*} expect - expect value
+   * @param {*} literal - literal value
    */
-  resolve(context, expect) {
-    return resolve(context, expect)
+  resolve(context, literal) {
+    return resolve(context, literal)
   }
 
   /**

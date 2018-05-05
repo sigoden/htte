@@ -16,14 +16,14 @@ class ContextDiff {
   }
 
   /**
-   * Diff the expect and actual value
+   * Diff the literal and actual value
    * @param {ContextDiff} context - scoped context
-   * @param {*} expect - expect value
+   * @param {*} literal - literal value
    * @param {*} actual - actual value
    * @param {boolean} isStrict - whether enables strict mode
    */
-  diff(context, expect, actual, isStrict = true) {
-    return diff(context, expect, actual, isStrict)
+  diff(context, literal, actual, isStrict = true) {
+    return diff(context, literal, actual, isStrict)
   }
 
   /**
