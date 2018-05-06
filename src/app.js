@@ -60,8 +60,9 @@ class App {
       units = this._units.slice(cursor)
     }
 
-    let logger = new Logger('RunUnits', { follow: true, logFunc: this._print })
+    let logger = new Logger('RunUnits')
 
+    let lastUnitLogger
     this._runExitCode = 0
     return units
       .reduce((promise, unit) => {
@@ -76,6 +77,14 @@ class App {
                 this._session.setCursor(cursor)
               }
             }
+            let printLogger
+            if (!lastUnitLogger) {
+              printLogger = logger
+            } else {
+              printLogger = Logger.subtract(unitLogger, lastUnitLogger)
+            }
+            this._print(_.trimEnd(printLogger.toString()))
+            lastUnitLogger = unitLogger
             return v
           })
         })

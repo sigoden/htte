@@ -5,22 +5,17 @@ describe('Test Logger', () => {
     let logger = new Logger()
     expect(logger._title).toMatch(/^\w{6}$/)
     expect(logger._opts).toEqual({
-      follow: false,
-      indent: '  ',
-      logFunc: console.log
+      indent: '  '
     })
     expect(logger._msgs).toEqual([])
     expect(logger._level).toEqual(0)
     expect(logger._children).toEqual([])
-    expect(logger._index).toEqual(-1)
-    expect(logger._focus).toEqual(-1)
   })
   test('custom options', () => {
     let options = { indent: '\t' }
     let logger = new Logger('test', options)
     expect(logger._title).toBe('test')
     expect(logger._opts.indent).toBe(options.indent)
-    expect(logger._opts.follow).toBe(false)
   })
 })
 
@@ -166,6 +161,9 @@ describe('public function', () => {
       expect(childLogger.toString(0)).toBe(`child:
   msg
 `)
+      expect(childLogger.toString(2)).toBe(`    child:
+      msg
+`)
     })
   })
   describe('tryThrow', () => {
@@ -182,35 +180,9 @@ describe('public function', () => {
   describe('log', () => {
     test('should log the message', () => {
       let logger = new Logger('logger')
-      expect(logger.log('msg')).toBeUndefined()
-    })
-    test('should log the message when option `follow` is enabled', () => {
-      let logFn = jest.fn()
-      let logger = new Logger('logger', { follow: true, logFunc: logFn })
-      logger.log('msg')
-      expect(logFn.mock.calls).toEqual([['logger:'], ['  msg']])
-      logger.log('msg2')
-      expect(logFn.mock.calls).toEqual([['logger:'], ['  msg'], ['  msg2']])
-    })
-    test('should take care of title reusing', () => {
-      let logFn = jest.fn()
-      let logger = new Logger('logger', { follow: true, logFunc: logFn })
-      let logger1 = logger.enters(['a', 'b', 'c'])
-      logger1.log('msg')
-      let logger2 = logger.enters(['a', 'd', 'b'])
-      logger2.log('msg2')
-      logger1.log('msg3')
-      expect(logFn.mock.calls.join('\n')).toBe(`logger:
-  a:
-    b:
-      c:
-        msg
-    d:
-      b:
-        msg2
-    b:
-      c:
-        msg3`)
+      let result = logger.log('msg')
+      expect(logger._msgs).toEqual(['msg'])
+      expect(result).toBeUndefined()
     })
   })
   describe('clear', () => {
@@ -221,6 +193,31 @@ describe('public function', () => {
       logger2.log('msg')
       logger1.clear()
       expect(logger1.dirty()).toBe(false)
+    })
+  })
+  describe('path', () => {
+    test('get the path from root logger', () => {
+      expect(new Logger('a').path()).toEqual(['a'])
+      expect(new Logger('a').enters(['b', 'c', 'd']).path()).toEqual(['a', 'b', 'c', 'd'])
+    })
+  })
+})
+
+describe('static function', () => {
+  describe('subtract', () => {
+    test('should subtract the common parts', () => {
+      let root = new Logger('root')
+      let logger1 = root.enters(['a', 'b', 'c'])
+      let logger2 = root.enters(['a', 'b', 'd'])
+      expect(Logger.subtract(logger1, logger2)).toBe(logger1)
+      expect(Logger.subtract(logger2, logger1)).toBe(logger2)
+    })
+    test('should subtract the common parts', () => {
+      let root = new Logger('root')
+      let logger1 = root.enters(['a', 'b', 'c', 'd'])
+      let logger2 = root.enters(['a', 'b', 'd', 'e'])
+      expect(Logger.subtract(logger1, logger2)).toBe(logger1.exit())
+      expect(Logger.subtract(logger2, logger1)).toBe(logger2.exit())
     })
   })
 })

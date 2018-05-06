@@ -61,9 +61,8 @@ class Context {
    */
   resolveReq(req) {
     if (utils.isTypeOf(req, 'undefined')) return {}
-    let logger = this._logger.enter('req').setOptions({ follow: false })
+    let logger = this._logger.enter('req')
     let result = resolve(new ContextResolve(this._query, logger), req)
-    if (logger.dirty()) return compactLog(logger)
     return result
   }
 
@@ -74,7 +73,7 @@ class Context {
    * @returns {boolean} - Whether pass
    */
   diffRes(expect, res) {
-    let logger = this._logger.enter('res').setOptions({ follow: false })
+    let logger = this._logger.enter('res')
     let ctx = new ContextDiff(this._query, logger)
     let [statusDiffed, headersDiffed, bodyDiffed] = [true, true, true]
     let diffStatusOrBody = false
@@ -92,15 +91,8 @@ class Context {
     if (!diffStatusOrBody && res.status > 299) {
       return ctx.enter('status').error('not good')
     }
-    if (logger.dirty()) compactLog(logger)
     return statusDiffed && headersDiffed && bodyDiffed
   }
-}
-
-function compactLog(logger) {
-  let errMsg = logger.toString(0)
-  logger.clear()
-  return logger.exit().log(errMsg.trim())
 }
 
 module.exports = Context

@@ -42,7 +42,7 @@ describe('Test Context', () => {
     test('log error when resolving', () => {
       let { context, logger } = init()
       let req = { a: (context, literal) => context.error('something wrong') }
-      expect(context.resolveReq(req)).toBeUndefined()
+      expect(context.resolveReq(req)).toBeDefined()
       expect(logger.toString()).toBe(`  test1:
     req:
       a:
@@ -97,7 +97,7 @@ function init() {
   let unit = {}
   let session = { records: jest.fn(), writeUnit: jest.fn() }
   let config = { exports: jest.fn() }
-  let logger = new Logger('RunUnits', { follow: true, logFunc: jest.fn() }).enter('test1')
+  let logger = new Logger('RunUnits').enter('test1')
   let context = new Context(unit, session, config, logger)
   return { unit, session, config, logger, context }
 }

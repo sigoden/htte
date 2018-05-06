@@ -3,7 +3,7 @@ const { EOL } = require('os')
 
 const utils = require('./utils')
 
-const defaultOptions = { follow: false, indent: '  ', logFunc: console.log }
+const defaultOptions = { indent: '  ' }
 
 /**
  * Logger control how to print info
@@ -13,12 +13,36 @@ const defaultOptions = { follow: false, indent: '  ', logFunc: console.log }
 
 class Logger {
   /**
+   * Subtract the common parts, returns logger start have different title
+   *
+   * e.g.
+   * Subtract(A -> B -> C, A -> B -> D) = C
+   * Subtract(A -> B -> C -> D, A -> B -> D -> E) = C -> D
+   *
+   * @param {Logger} ref
+   * @param {Logger} target
+   *
+   * @returns {Logger}
+   */
+  static subtract(target, ref) {
+    let refPath = ref.path()
+    let targetPath = target.path()
+    let diffIndex = 0
+    for (; diffIndex < targetPath.length; diffIndex++) {
+      if (targetPath[diffIndex] !== refPath[diffIndex]) break
+    }
+    let exitCount = targetPath.length - diffIndex - 1
+    let result = target
+    for (let i = 0; i < exitCount; i++) {
+      result = result.exit()
+    }
+    return result
+  }
+  /**
    * Create instance of Logger
    *
    * @param {string} title - title of logger
    * @param {Object} options - options of logger
-   * @param {boolean} options.follow - immeridate call logFunc while receiving a new msg
-   * @param {function} options.logFunc - function to process the log string
    */
   constructor(title, options) {
     this.setTitle(title)
@@ -27,8 +51,6 @@ class Logger {
     this._msgs = []
     this._level = 0
     this._children = []
-    this._index = -1
-    this._focus = -1
   }
 
   /**
@@ -59,90 +81,6 @@ class Logger {
     msg = msg.toString()
 
     this._msgs.push(msg)
-
-    if (this._opts.follow) {
-      this._follow(msg)
-    }
-  }
-
-  /**
-   * Follow the msg when options follow is true
-   * @param {string} msg - The message to follow
-   */
-  _follow(msg) {
-    if (this._isRoot()) {
-      // print root logger only once
-      if (!this._followedRoot) {
-        this._opts.logFunc(this._indentTitle())
-        this._opts.logFunc(this._indentMsg(msg))
-        return
-      }
-    }
-
-    // print title of chaing loggers
-    let chain = this._dirtyChain([])
-
-    if (chain.length) {
-      let top = chain[chain.length - 1].exit()
-      top._unfocusChildren()
-
-      chain.forEach(l => {
-        if (l._parent) {
-          l._parent._focus = l._index
-        }
-      })
-      let titles = chain
-        .reverse()
-        .map(l => l._indentTitle())
-        .join(EOL)
-
-      this._opts.logFunc(titles)
-    }
-
-    this._opts.logFunc(this._indentMsg(msg))
-  }
-
-  /**
-   * Whether the logger is root
-   */
-  _isRoot() {
-    return !this._parent
-  }
-
-  /**
-   * Get the chain of affected loggers when changed focus
-   *
-   * a
-   * +--b
-   *    +--c
-   *    |  +--d --> chain1
-   *    +--e
-   *       +--f --> chain2
-   *
-   * when changing focus from node from d to f, the affected loggers will be [e, f]
-   */
-  _dirtyChain(chain) {
-    if (this._isRoot()) {
-      if (this._followedRoot) return chain
-      return chain.concat([this])
-    }
-
-    let parent = this._parent
-    if (this._index === parent._focus) {
-      return chain
-    }
-
-    return parent._dirtyChain(chain.concat([this]))
-  }
-
-  /**
-   * Clear the cached focus recursivelly
-   */
-  _unfocusChildren() {
-    this._children.forEach(l => {
-      l._focus = -1
-      l._unfocusChildren()
-    })
   }
 
   /**
@@ -175,8 +113,7 @@ class Logger {
    * Indent title line
    * @param {Integer} level - how many level to indent
    */
-  _indentTitle(level = this._level) {
-    if (this._isRoot()) this._followedRoot = true
+  _indentTitle(level) {
     return this._opts.indent.repeat(level) + this._title + ':'
   }
 
@@ -184,7 +121,7 @@ class Logger {
    * Indent msg line
    * @param {Integer} level - how many level to indent
    */
-  _indentMsg(msg, level = this._level) {
+  _indentMsg(msg, level) {
     let _msg = msg.split(EOL)
     return _msg.map(v => this._opts.indent.repeat(level + 1) + v).join(EOL)
   }
@@ -209,7 +146,6 @@ class Logger {
     let child = new Logger(title, this._opts)
     this._children.push(child)
     child._level = this._level + 1
-    child._index = this._children.length - 1
     child._parent = this
     return child
   }
@@ -218,7 +154,7 @@ class Logger {
    * Select parent logger, if the parent does not exist, returns it.
    */
   exit() {
-    if (this._isRoot()) return this
+    if (!this._parent) return this
     return this._parent
   }
 
@@ -246,6 +182,14 @@ class Logger {
   clear() {
     this._msgs = []
     this._children.forEach(l => l.clear())
+  }
+
+  /**
+   * Get the path from root logger
+   */
+  path() {
+    if (!this._parent) return [this._title]
+    return this._parent.path().concat([this._title])
   }
 
   /**
