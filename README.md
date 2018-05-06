@@ -110,6 +110,11 @@ Htte will read the configuration file `htte.yaml` and the test file `login.yaml`
 
 For each test unit, Htte will generate a request based on the `req` description and send it to the corresponding api endpoint, and then compare the response with the `res` description.
 
+## Examples
+
+- [Restful-Booker](./examples/restful-booker) — An API playground created by Mark Winteringham for those wanting to learn more about API testing and tools
+- [Realword](./examples/realworld/) — Exemplary fullstack blog apps powered by React, Angular, Node, Django, and many more — it’s like TodoMVC, but for fullstack apps! 
+
 ## License
 
 [MIT](https://github.com/sigoden/htte/blob/master/LICENSE)

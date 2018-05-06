@@ -105,6 +105,11 @@ $ htte
 Htte 将读取配置文件 `htte.yaml` 和测试文件 `login.yaml`, 得到一系列测试单元，并逐一执行测试单元。
 对每个测试单元，Htte 将根据其测试描述的请求生成请求并发送到对应接口，然后对接口响应与测试描述的响应比对。
 
+## 例子
+
+- [Restful-Booker](./examples/restful-booker) —— 简单的图书管理应用，专为测试 API 创建演示站点
+- [Realword](./examples/realworld/) —— 全栈博客应用
+
 ## 文档
 
 详见[官方网站](https://sigoden.github.io/htte)
