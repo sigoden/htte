@@ -618,6 +618,12 @@ describe('private function', () => {
       let result = unit._deserialize(data, 'application/yaml')
       expect(result).toBe(data)
     })
+    test('should return data if content-type is undefined', () => {
+      let { unit } = createUnit1()
+      let data = {}
+      let result = unit._deserialize(data, undefined)
+      expect(result).toBe(data)
+    })
     test('should return data if serializer is json', () => {
       let { unit } = createUnit1()
       let data = { content: 'good' }

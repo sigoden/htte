@@ -254,9 +254,6 @@ class Unit {
     return this._request(this._api, req, logger)
       .then(({ status, headers, data: body }) => {
         body = this._deserialize(body, headers['content-type'])
-        // if (headers['content-type']) {
-        //   body = this._deserialize(body, headers['content-type'])
-        // }
         return { status, headers, body }
       })
       .catch(err => {
@@ -283,6 +280,7 @@ class Unit {
    * @param {string} contentType - content-type of body data
    */
   _deserialize(data, contentType) {
+    if (!contentType) return data
     let contentTypeOmitParams = contentType.split(';')[0]
     let serializer = this._config.findSerializer(contentTypeOmitParams)
     if (!serializer) return data
