@@ -30,7 +30,7 @@ describe('test app', () => {
           .then(result => {
             server.close()
             expect(result).toBe(0)
-            expect(print.mock.calls).toHaveLength(52)
+            expect(print.mock.calls).toHaveLength(26)
             // console.log(print.mock.calls.map(c => c[0]).join('\n'))
             resolve()
           })
