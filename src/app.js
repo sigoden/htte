@@ -62,7 +62,7 @@ class App {
 
     let logger = new Logger('RunUnits', { follow: true, logFunc: this._print })
 
-    let exitStatus = 0
+    this._runExitCode = 0
     return units
       .reduce((promise, unit) => {
         return promise.then(isContinue => {
@@ -75,8 +75,6 @@ class App {
                 if (cursor === this._units.length) cursor = 0
                 this._session.setCursor(cursor)
               }
-            } else {
-              exitStatus = 1
             }
             return v
           })
@@ -84,7 +82,7 @@ class App {
       }, Promise.resolve(true))
       .then(() => {
         this._session.persist()
-        return exitStatus
+        return this._runExitCode
       })
   }
 
@@ -109,6 +107,7 @@ class App {
             // flat error, or it will throw 'Converting circular structure to JSON' in session.persist
             res.err = res.err.message
           }
+          this._runExitCode = 1
         }
         self._session.writeUnit(unit, 'res', res)
         return pass || !options.bail

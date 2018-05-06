@@ -60,7 +60,20 @@ describe('Test App', () => {
         expect(err.message).toMatch('_unitCursor throw error')
       })
     })
-    test('break when fail the unit and the bail option is enabled', () => {
+    test('exit 1 when testing failed', () => {
+      UnitManager.mockImplementation(() => ({
+        units: jest.fn(() => [
+          createMockUnit({ name: 'unit1', describes: ['unit1'] }),
+          createMockUnit({ name: 'unit2', describes: ['unit2'], execute: { pass: false, res: {} } }),
+          createMockUnit({ name: 'unit3', describes: ['unit3'] })
+        ])
+      }))
+      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      return app.run({}).then(result => {
+        expect(result).toBe(1)
+      })
+    })
+    test('break when testing failed and bail is enabled', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -75,7 +88,7 @@ describe('Test App', () => {
         expect(result).toBe(1)
       })
     })
-    test('continue run when fail the unit but the bail option is disabled', () => {
+    test('continue run when testing failed but bail is disabled', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
@@ -88,7 +101,7 @@ describe('Test App', () => {
         expect(app._units[2].execute).toHaveBeenCalled()
       })
     })
-    test('run one unit when the shot option is enabled', () => {
+    test('run one unit when shot is enabled', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [
           createMockUnit({ name: 'unit1', describes: ['unit1'] }),
