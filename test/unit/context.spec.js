@@ -65,11 +65,11 @@ describe('Test Context', () => {
       expect(logger.toString()).toBe(`  test1:
     res:
       status:
-        value diff, expect 200, actual undefined
+        value diff, 200 ≠ undefined
       body:
-        type diff, expect {\"msg\":\"ok\"}, actual undefined
+        type diff, object ≠ undefined
       headers:
-        type diff, expect {\"Content-Type\":\"application/json\"}, actual undefined
+        type diff, object ≠ undefined
 `)
     })
     test('only diff the properties the expect value have when diffing headers', () => {

@@ -429,7 +429,7 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`    [0](unit 1):
       req:
         params:
-          params diff, extra id
+          params diff, -- id
 `)
     })
     test('log error when params have less fields', () => {
@@ -440,7 +440,7 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`    [0](unit 1):
       req:
         params:
-          params diff, need slug
+          params diff, ++ slug
 `)
     })
   })
@@ -506,7 +506,7 @@ describe('private function', () => {
         query:
           must be object
         params:
-          params diff, extra slug
+          params diff, -- slug
 `)
     })
   })

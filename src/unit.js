@@ -196,10 +196,10 @@ class Unit {
     let includes = _.difference(keys, apiKeys)
     let errMsg = ``
     if (excludes.length) {
-      errMsg += `, need ${excludes.join('|')}`
+      errMsg += `, ++ ${excludes.join('|')}`
     }
     if (includes.length) {
-      errMsg += `, extra ${includes.join('|')}`
+      errMsg += `, -- ${includes.join('|')}`
     }
     if (errMsg) {
       return logger.log(`params diff` + errMsg)

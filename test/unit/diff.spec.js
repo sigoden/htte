@@ -15,7 +15,7 @@ describe('Test diff', () => {
     })
     test('log error if the primitive is not equal', () => {
       expect(diff(context, '3', 3)).toBe(false)
-      expect(context.error.mock.calls[0][0]).toBe(`value diff, expect "3", actual 3`)
+      expect(context.error.mock.calls[0][0]).toBe(`value diff, "3" ≠ 3`)
     })
   })
   describe('diff by function', () => {
@@ -56,7 +56,7 @@ describe('Test diff', () => {
       let value = ['a', 'b', 'c']
       let actual = ['a', 'b', 'c', 'd']
       expect(diff(context, value, actual)).toBe(false)
-      expect(context.error.mock.calls[0][0]).toBe(`size diff, expect 3, actual 4`)
+      expect(context.error.mock.calls[0][0]).toBe(`size diff, 3 ≠ 4`)
     })
   })
   describe('diff object', () => {
@@ -80,7 +80,7 @@ describe('Test diff', () => {
       let value = { a: 'a', c: 'c' }
       let actual = { a: 'a', b: 'b' }
       expect(diff(context, value, actual)).toBe(false)
-      expect(context.error.mock.calls[0][0]).toBe('props diff, need c, extra b')
+      expect(context.error.mock.calls[0][0]).toBe('props diff, ++ c, -- b')
     })
   })
 })
