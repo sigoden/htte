@@ -14,8 +14,13 @@ module.exports = {
       .conflicts('amend', 'unit')
   },
   handler: function(argv) {
-    new App(argv.config, print(process.env.DEBUG)).run(argv).then(exitStatus => {
-      process.exit(exitStatus)
-    })
+    new App(argv.config, print(process.env.DEBUG))
+      .run(argv)
+      .then(exitStatus => {
+        process.exit(exitStatus)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
