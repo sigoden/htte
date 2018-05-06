@@ -7,7 +7,9 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-htte 是一款 HTTP 接口自动化测试框架。
+Htte 是一款 HTTP 接口自动化测试框架。
+
+> 翻译: [Englist](./README.md) | [中文](./README.zh.md)
 
 ## 特性
 
@@ -107,6 +109,12 @@ Htte 将读取配置文件 `htte.yaml` 和测试文件 `login.yaml`, 得到一�
 
 详见[官方网站](https://sigoden.github.io/htte)
 
+- [入门](https://sigoden.github.io/htte/0.3/docs/)
+- [配置文件](https://sigoden.github.io/htte/0.3/docs/config-file.html)
+- [测试模块](https://sigoden.github.io/htte/0.3/docs/module-file.html)
+- [插件](https://sigoden.github.io/htte/0.3/docs/plugin.html)
+
 ## 许可证
 
 [MIT](https://github.com/sigoden/htte/blob/master/LICENSE)
+
