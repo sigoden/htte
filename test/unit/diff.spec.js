@@ -32,7 +32,7 @@ describe('Test diff', () => {
       })
       let actual = {}
       expect(diff(context, value, actual)).toBe(false)
-      expect(context.error.mock.calls[0][0]).toBe(`cannot diff, something wrong`)
+      expect(context.error.mock.calls[0][0]).toMatch(`cannot diff, Error: something wrong`)
     })
   })
   describe('diff array', () => {

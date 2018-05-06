@@ -22,7 +22,7 @@ function diff(context, expect, actual, isStrict = true) {
       try {
         return expect(context, actual)
       } catch (err) {
-        return context.error(`cannot diff, ${err.message}`)
+        return context.error(`cannot diff, ${err.stack}`)
       }
     case 'array':
       return diffArray(context, expect, actual, isStrict)

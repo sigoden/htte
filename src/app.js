@@ -105,7 +105,7 @@ class App {
           if (res.err) {
             logger.enter('res').log(res.err)
             // flat error, or it will throw 'Converting circular structure to JSON' in session.persist
-            res.err = res.err.message
+            res.err = String(res.err)
           }
           this._runExitCode = 1
         }

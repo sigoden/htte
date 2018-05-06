@@ -18,7 +18,7 @@ function resolve(context, value) {
       try {
         return value(context)
       } catch (err) {
-        return context.error(`cannot resolve value, ${err.message}`)
+        return context.error(`cannot resolve value, ${err.stack}`)
       }
     case 'array':
       return value.map((elem, index) => {

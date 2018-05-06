@@ -22,7 +22,7 @@ describe('Test resolve', () => {
       throw new Error('something wrong')
     })
     expect(resolve(context, value)).toBeUndefined()
-    expect(context.error.mock.calls[0][0]).toBe('cannot resolve value, something wrong')
+    expect(context.error.mock.calls[0][0]).toMatch('cannot resolve value, Error: something wrong')
   })
   test('map each element if value is array', () => {
     let value = ['a', 'b', 'c']

@@ -261,7 +261,7 @@ class Unit {
           let { status, headers, data: body } = err.response
           return { status, headers, body }
         }
-        return { err: err.message }
+        return { err }
       })
       .then(res => {
         res.time = process.hrtime(this._hrstart)[1] / 1000000
