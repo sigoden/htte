@@ -1,6 +1,7 @@
 const Logger = require('../../src/logger')
 const JSONSerializer = require('../../src/serializers/json')
 const Unit = require('../../src/unit')
+const Config = require('../../src/config')
 const _ = require('lodash')
 
 jest.mock('axios')
@@ -382,6 +383,46 @@ describe('private function', () => {
         cannot find api notfind
 `)
     })
+    test('parameter api is object', () => {
+      let { unit, logger } = createUnit1()
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI({ name: 'echo', uri: '/echo' }, scopedLogger)
+      expect(api).toEqual({
+        keys: [],
+        method: 'get',
+        name: 'echo',
+        timeout: 1000,
+        type: 'json',
+        url: 'http://localhost:3000/echo'
+      })
+    })
+    test('parameter api is not object nor string', () => {
+      let { unit, logger } = createUnit1()
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI([], scopedLogger)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      api:
+        must be string or object
+`)
+    })
+    test('parameter api is object but have no property name', () => {
+      let { unit, logger } = createUnit1()
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI({ uri: '/echo' }, scopedLogger)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      api:
+        must have properties name, uri
+`)
+    })
+    test('parameter api is object but have no property uri', () => {
+      let { unit, logger } = createUnit1()
+      let scopedLogger = logger.enter('api')
+      let api = unit._parseAPI({ name: 'echo' }, scopedLogger)
+      expect(logger.toString()).toBe(`    [0](unit 1):
+      api:
+        must have properties name, uri
+`)
+    })
   })
   describe('_parseReqParams', () => {
     test('should return parsed params', () => {
@@ -671,15 +712,13 @@ function init(options) {
     req: req,
     res: res
   }
-  let config = {
-    findAPI: _api =>
-      _api === api
-        ? { keys: apiKeys, name: api, url: apiUrl, method: apiMethod || 'get', timeout: 1000, type }
-        : undefined,
-    findSerializer: type => {
-      return type === 'json' || type === 'application/json' || type === undefined ? JSONSerializer : undefined
-    }
-  }
+  let config = new Config()
+
+  config.findAPI = _api =>
+    _api === api
+      ? { keys: apiKeys, name: api, url: apiUrl, method: apiMethod || 'get', timeout: 1000, type }
+      : undefined
+
   let logger = new Logger('LoadUnits').enter(moduleName)
   let scopedLogger = scopeDescribes.reduce((logger, describe, index) => {
     return logger.enter(`[${scopeIndexes[index]}](${describe})`)

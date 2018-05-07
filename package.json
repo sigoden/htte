@@ -1,6 +1,6 @@
 {
   "name": "htte",
-  "version": "0.3.6",
+  "version": "0.3.8",
   "description": "Declarative http test framework ",
   "main": "./dist/index.js",
   "bin": {
@@ -44,6 +44,7 @@
     "js-yaml": "^3.11.0",
     "jsonpath": "^1.0.0",
     "lodash": "^4.17.5",
+    "md5": "^2.2.1",
     "mkdir": "0.0.2",
     "recursive-readdir-sync": "^1.0.6",
     "update-notifier": "^2.5.0",

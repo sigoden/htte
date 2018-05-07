@@ -27,14 +27,35 @@ describe('Test Config', () => {
   test('throw error if file does not exist', () => {
     expect(() => new Config(resolveFixtureFile('./config/404.yaml'))).toThrow(/can not load config file/)
   })
+  test('init without config file', () => {
+    let config = new Config()
+    let configFile = path.resolve('.yaml')
+    expect(config._file).toBe(configFile)
+    expect(config._logger).toBeInstanceOf(Logger)
+    expect(config._template).toEqual({
+      rootDir: '.',
+      sessionFile: config._sessionFile,
+      type: 'json',
+      timeout: 1000,
+      url: 'http://localhost:3000',
+      apis: {},
+      exports: {},
+      plugins: [],
+      serializers: []
+    })
+    expect(config._serializerM.names()).toEqual(['json'])
+    expect(config._rootDir).toEqual(path.dirname(configFile))
+    expect(config._sessionFile).toMatch(/^\/tmp\/htte-session-\w{32}\.json$/)
+    expect(config._type).toEqual('json')
+    expect(config._url).toBe('http://localhost:3000')
+    expect(config._apis).toEqual([])
+    expect(config._exports).toEqual({})
+    expect(config._plugins).toBeInstanceOf(Array)
+    expect(config._serializers).toBeInstanceOf(Array)
+  })
 })
 
 describe('Test parse function', () => {
-  afterAll(() => {
-    try {
-      fs.unlinkSync(resolveFixtureFile('./config/.session'))
-    } catch (e) {}
-  })
   describe('_parseRootDir', () => {
     test('return directory which contains config file when omitted', () => {
       let { config } = init()
@@ -77,7 +98,7 @@ describe('Test parse function', () => {
     })
     test('return file named .session and stored in same directory of config file when omitted ', () => {
       let { config } = init()
-      expect(config.sessionFile()).toEqual(resolveFixtureFile('./config/.session'))
+      expect(config.sessionFile()).toMatch(/^\/tmp\/htte-session-\w{32}\.json$/)
     })
     test('should work when sessionFile is relative path', () => {
       let { config, logger } = init()
@@ -334,76 +355,6 @@ describe('Test parse function', () => {
       expect(scopedLogger.dirty()).toBe(true)
     })
   })
-  describe('_modifyAPI', () => {
-    test('APIObject should have method "get" even omitted', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(api.method).toEqual('get')
-    })
-    test('APIObject should have url which is absolute even uri is relative', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(api.url).toEqual(config._url + value.uri)
-    })
-    test('log error if uri is not valid', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: 'feed' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(scopedLogger.toString()).toBe(`    getFeed:
-      url:
-        must be valid web url, not feed
-`)
-    })
-    test('APIObject with custom timeout', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed', timeout: 500 }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(api.timeout).toEqual(500)
-    })
-    test('log error if timeout is not integer', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed', timeout: '500s' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(scopedLogger.toString()).toBe(`    getFeed:
-      timeout:
-        must be integer
-`)
-    })
-    test('log error when type is unregisted', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed', type: 'xml' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(scopedLogger.toString()).toMatch(`    getFeed:
-      type:
-        must be one of json
-`)
-    })
-    test('log error when method is not valid', () => {
-      let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed', method: 'pst' }
-      let scopedLogger = logger.enter('apis').enter('getFeed')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(scopedLogger.toString()).toBe(`    getFeed:
-      method:
-        must be valid http method, not pst
-`)
-    })
-    test('APIObject should have keys with url params', () => {
-      let { config, logger } = init()
-      let value = { name: 'getComment', uri: '/articles/{slug}/comments/{id}' }
-      let scopedLogger = logger.enter('apis').enter('getComment')
-      let api = config._modifyAPI(value, scopedLogger)
-      expect(api.keys).toEqual(['id', 'slug'])
-    })
-  })
   describe('_parseExports', () => {
     test('should return {} when omitted', () => {
       let { config, logger } = init()
@@ -605,6 +556,76 @@ describe('public functions', () => {
     test('use cache when call again', () => {
       let schema = config.schema()
       expect(config.schema()).toBe(schema)
+    })
+  })
+  describe('parseAPI', () => {
+    test('APIObject should have method "get" even omitted', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(api.method).toEqual('get')
+    })
+    test('APIObject should have url which is absolute even uri is relative', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(api.url).toEqual(config._url + value.uri)
+    })
+    test('log error if uri is not valid', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: 'feed' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(scopedLogger.toString()).toBe(`    getFeed:
+      url:
+        must be valid web url, not feed
+`)
+    })
+    test('APIObject with custom timeout', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', timeout: 500 }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(api.timeout).toEqual(500)
+    })
+    test('log error if timeout is not integer', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', timeout: '500s' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(scopedLogger.toString()).toBe(`    getFeed:
+      timeout:
+        must be integer
+`)
+    })
+    test('log error when type is unregisted', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', type: 'xml' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(scopedLogger.toString()).toMatch(`    getFeed:
+      type:
+        must be one of json
+`)
+    })
+    test('log error when method is not valid', () => {
+      let { config, logger } = init()
+      let value = { name: 'getFeed', uri: '/feed', method: 'pst' }
+      let scopedLogger = logger.enter('apis').enter('getFeed')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(scopedLogger.toString()).toBe(`    getFeed:
+      method:
+        must be valid http method, not pst
+`)
+    })
+    test('APIObject should have keys with url params', () => {
+      let { config, logger } = init()
+      let value = { name: 'getComment', uri: '/articles/{slug}/comments/{id}' }
+      let scopedLogger = logger.enter('apis').enter('getComment')
+      let api = config.parseAPI(value, scopedLogger)
+      expect(api.keys).toEqual(['id', 'slug'])
     })
   })
 })

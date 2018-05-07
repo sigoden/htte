@@ -12,7 +12,6 @@ require('yargs')
   .command(require('./cmd/view'))
   .option('c', {
     description: 'set config file',
-    alias: 'config',
-    default: 'htte.yaml'
+    alias: 'config'
   })
   .help().argv

@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const path = require('path')
+const os = require('os')
 const yaml = require('js-yaml')
+const md5 = require('md5')
 
 const Logger = require('./logger')
 const utils = require('./utils')
@@ -14,7 +16,7 @@ const BUILTIN_PLUGINS = ['./plugins']
 
 const defaultConfig = {
   rootDir: '.',
-  sessionFile: './.session',
+  sessionFile: tmpfile(),
   type: 'json',
   timeout: 1000,
   url: 'http://localhost:3000',
@@ -35,12 +37,17 @@ class Config {
    * @param {string} file - config file path
    */
   constructor(file) {
-    this._file = path.resolve(file)
+    if (!file) {
+      this._file = path.resolve('.yaml')
+      this._template = defaultConfig
+    } else {
+      this._file = path.resolve(file)
+      this._template = _.defaultsDeep(loadConfig(this._file), defaultConfig)
+    }
+
     this._logger = new Logger('LoadConfig')
     this._pluginM = PluginManager()
     this._serializerM = SerializerManager()
-
-    this._template = _.defaultsDeep(loadConfig(this._file), defaultConfig)
 
     this._parse(this._template)
 
@@ -182,7 +189,7 @@ class Config {
     if (names.length) return logger.log(`must have no conflict names ${names}`)
 
     // filter out invalid APIObjects
-    return _apis.map(v => this._modifyAPI(v, logger.enter(v.name))).filter(v => !!v)
+    return _apis.map(v => this.parseAPI(v, logger.enter(v.name))).filter(v => !!v)
   }
 
   /**
@@ -244,7 +251,7 @@ class Config {
    */
 
   /**
-   * Normalize api object
+   * Check and parse api object
    * @param {object} api - the raw api object
    * @param {string} api.uri - the uri of endpoint
    * @param {string|undefined} api.method - the http method of endpoint
@@ -254,7 +261,7 @@ class Config {
    *
    * @returns {APIObject} - the normalized api object
    */
-  _modifyAPI(api, logger) {
+  parseAPI(api, logger) {
     let _api = {}
 
     _api.name = api.name
@@ -484,6 +491,12 @@ function checkUrl(uri, baseUrl) {
   } catch (err) {
     throw new Error(`must be valid web url, not ${url}`)
   }
+}
+
+// generate tmp file
+function tmpfile() {
+  let filename = `htte-session-${md5(process.cwd())}.json`
+  return path.resolve(os.tmpdir(), filename)
 }
 
 module.exports = Config

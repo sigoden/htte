@@ -113,12 +113,19 @@ class Unit {
 
   /**
    * Check and retrive APIObject
-   * @param {string} api - name of APIObject
+   * @param {string|Object} api - name of APIObject
    * @param {Logger} logger
    */
   _parseAPI(api, logger) {
-    let _api = this._config.findAPI(api)
-    if (!_api) return logger.log(`cannot find api ${api}`)
+    if (!utils.isTypeOf(api, ['string', 'object'])) return logger.log(`must be string or object`)
+    let _api
+    if (typeof api === 'string') {
+      _api = this._config.findAPI(api)
+      if (!_api) return logger.log(`cannot find api ${api}`)
+    } else {
+      if (!api.name || !api.uri) return logger.log('must have properties name, uri')
+      _api = this._config.parseAPI(api, logger)
+    }
     return _api
   }
 
