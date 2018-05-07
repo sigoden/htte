@@ -83,7 +83,9 @@ class App {
             } else {
               printLogger = Logger.subtract(unitLogger, lastUnitLogger)
             }
-            this._print(_.trimEnd(printLogger.toString()))
+            if (printLogger.dirty()) {
+              this._print(_.trimEnd(printLogger.toString()))
+            }
             lastUnitLogger = unitLogger
             return v
           })
