@@ -1,6 +1,6 @@
 {
   "name": "htte",
-  "version": "0.3.8",
+  "version": "0.3.10",
   "description": "Declarative http test framework ",
   "main": "./dist/index.js",
   "bin": {
@@ -15,7 +15,7 @@
     "test:unit": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "compile": "rm -rf ./dist/* && babel -q -d ./dist ./src",
     "prepublish": "npm run compile",
-    "test:int": "jest --testPathPattern integration --no-cache"
+    "test:int": "./src/bin/htte.js -c ./examples/realworld/htte.yaml"
   },
   "repository": {
     "type": "git",
@@ -40,12 +40,14 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "dateformat": "^3.0.3",
     "js-yaml": "^3.11.0",
     "jsonpath": "^1.0.0",
     "lodash": "^4.17.5",
     "md5": "^2.2.1",
     "mkdir": "0.0.2",
     "recursive-readdir-sync": "^1.0.6",
+    "timestring": "^5.0.0",
     "update-notifier": "^2.5.0",
     "yargs": "^11.0.0"
   },
@@ -87,7 +89,6 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "conduit-node": "git+https://github.com/sigoden/node-express-realworld-example-app.git",
     "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-plugin-prettier": "^2.6.0",
