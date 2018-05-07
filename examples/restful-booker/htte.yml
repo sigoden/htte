@@ -1,5 +1,4 @@
 url: https://restful-booker.herokuapp.com
-sessionFile: /tmp/restful-booker.session.json
 timeout: 10000
 apis:
   - name: ping
