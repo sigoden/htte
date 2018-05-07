@@ -15,7 +15,6 @@
     "test:unit": "jest --coverage --no-cache --testPathPattern unit --testPathPattern __tests__",
     "compile": "rm -rf ./dist/* && babel -q -d ./dist ./src",
     "prepublish": "npm run compile",
-    "pretest:int": "git submodule update --init && npm --silent --prefix ./test/fixtures/realworld install --production",
     "test:int": "jest --testPathPattern integration --no-cache"
   },
   "repository": {
@@ -88,6 +87,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "conduit-node": "git+https://github.com/sigoden/node-express-realworld-example-app.git",
     "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-plugin-prettier": "^2.6.0",
