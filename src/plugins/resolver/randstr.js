@@ -1,6 +1,7 @@
 /**
  * Generate random string
- * @argument {Integer} length - length of random string
+ * @argument {string} options - <length>:<flag>
+ * flag l -> a-z, u -> A-Z, n -> 0-9, lu -> a-zA-Z, lun -> a-zA-Z0-9
  *
  * e.g.
  *
@@ -12,27 +13,45 @@
  *
  * !$randstr 8
  * bnYdsf7s
+ *
+ * !$randstr 8:lu
+ * bnYdsfbs
  */
 module.exports = {
   name: 'randstr',
   kind: 'scalar',
   handler: (context, literal) => {
-    let length
-    if (literal === null) {
-      length = 6
-    } else {
-      length = parseInt(literal)
-      if (Number.isNaN(length)) {
-        return context.error('argument length must be integer')
-      }
+    try {
+      let [length, flag] = parseOptions(literal)
+      return randomString(length, flag)
+    } catch (err) {
+      return context.error(err.message)
     }
-    return randomString(length)
   }
 }
 
-function randomString(length) {
+function parseOptions(literal) {
+  if (literal === null) return [6, 'lun']
+  if (!/^(\d+)?:?[lun]{0,3}$/.test(literal)) {
+    throw new Error(`arguments invalid, ${literal}`)
+  }
+  let [length, flag = 'lun'] = literal.split(':')
+  length = parseInt(length || 6)
+  return [length, flag]
+}
+
+function randomString(length, flag) {
   let result = ''
-  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let possible = ''
+  if (flag.indexOf('l') > -1) {
+    possible += 'abcdefghijklmnopqrstuvwxyz'
+  }
+  if (flag.indexOf('u') > -1) {
+    possible += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  }
+  if (flag.indexOf('n') > -1) {
+    possible += '0123456789'
+  }
   for (let i = 0; i < length; i++) {
     result += possible.charAt(Math.floor(Math.random() * possible.length))
   }

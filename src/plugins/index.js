@@ -10,7 +10,7 @@ module.exports = {
   ],
   resolver: [
     require('./resolver/concat'),
-    require('./resolver/now'),
+    require('./resolver/datetime'),
     require('./resolver/query'),
     require('./resolver/randstr')
   ]

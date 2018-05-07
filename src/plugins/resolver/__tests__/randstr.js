@@ -4,20 +4,36 @@ const Logger = require('../../../logger')
 const Plugin = require('../randstr')
 
 describe('test randstr resolver', () => {
-  test('return 6-char random string', () => {
+  test('return 6-char random string with no options', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
-    expect(Plugin.handler(ctx, null)).toMatch(/\w{6}/)
+    expect(Plugin.handler(ctx, null)).toMatch(/^\w{6}$/)
   })
-  test('return random string in n-length', () => {
+  test('return random string with different options', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
-    expect(Plugin.handler(ctx, 10)).toMatch(/\w{10}/)
+    let v1 = Plugin.handler(ctx, '10:l')
+    let v2 = Plugin.handler(ctx, '10:u')
+    let v3 = Plugin.handler(ctx, '10:n')
+    let v4 = Plugin.handler(ctx, '10:lu')
+    let v5 = Plugin.handler(ctx, '10:ln')
+    let v6 = Plugin.handler(ctx, '10:un')
+    let v7 = Plugin.handler(ctx, '10')
+    let v8 = Plugin.handler(ctx, ':lun')
+    logger.tryThrow()
+    expect(v1).toMatch(/^[a-z]{10}$/)
+    expect(v2).toMatch(/^[A-Z]{10}$/)
+    expect(v3).toMatch(/^[0-9]{10}$/)
+    expect(v4).toMatch(/^[a-zA-Z]{10}$/)
+    expect(v5).toMatch(/^[a-z0-9]{10}$/)
+    expect(v6).toMatch(/^[A-Z0-9]{10}$/)
+    expect(v7).toMatch(/^[A-Za-z0-9]{10}$/)
+    expect(v8).toMatch(/^[A-Za-z0-9]{6}$/)
   })
-  test('log error if length is not integer', () => {
+  test('log error with wrong options', () => {
     let logger = new Logger()
     let ctx = new Context(jest.fn(), logger)
     expect(Plugin.handler(ctx, 'abc')).toBeUndefined()
-    expect(logger.toString()).toMatch('argument length must be integer')
+    expect(logger.toString()).toMatch('arguments invalid, abc')
   })
 })
