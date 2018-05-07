@@ -391,7 +391,7 @@ describe('private function', () => {
         keys: [],
         method: 'get',
         name: 'echo',
-        timeout: 1000,
+        timeout: 3000,
         type: 'json',
         url: 'http://localhost:3000/echo'
       })

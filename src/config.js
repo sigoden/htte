@@ -18,7 +18,7 @@ const defaultConfig = {
   rootDir: '.',
   sessionFile: tmpfile(),
   type: 'json',
-  timeout: 1000,
+  timeout: 3000,
   url: 'http://localhost:3000',
   apis: {},
   exports: {},

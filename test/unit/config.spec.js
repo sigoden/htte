@@ -36,7 +36,7 @@ describe('Test Config', () => {
       rootDir: '.',
       sessionFile: config._sessionFile,
       type: 'json',
-      timeout: 1000,
+      timeout: 3000,
       url: 'http://localhost:3000',
       apis: {},
       exports: {},
@@ -146,7 +146,7 @@ describe('Test parse function', () => {
   describe('_parseTimeout', () => {
     test('return 1000 when omitted', () => {
       let { config } = init()
-      expect(config._timeout).toBe(1000)
+      expect(config._timeout).toBe(3000)
     })
     test('log error if timeout is not integer', () => {
       let { config, logger } = init()
@@ -223,10 +223,10 @@ describe('Test parse function', () => {
           method: 'post',
           name: 'createFeed',
           url: 'http://localhost:3000/feed',
-          timeout: 1000,
+          timeout: 3000,
           type: 'json'
         },
-        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 1000, type: 'json' }
+        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 3000, type: 'json' }
       ])
     })
     test('should work when apis is object', () => {
@@ -243,10 +243,10 @@ describe('Test parse function', () => {
           method: 'post',
           name: 'createFeed',
           url: 'http://localhost:3000/feed',
-          timeout: 1000,
+          timeout: 3000,
           type: 'json'
         },
-        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 1000, type: 'json' }
+        { keys: [], method: 'get', name: 'getFeed', url: 'http://localhost:3000/feed', timeout: 3000, type: 'json' }
       ])
     })
     test('filter out the invalid APIObject', () => {
@@ -264,7 +264,7 @@ describe('Test parse function', () => {
           method: 'get',
           name: 'getFeed',
           url: 'http://localhost:3000/feed',
-          timeout: 1000,
+          timeout: 3000,
           type: 'json'
         }
       ])
