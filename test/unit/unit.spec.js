@@ -383,7 +383,7 @@ describe('private function', () => {
         cannot find api notfind
 `)
     })
-    test('parameter api is object', () => {
+    test('should return api object if parameter api is object', () => {
       let { unit, logger } = createUnit1()
       let scopedLogger = logger.enter('api')
       let api = unit._parseAPI({ name: 'echo', uri: '/echo' }, scopedLogger)
@@ -396,7 +396,7 @@ describe('private function', () => {
         url: 'http://localhost:3000/echo'
       })
     })
-    test('parameter api is not object nor string', () => {
+    test('should return api object if parameter api is not object nor string', () => {
       let { unit, logger } = createUnit1()
       let scopedLogger = logger.enter('api')
       let api = unit._parseAPI([], scopedLogger)
@@ -405,22 +405,19 @@ describe('private function', () => {
         must be string or object
 `)
     })
-    test('parameter api is object but have no property name', () => {
+    test('should return api object parameter api is object but have no property name', () => {
       let { unit, logger } = createUnit1()
       let scopedLogger = logger.enter('api')
       let api = unit._parseAPI({ uri: '/echo' }, scopedLogger)
-      expect(logger.toString()).toBe(`    [0](unit 1):
-      api:
-        must have properties name, uri
-`)
+      expect(api.name).toEqual('get /echo')
     })
-    test('parameter api is object but have no property uri', () => {
+    test('log error if parameter api is object but have no property uri', () => {
       let { unit, logger } = createUnit1()
       let scopedLogger = logger.enter('api')
       let api = unit._parseAPI({ name: 'echo' }, scopedLogger)
       expect(logger.toString()).toBe(`    [0](unit 1):
       api:
-        must have properties name, uri
+        must have properties uri
 `)
     })
   })

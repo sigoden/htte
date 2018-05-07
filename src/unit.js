@@ -123,7 +123,8 @@ class Unit {
       _api = this._config.findAPI(api)
       if (!_api) return logger.log(`cannot find api ${api}`)
     } else {
-      if (!api.name || !api.uri) return logger.log('must have properties name, uri')
+      if (!api.uri) return logger.log('must have properties uri')
+      if (!api.name) api.name = (api.method || 'get') + ' ' + api.uri
       _api = this._config.parseAPI(api, logger)
     }
     return _api
