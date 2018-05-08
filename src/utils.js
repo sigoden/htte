@@ -168,8 +168,8 @@ module.exports = {
    */
   mergeTypeOptions: (base, options) => {
     if (type(options) !== 'object') return base
-    return Object.entries(options).reduce((acc, elem) => {
-      acc += `; ${elem[0]}=${elem[1]}`
+    return Object.keys(options).reduce((acc, key) => {
+      acc += `; ${key}=${options[key]}`
       return acc
     }, base)
   },
