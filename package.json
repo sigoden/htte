@@ -1,6 +1,6 @@
 {
   "name": "htte",
-  "version": "0.3.10",
+  "version": "0.3.12",
   "description": "Declarative http test framework ",
   "main": "./dist/index.js",
   "bin": {
