@@ -18,7 +18,7 @@ const dateFormat = require('dateformat')
  */
 module.exports = {
   name: 'datetime',
-  kind: 'scalar',
+  kind: 'sequence',
   handler: (context, literal) => {
     let offset, format, refDate
     try {
