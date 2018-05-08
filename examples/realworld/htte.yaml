@@ -1,6 +1,6 @@
 rootDir: ./tests
 url: https://htte-realworld.herokuapp.com/api
-timeout: 10000
+timeout: 30000
 apis:
   register:
     method: post
