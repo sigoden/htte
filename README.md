@@ -18,7 +18,7 @@ Htte is a declartive HTTP API automated testing framework.
 - Testing simplified to describe requests and responses
 - Provide plugin to customize request data generation and response data assertion
 - Provide data links to access other test data
-- API coding configurable, builtin json(application/json)
+- Data exchage format configurable, builtin json and xml
 
 ## Getting started
 
