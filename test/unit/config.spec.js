@@ -14,7 +14,7 @@ describe('Test Config', () => {
     expect(config._file).toBe(configFile)
     expect(config._logger).toBeInstanceOf(Logger)
     expect(config._template).toEqual(require(resolveFixtureFile('./config/realworld.json')))
-    expect(config._serializerM.names()).toEqual(['json'])
+    expect(config._serializerM.names()).toEqual(['json', 'xml'])
     expect(config._rootDir).toEqual(path.dirname(configFile))
     expect(config._sessionFile).toEqual('/tmp/realworld.session')
     expect(config._type).toEqual('json')
@@ -43,7 +43,7 @@ describe('Test Config', () => {
       plugins: [],
       serializers: []
     })
-    expect(config._serializerM.names()).toEqual(['json'])
+    expect(config._serializerM.names()).toEqual(['json', 'xml'])
     expect(config._rootDir).toEqual(path.dirname(configFile))
     expect(config._sessionFile).toMatch(/^\/tmp\/htte-session-\w{32}\.json$/)
     expect(config._type).toEqual('json')
@@ -136,10 +136,10 @@ describe('Test parse function', () => {
     test('log error if type of serializer unregisted', () => {
       let { config, logger } = init()
       let scopedLogger = logger.enter('type')
-      let type = config._parseType('xml', scopedLogger)
+      let type = config._parseType('exe', scopedLogger)
       expect(type).toBeUndefined()
       expect(scopedLogger.toString()).toBe(`  type:
-    must be one of json
+    must be one of json,xml
 `)
     })
   })
@@ -396,7 +396,7 @@ describe('Test parse function', () => {
       let result = config._parsePlugins([pluginPath], scopedLogger)
       expect(scopedLogger.toString()).toBe(`  plugins:
     ${pluginPath}:
-      cannot be required
+      cannot be loaded as module
 `)
     })
     test('log error when module of plugin is not object', () => {
@@ -463,6 +463,14 @@ describe('Test parse function', () => {
       let result = config._parseSerializers([serializerPath], scopedLogger)
       expect(result).toContainEqual('test1')
     })
+    test('pass builtin serializer options', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      let value = [{ module: 'htte-serializers-xml', options: { serializer: { ignoreAttributes: true } } }]
+      let result = config._parseSerializers(value, scopedLogger)
+      expect(result).toEqual(['xml', 'json'])
+    })
     test('log error when serializers is not array or undefined', () => {
       let { config, logger } = init()
       config._serializerM = SerializerManager()
@@ -476,23 +484,92 @@ describe('Test parse function', () => {
       let { config, logger } = init()
       config._serializerM = SerializerManager()
       let serializerPath = resolveFixtureFile('./config/serializer-404')
-      let scopedLogger = logger.enter('serializer')
+      let scopedLogger = logger.enter('serializers')
       let result = config._parseSerializers([serializerPath], scopedLogger)
-      expect(scopedLogger.toString()).toBe(`  serializer:
+      expect(scopedLogger.toString()).toBe(`  serializers:
     ${serializerPath}:
-      cannot be required
+      cannot be loaded as module
+`)
+    })
+    test('log error if module item is invalid', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      let result = config._parseSerializers([{}], scopedLogger)
+      expect(scopedLogger.toString()).toBe(`  serializers:
+    [0]:
+      must have property module
 `)
     })
     test('log error if module failed to regist', () => {
       let { config, logger } = init()
       config._serializerM = SerializerManager()
-      let serializerPath = resolveFixtureFile('./config/serializer-test3')
-      let scopedLogger = logger.enter('serializer')
-      let result = config._parseSerializers([serializerPath], scopedLogger)
-      expect(scopedLogger.toString()).toBe(`  serializer:
+      let serializerPath = resolveFixtureFile('./config/serializer-test1')
+      let scopedLogger = logger.enter('serializers')
+      let result = config._parseSerializers([serializerPath, serializerPath], scopedLogger)
+      expect(scopedLogger.toString()).toBe(`  serializers:
     ${serializerPath}:
-      json: serializer conflict
+      test1: serializer conflict
 `)
+    })
+  })
+  describe('_parseSerializerItem', () => {
+    test('should wrap to object if item is string', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializer', '[0]')
+      let item = 'path'
+      expect(config._parseSerializerItem(item, scopedLogger)).toEqual({ module: item, options: {} })
+    })
+    test('should return object if item is object', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers', '[0]')
+      let item = { module: 'path', options: { serializer: {} }, extra: {} }
+      let result = { module: 'path', options: { serializer: {} } }
+      expect(config._parseSerializerItem(item, scopedLogger)).toEqual(result)
+      let item2 = { module: 'path' }
+      let result2 = { module: 'path', options: {} }
+      expect(config._parseSerializerItem(item2, scopedLogger)).toEqual(result2)
+    })
+    test('log error if item is not string nor object', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      expect(config._parseSerializerItem([], scopedLogger.enter('[0]'))).toBeUndefined()
+      expect(scopedLogger.toString()).toBe(`  serializers:
+    [0]:
+      must be string or object
+`)
+    })
+    test('log error if item have no property module', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      expect(config._parseSerializerItem({ options: {} }, scopedLogger.enter('[0]'))).toBeUndefined()
+      expect(scopedLogger.toString()).toBe(`  serializers:
+    [0]:
+      must have property module
+`)
+    })
+    test('log error if item have property options but invalid', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      expect(config._parseSerializerItem({ module: 'path', options: 'abc' }, scopedLogger.enter('[0]'))).toBeUndefined()
+      expect(scopedLogger.toString()).toBe(`  serializers:
+    [0]:
+      options:
+        must be object
+`)
+    })
+    test('special proc on builtin serializer', () => {
+      let { config, logger } = init()
+      config._serializerM = SerializerManager()
+      let scopedLogger = logger.enter('serializers')
+      let item = { module: 'htte-serializers-json', options: { serializer: {} } }
+      let result = { module: './serializers/json', options: { serializer: {} } }
+      expect(config._parseSerializerItem(item, scopedLogger.enter('[0]'))).toEqual(result)
     })
   })
 })
@@ -546,7 +623,7 @@ describe('public functions', () => {
       expect(config.findSerializer('application/json').name).toBe(config._type)
     })
     test('return undefined if type of serializer does not find', () => {
-      expect(config.findSerializer('xml')).toBeUndefined()
+      expect(config.findSerializer('exe')).toBeUndefined()
     })
   })
   describe('#schema', () => {
@@ -602,12 +679,12 @@ describe('public functions', () => {
     })
     test('log error when type is unregisted', () => {
       let { config, logger } = init()
-      let value = { name: 'getFeed', uri: '/feed', type: 'xml' }
+      let value = { name: 'getFeed', uri: '/feed', type: 'exe' }
       let scopedLogger = logger.enter('apis').enter('getFeed')
       let api = config.parseAPI(value, scopedLogger)
       expect(scopedLogger.toString()).toMatch(`    getFeed:
       type:
-        must be one of json
+        must be one of json,xml
 `)
     })
     test('log error when method is not valid', () => {

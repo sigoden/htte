@@ -356,6 +356,25 @@ res: {}
         expect(result.pass).toBe(false)
       })
     })
+    test('deserialize body with error', () => {
+      let ctx = {
+        record: jest.fn(),
+        resolveReq: jest.fn().mockImplementation(v => v),
+        logger: () => new Logger(),
+        diffRes: () => true
+      }
+      let fakeRes = {
+        headers: { 'content-type': 'application/xml' },
+        data: '<'
+      }
+      let mockAxios = require('axios').mockImplementation(() => Promise.resolve(fakeRes))
+      let { unit, logger } = createUnit2()
+      return unit.execute(ctx).then(result => {
+        expect(result.res.err.message).toBe('cannot deserialize body, Fail to parse xml')
+        expect(result.req).toBeDefined()
+        expect(result.pass).toBe(false)
+      })
+    })
   })
 })
 describe('private function', () => {

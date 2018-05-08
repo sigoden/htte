@@ -261,7 +261,11 @@ class Unit {
     let logger = ctx.logger().enter('req')
     return this._request(this._api, req, logger)
       .then(({ status, headers, data: body }) => {
-        body = this._deserialize(body, headers['content-type'])
+        try {
+          body = this._deserialize(body, headers['content-type'])
+        } catch (err) {
+          return { err }
+        }
         return { status, headers, body }
       })
       .catch(err => {
@@ -294,7 +298,11 @@ class Unit {
     if (!serializer) return data
     // json already deserialized
     if (serializer.name === 'json') return data
-    return serializer.deserialize(data, this._api.name)
+    try {
+      return serializer.deserialize(data, this._api.name)
+    } catch (err) {
+      throw new Error('cannot deserialize body, ' + err.message)
+    }
   }
 
   /**
@@ -372,7 +380,7 @@ class Unit {
       } catch (err) {
         return Promise.reject(`cannot serialize body, ${err}`)
       }
-      headers['Content-Type'] = serializer.type
+      headers['Content-Type'] = serializer.contentType()
     }
 
     this._hrstart = process.hrtime()

@@ -146,6 +146,14 @@ describe('Test utils', () => {
       expect(utils.isTypeOf({}, ['undefined', 'object'])).toBe(true)
     })
   })
+  describe('mergeTypeOptions', () => {
+    test('return base value if options is invalid', () => {
+      expect(utils.mergeTypeOptions('application/json')).toBe('application/json')
+    })
+    test('merge contentTypeOptions', () => {
+      expect(utils.mergeTypeOptions('application/json', { charset: 'utf-8' })).toBe('application/json; charset=utf-8')
+    })
+  })
   describe('print', () => {
     let log$ = console.log
     afterAll(() => {

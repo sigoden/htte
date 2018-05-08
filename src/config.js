@@ -11,8 +11,9 @@ const SerializerManager = require('./serializer-manager')
 const HTTP_METHODS = ['get', 'head', 'post', 'put', 'delete', 'connect', 'options', 'patch']
 const { URL } = require('url')
 
-const BUILTIN_SERIALIZERS = ['./serializers/json']
-const BUILTIN_PLUGINS = ['./plugins']
+const SERIALIZERS_PATH = './serializers/'
+const BUILTIN_SERIALIZERS = ['json', 'xml']
+const BUILTIN_PLUGIN = './plugins'
 
 const defaultConfig = {
   rootDir: '.',
@@ -322,15 +323,11 @@ class Config {
    */
   _parsePlugins(plugins, logger) {
     if (!utils.isTypeOf(plugins, 'array')) return logger.log('must be array')
-    plugins = BUILTIN_PLUGINS.concat(plugins)
+    plugins = [BUILTIN_PLUGIN].concat(plugins)
     plugins.forEach(path => {
-      let pluginModule
       let scopedLogger = logger.enter(path)
-      try {
-        pluginModule = require(path)
-      } catch (err) {
-        return scopedLogger.log(`cannot be required`)
-      }
+      let pluginModule = this._requireModule(path, scopedLogger)
+      if (!pluginModule) return
       if (!utils.isTypeOf(pluginModule, 'object')) {
         return scopedLogger.log('must be object')
       }
@@ -365,7 +362,7 @@ class Config {
 
   /**
    * Check `serializers` options
-   * @param {string[]} serializers  - the serializers to regist
+   * @param {Object[]|String[]} serializers  - the serializers to regist
    * @param {Logger} logger
    *
    * serializers is a list of node modules, each module exports
@@ -384,22 +381,67 @@ class Config {
     if (!utils.isTypeOf(serializers, ['array'])) {
       return logger.log('must be array')
     }
-    serializers = BUILTIN_SERIALIZERS.concat(serializers)
-    serializers.forEach(path => {
-      let serializerModule
-      let scopedLogger = logger.enter(path)
+    let processSerializerItem = (item, title) => {
+      let serializerItem = this._parseSerializerItem(item, logger.enter(title))
+      if (!serializerItem) return
+      let scopedLogger = logger.enter(serializerItem.module)
+      let serializerModule = this._requireModule(serializerItem.module, scopedLogger)
+      if (!serializerModule) return
       try {
-        serializerModule = require(path)
-      } catch (err) {
-        return scopedLogger.log(`cannot be required`)
-      }
-      try {
-        this._serializerM.regist(serializerModule)
+        this._serializerM.regist(serializerModule(serializerItem.options))
       } catch (err) {
         scopedLogger.log(err.message)
       }
+    }
+    serializers.forEach((item, index) => processSerializerItem(item, `[${index}]`))
+    BUILTIN_SERIALIZERS.map(name => {
+      if (!this._serializerM.findByName(name)) {
+        processSerializerItem(`${SERIALIZERS_PATH}${name}`, name)
+      }
     })
     return this._serializerM.names()
+  }
+
+  /**
+   * Check `serializers` each option
+   * @param {string|Object} item
+   * @param {Logger} logger
+   */
+  _parseSerializerItem(item, logger) {
+    let result = {}
+    if (!utils.isTypeOf(item, ['string', 'object'])) {
+      return logger.log('must be string or object')
+    }
+    if (utils.isTypeOf(item, 'string')) {
+      result = { module: item, options: {} }
+    } else {
+      if (!item.module) return logger.log('must have property module')
+      if (item.options && !utils.isTypeOf(item.options, 'object')) {
+        return logger.enter('options').log('must be object')
+      }
+      result = { module: item.module, options: item.options || {} }
+    }
+    BUILTIN_SERIALIZERS.forEach(name => {
+      if (result.module === `htte-serializers-${name}`) {
+        result.module = SERIALIZERS_PATH + name
+      }
+    })
+    return result
+  }
+
+  /**
+   * Load Module
+   * @param {string} path - module required path
+   * @param {Logger} logger
+   */
+  _requireModule(path, logger) {
+    try {
+      return require(path)
+    } catch (err) {}
+    try {
+      return require(path.resolve(path.dirname(this._file), path))
+    } catch (err) {}
+    return logger.log(`cannot be loaded as module`)
   }
 
   /**

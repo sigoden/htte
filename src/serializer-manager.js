@@ -11,7 +11,6 @@ module.exports = function() {
      * Regist serializer
      * @param {Object} plugin - model of serialize
      * @param {string} plugin.name - name of serializer, like json, xml
-     * @param {string} plugin.type - http content type, like application/json
      * @param {function} plugin.serialize - function to encode the object to specific data format
      * @param {function} plugin.deserialize - function to decode formated data to the object
      */
@@ -19,7 +18,7 @@ module.exports = function() {
       if (!_.isPlainObject(plugin)) {
         throw new Error('argument is not valid')
       }
-      let { name, type, serialize, deserialize } = plugin
+      let { name, serialize, deserialize, acceptType, contentType } = plugin
       // validate name
       if (!name || typeof name !== 'string') {
         throw new Error('name must be a string')
@@ -27,20 +26,17 @@ module.exports = function() {
       if (this.findByName(name)) {
         throw new Error(`${name}: serializer conflict`)
       }
-      // validate type
-      if (!type || typeof type !== 'string') {
-        throw new Error('type must be a string')
-      }
-      if (this.findByType(type)) {
-        throw new Error(`${name}: already exist serializer with type ${type}`)
-      }
-
       // validate serialize and deserialize
       if (typeof serialize !== 'function' || typeof deserialize !== 'function') {
         throw new Error(`${name}: serialize or deserialize must be function`)
       }
 
-      serializers.push(plugin)
+      // validate acceptType and contentType
+      if (typeof acceptType !== 'function' || typeof contentType !== 'function') {
+        throw new Error(`${name}: acceptType or contentType must be function`)
+      }
+
+      serializers.push({ name, serialize, deserialize, acceptType, contentType })
     },
 
     /**
@@ -64,7 +60,7 @@ module.exports = function() {
      * @param {string} type
      */
     findByType(type) {
-      return _.find(serializers, { type })
+      return _.find(serializers, serializer => serializer.acceptType(type))
     }
   }
 }

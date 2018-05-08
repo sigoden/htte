@@ -163,6 +163,18 @@ module.exports = {
   },
 
   /**
+   * Merge contentType Options
+   * mergeTypeOptions('application/json', { charset: 'utf-8' }) === 'application/json; charset=utf-8'
+   */
+  mergeTypeOptions: (base, options) => {
+    if (type(options) !== 'object') return base
+    return Object.entries(options).reduce((acc, elem) => {
+      acc += `; ${elem[0]}=${elem[1]}`
+      return acc
+    }, base)
+  },
+
+  /**
    * Print error stack in debug mode, only print normal message in normal mode
    */
   print: debug => {
