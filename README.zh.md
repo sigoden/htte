@@ -7,7 +7,7 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-> 翻译: [Englist](./README.md) | [中文](./README.zh.md)
+> 翻译: [English](./README.md) | [中文](./README.zh.md)
 
 ## 特性
 
