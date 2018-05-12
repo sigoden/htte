@@ -333,7 +333,8 @@ describe('Test parse function', () => {
       let apis = config._parseAPIsArray(value, scopedLogger)
       expect(scopedLogger.toString()).toBe(`  apis:
     [0]:
-      must have property name
+      name:
+        required
 `)
     })
     test('log error if any element have no property uri', () => {
@@ -343,7 +344,8 @@ describe('Test parse function', () => {
       let apis = config._parseAPIsArray(value, scopedLogger)
       expect(scopedLogger.toString()).toBe(`  apis:
     [0](getFeed):
-      must have property uri
+      uri:
+        required
 `)
     })
     test('filter out invalid APIObjects', () => {
@@ -498,7 +500,8 @@ describe('Test parse function', () => {
       let result = config._parseSerializers([{}], scopedLogger)
       expect(scopedLogger.toString()).toBe(`  serializers:
     [0]:
-      must have property module
+      module:
+        required
 `)
     })
     test('log error if module failed to regist', () => {
@@ -549,7 +552,8 @@ describe('Test parse function', () => {
       expect(config._parseSerializerItem({ options: {} }, scopedLogger.enter('[0]'))).toBeUndefined()
       expect(scopedLogger.toString()).toBe(`  serializers:
     [0]:
-      must have property module
+      module:
+        required
 `)
     })
     test('log error if item have property options but invalid', () => {

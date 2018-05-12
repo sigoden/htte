@@ -123,7 +123,8 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`  module:
     dependencies:
       [1]:
-        must have property module
+        module:
+          required
 `)
     })
     test('log error when there is conflicted names', () => {
@@ -164,7 +165,8 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`  module:
     dependencies:
       [0]:
-        must have property module
+        module:
+          required
 `)
     })
     test('log error if dependency file doest not exist', () => {
@@ -263,7 +265,8 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`  module:
     units:
       [0]:
-        must have property describe
+        describe:
+          required
 `)
     })
     test('unit group', () => {

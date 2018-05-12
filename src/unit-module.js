@@ -163,7 +163,7 @@ class UnitModule {
         break
       case 'object':
         let { name, module } = dependency
-        if (!module) return logger.log('must have property module')
+        if (!module) return logger.enter('module').log('required')
         _file = this._absoluteFile(module)
         _name = name
         break
@@ -231,7 +231,7 @@ class UnitModule {
       return logger.log(`must be object`)
     }
     if (!unit.describe) {
-      return logger.log(`must have property describe`)
+      return logger.enter('describe').log(`required`)
     }
     logger.setTitle(`[${index}](${unit.describe})`)
 

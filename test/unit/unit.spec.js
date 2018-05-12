@@ -436,7 +436,8 @@ describe('private function', () => {
       let api = unit._parseAPI({ name: 'echo' }, scopedLogger)
       expect(logger.toString()).toBe(`    [0](unit 1):
       api:
-        must have properties uri
+        uri:
+          required
 `)
     })
   })
@@ -475,7 +476,7 @@ describe('private function', () => {
       expect(logger.toString()).toBe(`    [0](unit 1):
       req:
         params:
-          must have property params
+          required
 `)
     })
     test('log error when params have extra fields', () => {

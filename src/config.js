@@ -234,8 +234,16 @@ class Config {
       }
 
       let { name, uri, method, timeout, type } = api
-      if (!name) return logger.enter(`[${index}]`).log('must have property name')
-      if (!uri) return logger.enter(`[${index}](${name})`).log('must have property uri')
+      if (!name)
+        return logger
+          .enter(`[${index}]`)
+          .enter('name')
+          .log('required')
+      if (!uri)
+        return logger
+          .enter(`[${index}](${name})`)
+          .enter('uri')
+          .log('required')
       return { name, uri, method, type, timeout }
     }
     return _.map(apis, mapFunc).filter(v => !!v)
@@ -415,7 +423,7 @@ class Config {
     if (utils.isTypeOf(item, 'string')) {
       result = { module: item, options: {} }
     } else {
-      if (!item.module) return logger.log('must have property module')
+      if (!item.module) return logger.enter('module').log('required')
       if (item.options && !utils.isTypeOf(item.options, 'object')) {
         return logger.enter('options').log('must be object')
       }

@@ -123,7 +123,7 @@ class Unit {
       _api = this._config.findAPI(api)
       if (!_api) return logger.log(`cannot find api ${api}`)
     } else {
-      if (!api.uri) return logger.log('must have properties uri')
+      if (!api.uri) return logger.enter('uri').log('required')
       if (!api.name) api.name = (api.method || 'get') + ' ' + api.uri
       _api = this._config.parseAPI(api, logger)
     }
@@ -197,7 +197,7 @@ class Unit {
     }
 
     let apiKeys = this._api.keys
-    if (!params && apiKeys.length) return logger.log('must have property params')
+    if (!params && apiKeys.length) return logger.log('required')
 
     let keys = _.keys(params).sort()
     let excludes = _.difference(apiKeys, keys)
