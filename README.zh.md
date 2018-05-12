@@ -1,4 +1,4 @@
-# Htte
+# Htte —— 自动化声明式接口测试工具
 
 [![Node Version](https://img.shields.io/badge/node-%3E=4-brightgreen.svg)](https://www.npmjs.com/package/htte)
 [![Build Status](https://travis-ci.org/sigoden/htte.svg?branch=master)](https://travis-ci.org/sigoden/htte)
@@ -7,119 +7,312 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-Htte 是一款 HTTP 接口自动化测试框架。
-
 > 翻译: [Englist](./README.md) | [中文](./README.zh.md)
 
 ## 特性
 
-- 采用 YAML 编写测试，上手简单，开发难度低，与后端代码无耦合
-- 接口测试简化成描述请求和响应
-- 提供插件自定义请求数据生成和响应数据断言
-- 提供数据链路访问其它测试的数据和配置导出数据
-- 数据交换格式可配置，内置 json, xml
+- 自动化，逐一执行测试文件中的测试用例
+- 声明式，用 YAML 编写测试
+- 语言无关性，平台无关性
+- 插件化，可以自由生成响应数据，灵活校验响应数据
+- 编码可扩展，内置 JSON/XML 编码器
 
 ## 开始使用
 
-### 安装
+接口测试就是构造请求，校验响应。
 
-Htte 是一款使用 Javascript 编写的命令行应用。为了保证 Htte 的正常运行，你需要先安装 [Node.js](https://nodejs.org/en/).
-运行命令 `node --version` 和 `npm --version` 确保 Node.js 能正常运行。
-
-安装 htte
-```
-npm install -g htte
-htte --version
-```
-
-### 配置接口信息
-
-假设有这样一个接口
-
-```
-功能: 用户登录
-请求路径: localhost:3000/login
-请求方法: POST
-请求头: { "Content-Type": "application/json" }
-请求数据: {"username": "john", "password": "johnsblog"}
-响应:
-  - 状况: 用户名和密码正确
-    响应状态码： 200
-    响应数据: {"username": "john", "token": "..."}
-  - 状况: 用户名或密码不正确
-    响应状态码： 401
-    响应数据: {"errcode": 11001, "message": "invalid username or password"}
+使用 cURL 构造请求
+```sh
+curl -X PUT \
+  'https://httpbin.org/anything/foo?q=bar' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Custom: baz' \
+  -d '{"key": "value"}'
 ```
 
-我们需要告诉 Htte 如何访问这个接口。在配置文件 `htte.yaml` 中添加接口信息
+肉眼校验响应
 
-```yaml
-url: http://localhost:3000
-type: json
-apis:
-  login:
-    method: post
-    uri: /login
+```json
+{
+  "args": {
+    "q": "bar"
+  },
+  "data": "{\"key\": \"value\"}",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Cache-Control": "no-cache",
+    "Connection": "close",
+    "Content-Length": "16",
+    "Content-Type": "application/json",
+    "Host": "httpbin.org",
+    "User-Agent": "curl/7.52.1",
+    "X-Custom": "baz"
+  },
+  "json": {
+    "key": "value"
+  },
+  "method": "PUT",
+  "origin": "113.116.157.5",
+  "url": "https://httpbin.org/anything/foo?q=bar"
+}
 ```
 
-### 编写接口测试
-
-这个接口存在两种情况，用户名和密码匹配时返回登录 token, 不匹配时返回错误信息。
-我们需要测试这两种情况。编写接口测试文件 `login.yaml`
+使用 Htte 进行接口测试。首先编写测试文件 `httpbin.yaml`
 
 ```yaml
 units:
-  - describe: 登录失败
-    api: login
+  - describe: httpbin demo
+    api:
+      uri: https://httpbin.org/anything/foo
+      method: put
     req:
+      query:
+        q: bar
+      headers:
+        X-Custom: baz
       body:
-        username: john
-        password: johnblog
-    res:
-      status: 401
-      body:
-        errcode: 11001
-        message: !@exist
-  - describe: 登录成功
-    api: login
-    name: johnLogin
-    req:
-      body:
-        username: john
-        password: johnsblog
+        key: value
     res:
       body:
-        username: john
-        token: !@exist
+        args:
+          q: bar
+        data: '{"key":"value"}'
+        files: {}
+        form: {}
+        headers: !@object
+          X-Custom: baz
+        json:
+          key: value
+        method: PUT
+        origin: !@regexp /^([0-9]{1,3}\.){3}[0-9]{1,3}$/
+        url: 'https://httpbin.org/anything/foo?q=bar'
 ```
 
-### 运行测试
-
-我们需要运行 Web 服务器并确保接口能正常工作。
-
-执行
+运行测试文件
 ```
-$ htte
+htte
+```
+> 使用 npm i -g htte 安装 htte 命令行工具，需要先安装 [node.js](https://nodejs.org/zh-cn/)
+
+执行结果如下
+```
+RunUnits:
+  test:
+    httpbin demo:
+      ✓
 ```
 
-Htte 将读取配置文件 `htte.yaml` 和测试文件 `login.yaml`, 得到一系列测试单元，并逐一执行测试单元。
-对每个测试单元，Htte 将根据其测试描述的请求生成请求并发送到对应接口，然后对接口响应与测试描述的响应比对。
+可以看到这条测试是通过的。
 
-## 例子
+用户只需要测试文件中描述接口的请求和响应，Htte 自动为你构造请求并发送到服务器，从服务器接收响应并进行数据校验，最后打印测试结果。
+
+为了验证 Htte 确实是会进行响应数据校验，我们可以修改测试文件:
+```yaml
+        json:
+        # key: value
+          key: Value
+```
+
+其执行结果为
+```
+RunUnits:
+  test:
+    httpbin demo:
+      res:
+        body:
+          json:
+            key:
+              value diff, "Value" ≠ "value"
+```
+
+可以看到测试是失败的，原因是响应体数据 `json.key` 的实际值 `value` 与 期望值 `Value` 不匹配。
+
+Htte 通过测试文件自动构造请求并校验响应。编写测试其实就是用 YAML 格式描述请求和预期响应。
+
+## 插件
+
+Htte 使用插件自定义请求数据生成和响应数据校验。
+
+> 采用 YAML 我们能直观的编写测试，测试一个接口无非是用 YAML 描述其请求和响应数据而已。但这种策略存在一个严重的问题。不是所有的数据（如当前时间）都是固定的可以直接描述的。我们需要灵活地生成响应数据，单单相等判断完全无法校验响应数据。我们需要灵活性，我们需要自定义，这些都有插件提供，这些插件也都可以提供。
+
+编写测试文件 `plugin.yaml`
+```
+units:
+  - describe: httpbin demo
+    api:
+      uri: https://httpbin.org/anything
+      method: post
+    req:
+      body:
+        foo: !$concat [ Bearer, ' ', !$randstr ]
+        bar: !$datetime
+    res:
+      body: !@object
+        json:
+          foo: !@regexp /^Bearer \w{6}$/
+          bar: !@exist
+```
+运行测试
+```
+htte --debug
+```
+> 选项 `--debug` 启用调试模式，会打印实际请求和响应数据
+
+执行结果
+```
+RunUnits:
+  plugin:
+    httpbin demo:
+      ✓
+      debug:
+        req:
+          url: 'https://httpbin.org/anything'
+          method: post
+          body:
+            foo: Bearer EtVcQr
+            bar: '2018-05-10T13:46:37.467Z'
+        res:
+          status: 200
+          body:
+            args: {}
+            data: '{"foo":"Bearer EtVcQr","bar":"2018-05-10T13:46:37.467Z"}'
+            files: {}
+            form: {}
+            headers:
+              Accept: 'application/json, text/plain, */*'
+              Connection: close
+              Content-Length: '56'
+              Content-Type: application/json
+              Host: httpbin.org
+              User-Agent: axios/0.18.0
+            json:
+              bar: '2018-05-10T13:46:37.467Z'
+              foo: Bearer EtVcQr
+            method: POST
+            origin: 113.116.51.68
+            url: 'https://httpbin.org/anything'
+```
+
+`!$` 作为前缀的是生成类插件，用来生成一些特殊的数据
+
+```yaml
+!$randstr => EtVcQr 生成随机字符串
+!$concat [ Bearer, ' ', !$randstr ] => 'Bearer EtVcQr' 拼接数组返回字符串
+!$datetime => '2018-05-10T13:46:37.467Z' 返回当前时间
+```
+
+`!@` 作为前缀的是比对类插件，用来进行一些特殊的数据比对
+
+```yaml
+!@object => 比对对象，但仅比对列出的字段。
+!@regexp => 校验数据是否匹配正则
+```
+
+采用描述性语言编写测试最大的障碍就是灵活性的丧失，但插件完美解决了这一问题。
+
+## 数据链接
+
+数据链接提供了一种从一个测试中获取另一个测试里的数据的方法。
+
+> 测试间是有数据耦合的。权限接口不是通常要带个登录接口返回的 token 吗？从一个测试中获取另一个测试里的数据常见策略是使用变量，Postman 以及代码编写测试时就是这样做的。但是变量必须定义了才能使用，而且需要命名，可能冲突，可能被不小心覆盖了，繁琐又不安全。数据链接就是一种另一种尝试，意外的灵活有安全呢！
+
+编写测试文件 `data-link.yaml`
+```yaml
+units:
+  - describe: get my ip address
+    name: getIP
+    api:
+      uri: https://httpbin.org/get
+    res:
+      body: !@object
+        origin: !@regexp /^([0-9]{1,3}\.){3}[0-9]{1,3}$/
+  - describe: send my id address
+    name: sendIP
+    api:
+      uri: https://httpbin.org/anything
+      method: post
+    req:
+      body:
+        ip: !$query $$getIP.res.body.origin
+    res:
+      body: !@object
+        json:
+          ip: !@query $$$req.body.ip
+```
+
+该测试文件包含两个测试，其中测试 `sendIP` 要使用到测试 `getIP` 响应数据 `origin`。先不看接下来的分析，你知道存在几个数据链接，分别引用的是哪些数据吗？
+
+答案时两处：
+
+- `$$getIP.res.body.origin` 是一个数据链接，它指向同测试文件中名为 `getIP` 的测试下的访问路径是 `res.body.origin` 数据。
+- `$$$req.body.ip` 也时一个数据链接，它指向同测试单元中访问路径为 `req.body.ip` 的数据。
+
+数据链接是字符串，必须结合插件才能发挥其作用。
+
+`!$query` 将返回链接的数据。
+`!@query` 将链接的数据作为预期与实际响应进行全等比较。
+
+- 灵活, 数据链路可以直接引用到任何数据
+- 安全, 数据链路引用的数据是只读的
+
+## 编码器
+
+编码器用来编码、解码数据，只用有了 XML 编码器，你才能测试格式为 application/xml 的接口。只要有编码器，Htte 能测试任意格式接口。
+
+> Htte 采用 YAML 描述请求和预期响应，内部数据格式是 JS 对象。在数据传给服务器前，Htte 需要使用编码器将 JS 对象码为特定格式。在收到响应后，Htte 也需要使用编码器将特定格式数据解码成 JS 对象。
+
+Htte 的编码器可扩展，目前内置 json 和 xml 两种格式编码器。
+
+XML 编码:
+
+```yaml
+units:
+  - describe: httpbin xml
+    api:
+      uri: https://httpbin.org/post
+      method: post
+      type: xml
+    req:
+      body:
+        key: value
+    res:
+      body: !@object
+        data: '<key>value</key>'
+```
+
+Htte 根据 `api.type` 得出接口请求数据编码是 XML, 并采用 xml 编码 `req.body` 的数据 `<key>value</key>`。
+
+XML 解码:
+
+```yaml
+units:
+  - describe: httpbin xml
+    api:
+      uri: https://httpbin.org/xml
+    res:
+      body:
+        slideshow:
+          slide:
+            - title: Wake up to WonderWidgets!
+            - title: Overview
+              item:
+                - '#text': Whyare great
+                  em: WonderWidgets
+                - ''
+                - '#text': WhoWonderWidgets
+                  em: buys
+```
+
+接口 `https://httpbin.org/xml` 响应的是 XML 数据，Htte 根据响应头 `Content-Type` 选择编码器对响应体进行解码。
+
+## 案例
 
 - [Restful-Booker](./examples/restful-booker) —— 简单的图书管理应用，专为测试 API 创建演示站点
 - [Realword](./examples/realworld/) —— 全栈博客应用
 
-## 文档
-
-详见[官方网站](https://sigoden.github.io/htte)
-
-- [入门](https://sigoden.github.io/htte/0.3/docs/)
-- [配置文件](https://sigoden.github.io/htte/0.3/docs/config-file.html)
-- [测试模块](https://sigoden.github.io/htte/0.3/docs/module-file.html)
-- [插件](https://sigoden.github.io/htte/0.3/docs/plugin.html)
-
 ## 许可证
 
 [MIT](https://github.com/sigoden/htte/blob/master/LICENSE)
-
