@@ -1,4 +1,4 @@
-# Htte - Declartive HTTP API automated testing tool.
+# Htte - Declarative HTTP API automated testing tool.
 
 [![Node Version](https://img.shields.io/badge/node-%3E=4-brightgreen.svg)](https://www.npmjs.com/package/htte)
 [![Build Status](https://travis-ci.org/sigoden/htte.svg?branch=master)](https://travis-ci.org/sigoden/htte)
