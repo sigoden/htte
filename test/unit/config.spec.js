@@ -25,7 +25,9 @@ describe('Test Config', () => {
     expect(config._serializers).toBeInstanceOf(Array)
   })
   test('throw error if file does not exist', () => {
-    expect(() => new Config({ configFile: resolveFixtureFile('./config/404.yaml') })).toThrow(/can not load config file/)
+    expect(() => new Config({ configFile: resolveFixtureFile('./config/404.yaml') })).toThrow(
+      /can not load config file/
+    )
   })
   test('init without config file', () => {
     let config = new Config()
