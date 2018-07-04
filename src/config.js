@@ -35,20 +35,25 @@ const defaultConfig = {
 class Config {
   /**
    * Create instance of Config
-   * @param {string} file - config file path
+   * @param {object} options - options to init Config
+   * @param {string} options.configFile - config file path
    */
-  constructor(file) {
-    if (!file) {
+  constructor(options = {}) {
+    let { configFile, timeout, url } = options
+    if (!configFile) {
       this._file = path.resolve('.yaml')
       this._template = defaultConfig
     } else {
-      this._file = path.resolve(file)
+      this._file = path.resolve(configFile)
       this._template = _.defaultsDeep(loadConfig(this._file), defaultConfig)
     }
 
     this._logger = new Logger('LoadConfig')
     this._pluginM = PluginManager()
     this._serializerM = SerializerManager()
+
+    if (timeout) this._template.timeout = timeout
+    if (url) this._template.url = url
 
     this._parse(this._template)
 

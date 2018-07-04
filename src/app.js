@@ -14,18 +14,18 @@ const Context = require('./context')
 class App {
   /**
    * Create an instance of App.
-   *
-   * @param {string} file - config file path
-   * @param {function} print - function to print app log
+   * @param {object} options - options to init app
+   * @param {string} options.configFile - config file path
+   * @param {function} options.printFunc - function to print app log
    *
    * @memberof App
    */
-  constructor(file, print) {
+  constructor(options) {
     this._ready = false
-    this._print = print || console.log
+    this._print = options.printFunc || console.log
 
     try {
-      this._config = new Config(file)
+      this._config = new Config(_.pick(options, ['configFile', 'url', 'timeout']))
       this._units = new UnitManager(this._config).units()
       this._session = new Session(this._config.sessionFile())
       this._ready = true

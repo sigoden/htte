@@ -323,7 +323,7 @@ function init(options = {}) {
     isModuleExist = () => true
   } = options
   let logger = new Logger('LoadUnits').enter(file)
-  let config = new Config(resolveFixtureFile('./unit-module/config.yaml'))
+  let config = new Config({ configFile: resolveFixtureFile('./unit-module/config.yaml') })
   config.findAPI = v => ({ method: 'get', name: v, url: `http://localhost:3000/` + v })
   let manager = { isModuleExist }
   let loadYamlSyncOrigin = utils.loadYamlSync

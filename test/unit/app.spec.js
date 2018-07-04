@@ -21,7 +21,7 @@ beforeEach(() => {
 describe('Test App', () => {
   describe('constructor', () => {
     test('private property', () => {
-      let app = new App(resolveFixtureFile('./app/config.yaml'))
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml') })
       expect(app._ready).toBe(true)
       expect(app._print).toBe(console.log)
       expect(app._config).toBeInstanceOf(Config)
@@ -34,7 +34,7 @@ describe('Test App', () => {
         throw new Error('unit-manager throw error')
       })
       let print = jest.fn()
-      let app = new App(resolveFixtureFile('./app/config.yaml'), print)
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: print })
       expect(app._ready).toBe(false)
       expect(print.mock.calls[0][0]).toBeInstanceOf(Error)
     })
@@ -44,14 +44,14 @@ describe('Test App', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._unitCursor = jest.fn(() => {
         throw new Error('_unitCursor throw error')
       })
       return app.run({}).then(result => expect(result).toBeUndefined())
     })
     test('reject when error occured', () => {
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._unitCursor = jest.fn(() => {
         throw new Error('_unitCursor throw error')
       })
@@ -68,7 +68,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       return app.run({}).then(result => {
         expect(result).toBe(1)
       })
@@ -81,7 +81,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       return app.run({ bail: true }).then(result => {
         expect(app._units[1].execute).toHaveBeenCalled()
         expect(app._units[2].execute).not.toHaveBeenCalled()
@@ -96,7 +96,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       return app.run({}).then(() => {
         expect(app._units[2].execute).toHaveBeenCalled()
       })
@@ -109,7 +109,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._session.cursor = jest.fn().mockReturnValue(1)
       return app.run({ shot: true, amend: true }).then(() => {
         expect(app._units[0].execute).not.toHaveBeenCalled()
@@ -125,7 +125,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       return app.run({ shot: true, unit: 'module-unit2' }).then(() => {
         expect(app._session.cursor()).toBe(0)
         expect(app._units[0].execute).not.toHaveBeenCalled()
@@ -141,7 +141,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._session.persist = jest.fn()
       app._session.setCursor = jest.fn()
       return app.run({}).then(() => {
@@ -155,7 +155,7 @@ describe('Test App', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._print = jest.fn(() => {
         throw new Error('_print throw error')
       })
@@ -169,7 +169,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.view({})
       expect(app._print).toHaveBeenCalledTimes(1)
       app._units.map(u => expect(u.view).toHaveBeenCalledTimes(1))
@@ -182,7 +182,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', module: 'module3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.view({ module: 'module2' })
       expect(app._units[0].view).not.toHaveBeenCalled()
       expect(app._units[1].view).toHaveBeenCalled()
@@ -196,7 +196,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', module: 'module3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.view({ module: ['module2', 'module3'] })
       expect(app._units[0].view).not.toHaveBeenCalled()
       expect(app._units[1].view).toHaveBeenCalled()
@@ -210,7 +210,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', api: 'getModel3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.view({ api: 'getModel2' })
       expect(app._units[0].view).not.toHaveBeenCalled()
       expect(app._units[1].view).toHaveBeenCalled()
@@ -224,7 +224,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', api: 'getModel3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.view({ api: ['getModel2', 'getModel3'] })
       expect(app._units[0].view).not.toHaveBeenCalled()
       expect(app._units[1].view).toHaveBeenCalled()
@@ -236,7 +236,7 @@ describe('Test App', () => {
       UnitManager.mockImplementation(() => {
         throw new Error('unit-manager throw error')
       })
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._unitCursor = jest.fn(() => {
         throw new Error('_unitCursor throw error')
       })
@@ -250,7 +250,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       let data = {}
       app._session.readUnit = jest.fn().mockReturnValue(data)
       app.inspect({ unit: 'module-unit2' })
@@ -265,7 +265,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       let data = {}
       app._session.cursor = jest.fn().mockReturnValue(1)
       app._session.readUnit = jest.fn().mockReturnValue(data)
@@ -274,7 +274,7 @@ describe('Test App', () => {
       expect(app._print).toHaveBeenCalled()
     })
     test('print error if unit is not found', () => {
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app.inspect({})
       expect(app._print).toHaveBeenCalled()
     })
@@ -286,7 +286,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       let data = {}
       app._session.cursor = jest.fn().mockReturnValue(1)
       app._session.readUnit = jest.fn().mockReturnValue(undefined)
@@ -303,7 +303,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       let cursor = app._unitCursor('module-unit2')
       expect(cursor).toBe(1)
     })
@@ -311,7 +311,7 @@ describe('Test App', () => {
       UnitManager.mockImplementation(() => ({
         units: jest.fn(() => [])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       expect(() => app._unitCursor('module-unit2')).toThrow('cannot find unit')
     })
     test('throw error when unit is not find', () => {
@@ -322,7 +322,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       expect(() => app._unitCursor('unit2')).toThrow('cannot find unit')
     })
     test('should able to use session cursor', () => {
@@ -333,7 +333,7 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._session.cursor = jest.fn().mockReturnValue(1)
       expect(app._unitCursor(undefined, true)).toBe(1)
     })
@@ -345,14 +345,14 @@ describe('Test App', () => {
           createMockUnit({ name: 'unit3', describes: ['unit3'] })
         ])
       }))
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       app._session.cursor = jest.fn().mockReturnValue(3)
       expect(app._unitCursor(undefined, true)).toBe(0)
     })
   })
   describe('_runUnit', () => {
     function helper(unitOptions) {
-      let app = new App(resolveFixtureFile('./app/config.yaml'), jest.fn())
+      let app = new App({ configFile: resolveFixtureFile('./app/config.yaml'), printFunc: jest.fn() })
       let unit = createMockUnit(unitOptions)
       let logger = new Logger()
       return { app, unit, logger }

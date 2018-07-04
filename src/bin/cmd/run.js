@@ -6,6 +6,8 @@ module.exports = {
   describe: 'run tests',
   builder: function(yargs) {
     return yargs
+      .option('url', { description: 'api base url' })
+      .option('timeout', { description: 'api request timeout' })
       .option('amend', { alias: 'a', description: 'start running from break position', boolean: true })
       .option('debug', { alias: 'd', description: 'print request and response', boolean: true })
       .option('unit', { alias: 'u', description: 'start running from specific unit' })
@@ -14,13 +16,19 @@ module.exports = {
       .conflicts('amend', 'unit')
   },
   handler: function(argv) {
-    new App(argv.config, print(process.env.DEBUG))
+    let options = {
+      configFile: argv.config,
+      printFunc: print(process.env.DEBUG)
+    }
+    if (argv.url) options.url = argv.url
+    if (argv.timeout) options.timeout = argv.timeout
+    new App(options)
       .run(argv)
       .then(exitStatus => {
         process.exit(exitStatus)
       })
       .catch(err => {
-        console.log(err)
+        printFunc(err)
       })
   }
 }

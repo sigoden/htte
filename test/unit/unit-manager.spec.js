@@ -7,7 +7,7 @@ const utils = require('../../src/utils')
 const { resolveFixtureFile } = require('./helper')
 
 describe('Test UnitManager', () => {
-  let config = new Config(resolveFixtureFile('./unit-manager/demo1/config.yaml'))
+  let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo1/config.yaml') })
   let manager = new UnitManager(config)
   test('private property', () => {
     expect(manager._config).toBe(config)
@@ -28,7 +28,7 @@ describe('Test UnitManager', () => {
 describe('public function', () => {
   describe('files', () => {
     test('return module files', () => {
-      let config = new Config(resolveFixtureFile('./unit-manager/demo1/config.yaml'))
+      let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo1/config.yaml') })
       let manager = new UnitManager(config)
       expect(manager.files()).toEqual([
         resolveFixtureFile('./unit-manager/demo1/module1.yaml'),
@@ -82,17 +82,17 @@ describe('public function', () => {
   })
   describe('modules', () => {
     test('return unit module', () => {
-      let config = new Config(resolveFixtureFile('./unit-manager/demo1/config.yaml'))
+      let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo1/config.yaml') })
       let manager = new UnitManager(config)
       expect(manager.modules()).toHaveLength(2)
       expect(manager.modules()[0]).toBeInstanceOf(UnitModule)
     })
     test('circular dependence detect', () => {
-      let config = new Config(resolveFixtureFile('./unit-manager/demo2/config.yaml'))
+      let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo2/config.yaml') })
       expect(() => new UnitManager(config)).toThrow('circular dependency detected, module2 -> module1')
     })
     test('sort by dependence', () => {
-      let config = new Config(resolveFixtureFile('./unit-manager/demo3/config.yaml'))
+      let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo3/config.yaml') })
       let manager = new UnitManager(config)
       expect(manager.modules()[0].name()).toEqual('module2')
     })
@@ -107,7 +107,7 @@ describe('public function', () => {
   })
   describe('units', () => {
     test('return units', () => {
-      let config = new Config(resolveFixtureFile('./unit-manager/demo1/config.yaml'))
+      let config = new Config({ configFile: resolveFixtureFile('./unit-manager/demo1/config.yaml') })
       let manager = new UnitManager(config)
       expect(manager.units()).toHaveLength(2)
       expect(manager.units()[0]).toBeInstanceOf(Unit)
@@ -116,7 +116,7 @@ describe('public function', () => {
 })
 
 function init(file = './unit-manager/empty/config.yaml') {
-  let config = new Config(resolveFixtureFile(file))
+  let config = new Config({ configFile: resolveFixtureFile(file) })
   let manager = new UnitManager(config)
   return { config, manager }
 }

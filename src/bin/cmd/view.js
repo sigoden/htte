@@ -10,6 +10,7 @@ module.exports = {
       .option('api', { alias: 'a', type: 'array', description: 'filter by api' })
   },
   handler: function(argv) {
-    new App(argv.config, print(process.env.DEBUG)).view(argv)
+    let options = { configFile: argv.config, printFunc: print(process.env.DEBUG) }
+    new App(options).view(argv)
   }
 }

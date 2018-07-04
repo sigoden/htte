@@ -8,6 +8,7 @@ module.exports = {
     return yargs.positional('unit', { describe: 'unit id', type: 'string' })
   },
   handler: function(argv) {
-    new App(argv.config, print(process.env.DEBUG)).inspect(argv)
+    let options = { configFile: argv.config, printFunc: print(process.env.DEBUG) }
+    new App(options).inspect(argv)
   }
 }

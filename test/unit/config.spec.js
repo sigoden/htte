@@ -9,7 +9,7 @@ const fs = require('fs')
 
 describe('Test Config', () => {
   let configFile = resolveFixtureFile('./config/realworld.yaml')
-  let config = new Config(configFile)
+  let config = new Config({ configFile })
   test('private property', () => {
     expect(config._file).toBe(configFile)
     expect(config._logger).toBeInstanceOf(Logger)
@@ -25,7 +25,7 @@ describe('Test Config', () => {
     expect(config._serializers).toBeInstanceOf(Array)
   })
   test('throw error if file does not exist', () => {
-    expect(() => new Config(resolveFixtureFile('./config/404.yaml'))).toThrow(/can not load config file/)
+    expect(() => new Config({ configFile: resolveFixtureFile('./config/404.yaml') })).toThrow(/can not load config file/)
   })
   test('init without config file', () => {
     let config = new Config()
@@ -52,6 +52,18 @@ describe('Test Config', () => {
     expect(config._exports).toEqual({})
     expect(config._plugins).toBeInstanceOf(Array)
     expect(config._serializers).toBeInstanceOf(Array)
+  })
+  test('override url', () => {
+    let configFile = resolveFixtureFile('./config/realworld.yaml')
+    let url = 'http://example.com'
+    let config = new Config({ configFile, url })
+    expect(config._url).toBe(url)
+  })
+  test('override timeout', () => {
+    let configFile = resolveFixtureFile('./config/realworld.yaml')
+    let timeout = Number.MAX_VALUE
+    let config = new Config({ configFile, timeout })
+    expect(config._timeout).toBe(timeout)
   })
 })
 
@@ -580,7 +592,7 @@ describe('Test parse function', () => {
 
 describe('public functions', () => {
   let configFile = resolveFixtureFile('./config/realworld.yaml')
-  let config = new Config(configFile)
+  let config = new Config({ configFile })
   describe('#file', () => {
     test('return absolute config file path', () => {
       expect(config.file()).toBe(configFile)
@@ -712,6 +724,6 @@ describe('public functions', () => {
 })
 
 function init() {
-  let config = new Config(resolveFixtureFile('./config/empty.yaml'))
+  let config = new Config({ configFile: resolveFixtureFile('./config/empty.yaml') })
   return { config, logger: config._logger }
 }
