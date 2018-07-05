@@ -129,7 +129,7 @@ describe('public function', () => {
     test('print req and res', () => {
       let { unit, options } = createUnit2()
       let debugLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
@@ -153,7 +153,7 @@ describe('public function', () => {
     test('print req and res while req is empty', () => {
       let { unit, options } = createUnit1()
       let debugLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
@@ -173,7 +173,7 @@ describe('public function', () => {
     test('print req and res if req.headers, req.body and res.body exists', () => {
       let { unit } = createUnit1()
       let debugLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
@@ -201,7 +201,7 @@ describe('public function', () => {
     test('print req and res if res.err', () => {
       let { unit } = createUnit1()
       let debugLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
       unit._axios = { method: unit.api().method, url: unit.api().url }
@@ -226,9 +226,9 @@ describe('public function', () => {
   describe('#view', () => {
     test('view unit', () => {
       let { unit } = createUnit1({ name: 'unit1' })
-      let viewLogger = new Logger('ViewUnits')
+      let viewLogger = new Logger('HTTE')
       unit.view(viewLogger)
-      expect(viewLogger.toString()).toBe(`ViewUnits:
+      expect(viewLogger.toString()).toBe(`HTTE:
   module1:
     unit 1:
       unit1
@@ -240,9 +240,9 @@ describe('public function', () => {
         scopeDescribes: ['group 1', 'sub group 2', 'unit 1'],
         scopeIndexes: [0, 0, 0]
       })
-      let viewLogger = new Logger('ViewUnits')
+      let viewLogger = new Logger('HTTE')
       unit.view(viewLogger)
-      expect(viewLogger.toString()).toBe(`ViewUnits:
+      expect(viewLogger.toString()).toBe(`HTTE:
   module1:
     group 1:
       sub group 2:
@@ -612,7 +612,7 @@ describe('private function', () => {
     test('reject if logger is dirty', () => {
       let { unit, logger } = createUnit2()
       let executeLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
         .enter('req')
@@ -625,7 +625,7 @@ describe('private function', () => {
       require('axios').mockImplementation(v => Promise.resolve(v))
       let { unit, logger } = createUnit1({ req: { headers: { Authorization: 'Bearer balaba' } } })
       let executeLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
         .enter('req')
@@ -637,7 +637,7 @@ describe('private function', () => {
       require('axios').mockImplementation(v => Promise.resolve(v))
       let { unit, logger } = createUnit2()
       let executeLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
         .enter('req')
@@ -659,7 +659,7 @@ describe('private function', () => {
         }
       })
       let executeLogger = new Logger()
-        .enter('RunUnits')
+        .enter('HTTE')
         .enter(unit.module())
         .enters(unit.describes())
         .enter('req')

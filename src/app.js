@@ -60,7 +60,7 @@ class App {
       units = this._units.slice(cursor)
     }
 
-    let logger = new Logger('RunUnits')
+    let logger = new Logger('HTTE')
 
     let lastUnitLogger
     this._runExitCode = 0
@@ -140,7 +140,7 @@ class App {
     if (!this._ready) return
 
     let units = this._units
-    let logger = new Logger('ViewUnits')
+    let logger = new Logger('HTTE')
     let filterFunc = (colletion, valueFunc, candicates) => {
       if (!candicates || !candicates.length) {
         return colletion

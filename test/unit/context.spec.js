@@ -97,7 +97,7 @@ function init() {
   let unit = {}
   let session = { records: jest.fn(), writeUnit: jest.fn() }
   let config = { exports: jest.fn() }
-  let logger = new Logger('RunUnits').enter('test1')
+  let logger = new Logger('HTTE').enter('test1')
   let context = new Context(unit, session, config, logger)
   return { unit, session, config, logger, context }
 }

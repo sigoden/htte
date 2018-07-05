@@ -99,7 +99,7 @@ htte
 
 The result is
 ```
-RunUnits:
+HTTE:
   test:
     httpbin demo:
       ✓
@@ -117,7 +117,7 @@ In order to verify that Htte really does validate the response data, we can modi
 
 The result is
 ```
-RunUnits:
+HTTE:
   test:
     httpbin demo:
       res:
@@ -162,7 +162,7 @@ htte --debug
 
 The result is
 ```
-RunUnits:
+HTTE:
   plugin:
     httpbin demo:
       ✓

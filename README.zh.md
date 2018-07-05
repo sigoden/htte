@@ -99,7 +99,7 @@ htte
 
 执行结果如下
 ```
-RunUnits:
+HTTE:
   test:
     httpbin demo:
       ✓
@@ -118,7 +118,7 @@ RunUnits:
 
 其执行结果为
 ```
-RunUnits:
+HTTE:
   test:
     httpbin demo:
       res:
@@ -163,7 +163,7 @@ htte --debug
 
 执行结果
 ```
-RunUnits:
+HTTE:
   plugin:
     httpbin demo:
       ✓
