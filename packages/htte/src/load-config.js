@@ -1,6 +1,6 @@
 const path = require('path');
-const merge = require('deepmerge');
 const yaml = require('js-yaml');
+const _ = require('lodash');
 const fs = require('fs');
 
 module.exports = function loadConfig(baseFile, patch) {
@@ -8,7 +8,7 @@ module.exports = function loadConfig(baseFile, patch) {
   let patchFile = getPatchFile(baseFile, patch);
   let baseConfig = yaml.load(path.resolve(baseDir, baseFile));
   let patchConfig = yaml.load(path.resolve(patchDir, patchFile));
-  return merge(baseConfig, patchConfig);
+  return _.merge(baseConfig, patchConfig);
 }
 
 function getBaseDir(baseFile) {
@@ -16,6 +16,6 @@ function getBaseDir(baseFile) {
 }
 
 function getPatchFile(baseFile, patch) {
-  let [ filename, extname ] = path.basename(baseFile).split('.');
-  return [ filename, patch, extname ].join('.');
+  let [filename, extname] = path.basename(baseFile).split('.');
+  return [filename, patch, extname].join('.');
 }

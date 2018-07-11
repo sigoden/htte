@@ -14,6 +14,7 @@ htte v0.4 将优化这里信息打印模块，提供统一的接口从更个部�
 
 ### 配置选项整理
 ```yaml
+session: # 指定会话文件保存位置
 modules: # 本次测试需要加载的模块文件
 - foo # 加载 foo.yaml 文件，模块变量名 foo
 - foo/bar # 加载 foo/bar.yaml 文件，模块变量名 foobar

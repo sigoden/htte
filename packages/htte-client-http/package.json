@@ -1,0 +1,16 @@
+{
+  "name": "htte-client-http",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "mime-types": "^2.1.18"
+  }
+}

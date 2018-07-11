@@ -1,9 +1,11 @@
-module.exports = function loadClients(baseDir, clients) {
-  if (!Array.isArray(clients)) {
+const path = require('path');
+const _ = require('lodash');
+
+module.exports = function loadClients(dir, clients) {
+  if (!_.isArray(clients)) {
     throw new Error('clients must be array');
   }
   let result = {};
-  let dir = path.resolve(baseDir, 'clients');
   for (let item of plugins) {
     result[item] = requireClient(dir, item.name)(options);
   }
