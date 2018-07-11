@@ -1,7 +1,8 @@
 const path = require('path');
 const _ = require('lodash');
+const defaultPlugins = [{name: 'htte-plugin-common', options: {}}];
 
-module.exports = function loadPlugins(dir, plugins) {
+module.exports = function loadPlugins(dir, plugins = defaultPlugins) {
   if (!_.isArray(plugins)) {
     throw new Error('plugins must be array');
   }

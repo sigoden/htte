@@ -6,7 +6,7 @@ const _ = require("lodash");
 
 module.exports = function init(options) {
   return {
-    run: function (req, ctx) {
+    run: function (req) {
       let url = templateString(req.url, req.params);
       let method = req.method || "get";
       let timeout = req.timeout || options.timeout || 30000;

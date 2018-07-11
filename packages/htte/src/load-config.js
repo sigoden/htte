@@ -8,7 +8,9 @@ module.exports = function loadConfig(baseFile, patch) {
   let patchFile = getPatchFile(baseFile, patch);
   let baseConfig = yaml.load(path.resolve(baseDir, baseFile));
   let patchConfig = yaml.load(path.resolve(patchDir, patchFile));
-  return _.merge(baseConfig, patchConfig);
+  let config =  _.merge(baseConfig, patchConfig);
+  config.baseDir = baseDir;
+  return config;
 }
 
 function getBaseDir(baseFile) {

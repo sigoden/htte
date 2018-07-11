@@ -1,17 +1,14 @@
-const jp = require('jsonpath');
+const _ = require('lodash');
 
 module.exports = function (store, unit) {
   return function (path) {
     let result;
-    if (!/^\$.+/.test(path)) {
-      throw new Error(`query ${path} is invalid`);
+    let ns = [unit.ctx.module, unit.name];
+    while (ns.length > -1) {
+      result = _.get(store, ns.concat(path).join('.'));
+      if (!_.isUndefined(result)) return result;
+      ns.splice(-1, 1);
     }
-    result = jp.query(_.get(store, unit.ctx.module, unit.name), path)
-    if (result.length) return result;
-    result = jp.query(_.get(store, unit.ctx.module), path)
-    if (result.length) return result;
-    result = jp.query(_.get(store), path)
-    if (result.length) return result;
     throw new Error(`query ${path} get nothing`);
   };
 };

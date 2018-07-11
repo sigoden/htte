@@ -1,7 +1,8 @@
 const path = require('path');
 const _ = require('lodash');
+const defaultClients = [{name: 'htte-client-http', options: {}}];
 
-module.exports = function loadClients(dir, clients) {
+module.exports = function loadClients(dir, clients = defaultClients) {
   if (!_.isArray(clients)) {
     throw new Error('clients must be array');
   }

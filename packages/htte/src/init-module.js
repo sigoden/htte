@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const crypto = require("crypto");
+const utils = require('htte-utils');
 
 module.exports = function(name, mod, expts) {
   if (_.isArray(mod)) {
@@ -28,6 +28,7 @@ function procGroup(output, ctx, group) {
 function procUnit(output, ctx, unit) {
   unit.ctx = ctx;
   unit.index = output.length;
+  unit.metadata = unit.metadata || {};
   unit.name = getUnitName(unit);
   ctx.expts.apply(unit);
   return unit;
@@ -35,20 +36,5 @@ function procUnit(output, ctx, unit) {
 
 function getUnitName(unit) {
   if (unit.name) return unit.name;
-  return hash(unit.index + unit.unit, 8);
-}
-
-function hash(str, size) {
-  let origin = '0123456789abcdefghijklmnopqrstuvwxyz';
-  let expect = 'abcdefghijklmnopqrstuvwxyz';
-  return crypto
-    .createHash("md5")
-    .update(str)
-    .digest("hex")
-    .split("")
-    .slice(0, size)
-    .map(c => {
-      return expect[origin.indexOf(c) % expect.length];
-    })
-    .join("");
+  return utils.md5x(unit.index + unit.unit, 8);
 }
