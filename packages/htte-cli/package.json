@@ -1,18 +1,33 @@
 {
   "name": "htte-cli",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.4.0",
+  "description": "cli for htte",
   "main": "index.js",
   "bin": {
-    "htte-cli": "htte.js"
+    "htte": "bin/htte.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "htte",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "gabbi",
+    "postman",
+    "framework"
+  ],
+  "homepage": "https://sigoden.github.io/htte/",
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
   "dependencies": {
+    "htte": "^0.4.0",
     "commander": "^2.16.0"
   }
 }

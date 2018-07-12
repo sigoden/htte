@@ -6,9 +6,14 @@
 		"prettier": "^1.13.7",
 		"lerna": "^2.11.0"
 	},
-	"eslintIgnore": ["node_modules"],
+	"eslintIgnore": [
+		"node_modules"
+	],
 	"prettier": {
 		"singleQuote": true,
 		"printWidth": 120
+	},
+	"dependencies": {
+		"lodash": "^4.17.10"
 	}
 }

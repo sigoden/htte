@@ -1,16 +1,33 @@
 {
   "name": "htte-client-http",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.4.0",
+  "description": "http client plugin for htte",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "htte",
+    "htte-client",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "gabbi",
+    "postman",
+    "framework"
+  ],
+  "homepage": "https://sigoden.github.io/htte/",
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
   "dependencies": {
     "axios": "^0.18.0",
+    "lodash": "^4.17.10",
+    "htte-utils": "^0.4.0",
     "mime-types": "^2.1.18"
   }
 }
