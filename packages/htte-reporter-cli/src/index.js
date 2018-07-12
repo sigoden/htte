@@ -1,33 +1,33 @@
-module.exports = function (options) {
-  return function (emiter) {
-    emiter.on('enterGroup', function (args) {
+module.exports = function(options) {
+  return function(emiter) {
+    emiter.on('enterGroup', function(args) {
       let { units } = args;
       console.log(`enter group: ${units.ctx.groups}`);
     });
-    emiter.on('skipUnit', function (args) {
+    emiter.on('skipUnit', function(args) {
       let { units } = args;
       console.log(`skip unit: ${units.name}`);
     });
-    emiter.on('runUnit', function (args) {
+    emiter.on('runUnit', function(args) {
       let { units } = args;
       console.log(`run unit: ${units.name}`);
     });
-    emiter.on('debugUnit', function (args) {
+    emiter.on('debugUnit', function(args) {
       let { units } = args;
       console.log(`debug unit: ${units.name}`);
     });
-    emiter.on('doneUnit', function (args) {
+    emiter.on('doneUnit', function(args) {
       let { units } = args;
       console.log(`done unit: ${units.name}`);
     });
-    emiter.on('error', function (err) {
+    emiter.on('error', function(err) {
       console.log(err);
     });
-    emiter.on('stop', function (args) {
+    emiter.on('stop', function(args) {
       console.log('stop');
     });
-    emiter.on('done', function (args) {
+    emiter.on('done', function(args) {
       console.log('done');
     });
-  }
-}
+  };
+};

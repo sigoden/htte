@@ -1,4 +1,4 @@
-module.exports = function (options) {
+module.exports = function(options) {
   return {
     tag: '!$query',
     kind: 'scalar',
@@ -11,5 +11,5 @@ module.exports = function (options) {
       }
       return value[0];
     }
-  }
+  };
 };

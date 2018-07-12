@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const _ = require('lodash');
 const utils = require('htte-utils');
 
 module.exports = function(name, mod, expts) {
@@ -8,9 +8,9 @@ module.exports = function(name, mod, expts) {
   let output = [];
   for (let item of mod) {
     if (item.group) {
-      procGroup(output, {module: name, groups: [item.group], expts}, item);
+      procGroup(output, { module: name, groups: [item.group], expts }, item);
     } else if (item.unit) {
-      procUnit(output, {module: name, groups: [], expts}, item);
+      procUnit(output, { module: name, groups: [], expts }, item);
     }
   }
   return output;
@@ -20,7 +20,7 @@ function procGroup(output, ctx, group) {
   ctx.expts = group.exports && expts.enter(group.exports);
   if (Array.isArray(group.units)) {
     group.units.forEach(function(item, index) {
-      procUnit(output, Object.assign({firstChild: index === 0}, ctx), item);
+      procUnit(output, Object.assign({ firstChild: index === 0 }, ctx), item);
     });
   }
 }

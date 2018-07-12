@@ -1,5 +1,14 @@
 {
 	"devDependencies": {
+		"eslint": "^5.0.1",
+		"eslint-plugin-jest": "^21.17.0",
+		"eslint-plugin-prettier": "^2.6.1",
+		"prettier": "^1.13.7",
 		"lerna": "^2.11.0"
+	},
+	"eslintIgnore": ["node_modules"],
+	"prettier": {
+		"singleQuote": true,
+		"printWidth": 120
 	}
 }

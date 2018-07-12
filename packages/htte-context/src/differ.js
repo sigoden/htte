@@ -1,5 +1,5 @@
-const diff = require("htte-diff");
-const query = require("htte-query");
+const diff = require('htte-diff');
+const query = require('htte-query');
 
 function differ(store, unit, segs = []) {
   let self = { segs: [] };
@@ -13,7 +13,7 @@ function differ(store, unit, segs = []) {
   self.enter = function(seg) {
     return diff(store, unit, segs.concat(seg));
   };
-  self.diff = function (expected, actual, strict) {
+  self.diff = function(expected, actual, strict) {
     return diff(self, expected, actual, strict);
   };
   self.query = query(store, unit);

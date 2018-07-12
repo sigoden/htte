@@ -1,21 +1,21 @@
-const _ = require("lodash");
-const utils = require("htte-utils");
+const _ = require('lodash');
+const utils = require('htte-utils');
 
 module.exports = function(context, expected, actual, strict = true) {
   switch (utils.type(expected)) {
-    case "number":
-    case "boolean":
-    case "string":
-    case "null":
-    case "undefined":
+    case 'number':
+    case 'boolean':
+    case 'string':
+    case 'null':
+    case 'undefined':
       diffPrimitive(context, expected, actual);
-    case "function":
+    case 'function':
       try {
         expected(context, actual);
       } catch (err) {
         context.throw(`cannot diff, ${err.message}`);
       }
-    case "array":
+    case 'array':
       diffArray(context, expected, actual, strict);
     default:
       diffObject(context, expected, actual, strict);
@@ -58,7 +58,7 @@ function diffObject(context, expected, actual, strict) {
   let actualKeys = Object.keys(actual);
 
   if (strict) {
-    matchKeys(context, expectedKeys, actualKeys)
+    matchKeys(context, expectedKeys, actualKeys);
   }
 
   expectedKeys.forEach(function(key) {
@@ -77,10 +77,10 @@ function matchKeys(context, expected, actual) {
 
   let errMsg = ``;
   if (excludes.length) {
-    errMsg += `, ++ ${excludes.join("|")}`;
+    errMsg += `, ++ ${excludes.join('|')}`;
   }
   if (includes.length) {
-    errMsg += `, -- ${includes.join("|")}`;
+    errMsg += `, -- ${includes.join('|')}`;
   }
   context.throw(`props diff` + errMsg);
 }

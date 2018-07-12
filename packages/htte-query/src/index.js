@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-module.exports = function (store, unit) {
-  return function (path) {
+module.exports = function(store, unit) {
+  return function(path) {
     let result;
     let ns = [unit.ctx.module, unit.name];
     while (ns.length > -1) {

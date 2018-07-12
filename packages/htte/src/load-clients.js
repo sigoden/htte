@@ -1,6 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
-const defaultClients = [{name: 'htte-client-http', options: {}}];
+const defaultClients = [{ name: 'htte-client-http', options: {} }];
 
 module.exports = function loadClients(dir, clients = defaultClients) {
   if (!_.isArray(clients)) {
@@ -11,15 +11,15 @@ module.exports = function loadClients(dir, clients = defaultClients) {
     result[item.name] = requireClient(dir, item.pkg)(options);
   }
   return result;
-}
+};
 
 function requireClient(dir, name) {
   try {
     return require(path.resolve(dir, name));
-  } catch (err) { }
+  } catch (err) {}
   try {
     return require(name);
-  } catch (err) { }
+  } catch (err) {}
 
   throw new Error(`clients ${name} cannot be loaded`);
 }

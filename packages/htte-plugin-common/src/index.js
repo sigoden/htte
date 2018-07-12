@@ -1,5 +1,3 @@
-module.exports = function (options) {
-  return [
-    require('./!$query')(options),
-  ]
-}
+module.exports = function(options) {
+  return [require('./!$query')(options)];
+};

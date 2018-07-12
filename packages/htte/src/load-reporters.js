@@ -1,6 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
-const defaultReporters = [{name: 'htte-reporter-cli', options: {}}];
+const defaultReporters = [{ name: 'htte-reporter-cli', options: {} }];
 
 module.exports = function loadReporters(dir, reporters = defaultReporters) {
   if (!_.isArray(reporters)) {
@@ -11,15 +11,15 @@ module.exports = function loadReporters(dir, reporters = defaultReporters) {
     result[item] = requireReporter(dir, item.name)(options);
   }
   return result;
-}
+};
 
 function requireReporter(dir, name) {
   try {
     return require(path.resolve(dir, name));
-  } catch (err) { }
+  } catch (err) {}
   try {
     return require(name);
-  } catch (err) { }
+  } catch (err) {}
 
   throw new Error(`reporter ${name} cannot be loaded`);
 }

@@ -14,15 +14,15 @@ module.exports = function loadModules(dir, mods, yamlLoader) {
     result[name] = yamlLoader(resolveYaml(dir, item.replace(/\//g, path.sep)));
   }
   return result;
-}
+};
 
 function resolveYaml(dir, name) {
   let file;
-  file = path.resolve(dir, name + '.yaml')
+  file = path.resolve(dir, name + '.yaml');
   if (fs.existsSync(file)) {
     return file;
   }
-  file = path.resolve(dir, name + '.yml')
+  file = path.resolve(dir, name + '.yml');
   if (fs.existsSync(file)) {
     return file;
   }

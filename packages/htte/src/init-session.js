@@ -23,9 +23,9 @@ module.exports = function(file) {
       let content = JSON.stringify(session, null, 2);
       try {
         fs.writeFileSync(file, content, 'utf8');
-      } catch(err) {
+      } catch (err) {
         throw new Error(`session ${file} must be writable`);
       }
     }
-  }
-}
+  };
+};
