@@ -8,7 +8,7 @@ module.exports = function(file) {
       _.set(session, path, value);
     },
     get: function(path) {
-      _.get(session, path);
+      return _.get(session, path);
     },
     load: function() {
       try {

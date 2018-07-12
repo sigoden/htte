@@ -1,8 +1,14 @@
+const util = require('util');
+
 module.exports = function(options) {
+  let current;
   return function(emiter) {
+    emiter.on('start', function(args) {
+      console.log('start');
+    });
     emiter.on('enterGroup', function(args) {
-      let { units } = args;
-      console.log(`enter group: ${units.ctx.groups}`);
+      let { unit } = args;
+      console.log(`enter group: ${unit.ctx.groups}`);
     });
     emiter.on('skipUnit', function(args) {
       let { unit } = args;
@@ -10,23 +16,17 @@ module.exports = function(options) {
     });
     emiter.on('runUnit', function(args) {
       let { unit } = args;
+      current = unit;
       console.log(`run unit: ${unit.name}`);
     });
-    emiter.on('debugUnit', function(args) {
-      let { unit } = args;
-      console.log(`debug unit: ${unit.name}`);
+    emiter.on('doneUnit', function() {
+      console.log(`done unit`);
     });
-    emiter.on('doneUnit', function(args) {
-      let { unit } = args;
-      console.log(`done unit: ${unit.name}`);
-    });
-    emiter.on('error', function(err) {
+    emiter.on('errorUnit', function(err) {
       console.log(err);
+      console.log(util.inspect(current.session, { depth: 6 }));
     });
-    emiter.on('stop', function(args) {
-      console.log('stop');
-    });
-    emiter.on('done', function(args) {
+    emiter.on('done', function() {
       console.log('done');
     });
   };

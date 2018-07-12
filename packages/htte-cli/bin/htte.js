@@ -20,4 +20,8 @@ program
     app.run(cmd);
   });
 
+process.on('unhandledRejection', function(err) {
+  console.log(err);
+});
+
 program.parse(process.argv);

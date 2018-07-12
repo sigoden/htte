@@ -1,16 +1,15 @@
 const resolve = require('htte-resolve');
 const query = require('htte-query');
 
-const ContextError = require('./error');
+const { ContextError } = require('htte-errors');
 
 function resolver(store, unit, segs = []) {
   let self = { segs: [] };
   self.exec = function(tagType, handler, literal) {
     if (tagType !== 'resolver') {
-      self.log('differ plugin is forbidden in resolver context');
-      return;
+      self.throw('differ plugin is forbidden in resolver context');
     }
-    let value = self.resolve(self, literal);
+    let value = self.resolve(literal);
     return handler(self, value);
   };
   self.enter = function(seg) {
@@ -21,7 +20,7 @@ function resolver(store, unit, segs = []) {
   };
   self.query = query(store, unit);
   self.throw = function(msg) {
-    throw new ContextError(msg, segs);
+    throw new ContextError(msg, segs, self.throw);
   };
   return self;
 }

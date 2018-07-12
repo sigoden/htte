@@ -20,7 +20,9 @@ module.exports = function(name, mod, expts) {
 };
 
 function procGroup(output, ctx, group) {
-  ctx.expts = group.exports && expts.enter(group.exports);
+  if (group.exports) {
+    ctx.expts = ctx.expts.enter(group.exports);
+  }
   if (Array.isArray(group.units)) {
     group.units.forEach(function(item, index) {
       procUnit(output, Object.assign({ firstChild: index === 0 }, ctx), item);
@@ -35,7 +37,14 @@ function procUnit(output, ctx, unit) {
   if (!_.isString(unit.name)) {
     unit.name = getUnitName(unit);
   }
-  output.push(ctx.expts.apply(unit));
+  unit = ctx.expts.apply(unit);
+  if (utils.type(unit.req) !== 'object') {
+    throw new Error(`module must have property req with object type, wrong module "${unit.describe}"`);
+  }
+  if (!_.isUndefined(unit.res) && utils.type(unit.res) !== 'object') {
+    throw new Error(`module must have property res with object type if exists, wrong module "${unit.describe}"`);
+  }
+  output.push(unit);
 }
 
 function getUnitName(unit) {

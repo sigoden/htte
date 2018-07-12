@@ -46,7 +46,7 @@ exports.md5x = function(str, size) {
     .join('');
 };
 
-exports.completeUrlParams = function(url, reqParams) {
+exports.completeUrlParams = function(url, reqParams = {}) {
   let expectedParams = url
     .split('/')
     .filter(function(seg) {
@@ -59,10 +59,10 @@ exports.completeUrlParams = function(url, reqParams) {
   let missedParams = expectedParams.filter(function(param) {
     return actualParams.indexOf(param) === -1;
   });
-  if (missedParams) throw new Error(`missed params ${missedParams}`);
+  if (missedParams.length) throw new Error(`params ${missedParams} is missed`);
   let result = url;
   for (let key of actualParams) {
-    result = result.replace(new RegExp(`\\{${key}\\}`, g), actualParams[key]);
+    result = result.replace(new RegExp(`\\{${key}\\}`, 'g'), reqParams[key]);
   }
   return result;
 };

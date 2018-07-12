@@ -1,6 +1,7 @@
 const EventEmitter = require('events');
 const _ = require('lodash');
 const context = require('htte-context');
+const CURSOR_KEY = 'metadata.cursor';
 
 function run(options) {
   let { session, clients, units, reporters, controls } = options;
@@ -10,10 +11,14 @@ function run(options) {
     reporter(emitter);
   });
   emitter.emit('start', options);
-  let cursor = getCursor(session, controls);
+  let cursor;
+  if (controls.continue) {
+    session.load();
+    cursor = session.get(CURSOR_KEY) || 0;
+  }
   let pauseAt = findPauseIndex(units, cursor);
   let tasks = units.slice(cursor, pauseAt).map(function(unit, index) {
-    return runUnit(unit, cursor);
+    return runUnit(unit);
   });
   let stop = false;
   return tasks
@@ -22,32 +27,22 @@ function run(options) {
         if (stop) return Promise.resolve();
         return task(session, clients, emitter)
           .then(function() {
+            session.set(CURSOR_KEY, ++cursor);
             emitter.emit('doneUnit');
           })
           .catch(function(err) {
-            emitter.emit('failUnit');
-            return emitter.emit('error', err);
+            emitter.emit('errorUnit', err);
             if (controls.bail) stop = true;
           });
       });
     }, Promise.resolve())
     .then(function() {
-      if (stop) {
-        emitter.emit('stop', options);
-        return;
-      }
-      emitter.emit('done', options);
+      session.save();
+      emitter.emit('done');
     });
 }
 
-function getCursor(session, controls) {
-  if (controls.continue) {
-    return session.get('metadata.cursor') || 0;
-  }
-  return 0;
-}
-
-function runUnit(unit, cursor) {
+function runUnit(unit) {
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
@@ -72,24 +67,29 @@ function runUnit(unit, cursor) {
       } catch (err) {
         reject(err);
       }
-      session.set([unit.ctx.module, unit.name, 'req'].join('.'), req);
-      client.run(req, unit.res).then(function(res) {
-        session.set([unit.ctx.module, unit.name, 'res'].join('.'), res);
-        if (res.err) reject(err);
-        let differ = context.differ(session.get('data'), unit);
-        try {
-          Object.keys(unit.res).forEach(function(key) {
-            differ.enter(key).diff(unit.res[key], res[key], true);
-          });
-        } catch (err) {
-          reject(err);
-        }
-        session.set('metadata.cusor', cursor);
-        if (unit.metadata.debug) {
-          emitter.emit('debugUnit', { unit, req, res });
-        }
-        resolve();
-      });
+      unit.session = { req };
+      session.set(['data', unit.ctx.module, unit.name, 'req'].join('.'), req);
+      let saveClientData = function(data) {
+        unit.session.client = data;
+      };
+      client
+        .run(req, unit.res, saveClientData)
+        .then(function(res) {
+          unit.session.res = res;
+          session.set(['data', unit.ctx.module, unit.name, 'res'].join('.'), res);
+          if (unit.res) {
+            let differ = context.differ(session.get('data'), unit);
+            try {
+              Object.keys(unit.res).forEach(function(key) {
+                differ.enter(key).diff(unit.res[key], res[key], true);
+              });
+            } catch (err) {
+              reject(err);
+            }
+          }
+          resolve();
+        })
+        .catch(reject);
     });
   };
 }

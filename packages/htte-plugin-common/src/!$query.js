@@ -9,7 +9,7 @@ module.exports = function(options) {
       } catch (err) {
         context.throw(err.message);
       }
-      return value[0];
+      return value;
     }
   };
 };

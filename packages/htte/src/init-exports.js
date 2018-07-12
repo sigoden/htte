@@ -10,8 +10,9 @@ module.exports = function(value, parent = null) {
     return expt(value, self);
   };
   self.apply = function(unit) {
+    let result = unit;
     let requires = unit.metadata.requires;
-    if (!requires) return;
+    if (!requires) return result;
     let keys;
     let type = utils.type(requires);
     if (type === 'string') {
@@ -21,7 +22,6 @@ module.exports = function(value, parent = null) {
     } else {
       throw new Error(`requires must be string or array of string`);
     }
-    let result = unit;
     for (let key of keys) {
       let value = self.search(key);
       result = _.merge(result, value);

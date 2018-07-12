@@ -3,29 +3,43 @@ const qs = require('querystring');
 const { type, completeUrlParams } = require('htte-utils');
 const mime = require('mime-types');
 const _ = require('lodash');
+const { ClientError } = require('htte-errors');
+const utils = require('htte-utils');
+
+const defaultOptions = {
+  type: 'json',
+  timeout: 30000
+};
+
+const reqChecks = [
+  { key: 'url', type: 'string', required: true },
+  { key: 'method', type: 'string', required: false },
+  { key: 'query', type: 'object', required: false },
+  { key: 'timeout', type: 'number', required: false },
+  { key: 'params', type: 'object', required: false },
+  { key: 'headers', type: 'object', required: false }
+];
 
 module.exports = function init(options) {
+  options = _.merge(defaultOptions, options);
   return {
-    run: function(req, expectedRes = { status: 200 }) {
-      let url = req.url;
-      if (!url) {
-        return Promise.reject({ err: `req.url must be string` });
+    run: function(req, expectedRes, saveClientData) {
+      try {
+        checkReq(reqChecks, req);
+      } catch (err) {
+        return Promise.reject(err);
       }
+      let url = req.url;
       if (/^\//.test(url)) {
         url = options.baseUrl + url;
       }
       try {
-        if (!_.isUndefined(req.params)) {
-          if (!type(req.params) !== 'object') {
-            throw new Error('req.params must be object');
-          }
-          url = completeUrlParams(url, req.params);
-        }
+        url = completeUrlParams(url, req.params);
       } catch (err) {
-        return Promise.reject({ err });
+        return Promise.reject(new ClientError(err.message, ['req', 'params']));
       }
-      let method = req.method || 'get';
-      let timeout = req.timeout || options.timeout || 30000;
+      let method = (req.method || 'get').toLowerCase();
+      let timeout = req.timeout || options.timeout;
       if (req.query) url += '?' + qs.stringify(req.query);
       let headers = req.headers || {};
       let body;
@@ -36,25 +50,29 @@ module.exports = function init(options) {
             headers['Content-Type'] = 'application/json; charset=utf-8';
             break;
           default:
-            return Promise.reject({ err: `req.type is unsupported` });
+            return Promise.reject(new ClientError('is unsupported', ['req', 'type']));
         }
       }
       let hrstart = process.hrtime();
-      return axios({ url, method, body, headers, timeout })
+      let clientData = { url, method, data: body, headers, timeout };
+      saveClientData(clientData);
+      return axios(clientData)
         .then(function(result) {
           let { status, headers, data } = result;
-          let res = { status, headers: _.pick(headers, Object.keys(expectedRes.headers || {})) };
+          let res = { status };
           let type = mime.extension(headers['content-type']);
-          try {
-            switch (type) {
-              case 'json':
-                res.body = data;
-                break;
-              default:
-                throw new Error('');
+          switch (type) {
+            case 'json':
+              res.body = data;
+              break;
+            default:
+              res.body = data;
+          }
+          let tidyHeaders;
+          if (expectedRes) {
+            if (utils.type(expectedRes.headers) === 'object') {
+              res.headers = _.pick(headers, Object.keys(expectedRes.headers));
             }
-          } catch (err) {
-            return Promise.result(`res.body cannot be unserialized`);
           }
           return res;
         })
@@ -63,7 +81,7 @@ module.exports = function init(options) {
             let { status, headers, data } = err.response;
             return { status, headers, body: data };
           } else {
-            return { err };
+            return Promise.reject(err);
           }
         })
         .then(function(res) {
@@ -74,3 +92,18 @@ module.exports = function init(options) {
     }
   };
 };
+
+function checkReq(checks, req) {
+  for (let check of checks) {
+    let value = req[check.key];
+    if (_.isUndefined(value)) {
+      if (check.required) {
+        throw new ClientError('is required', ['req', check.key]);
+      }
+      continue;
+    }
+    if (utils.type(value) !== check.type) {
+      throw new ClientError(`must be ${check.type}`, ['req', check.key]);
+    }
+  }
+}

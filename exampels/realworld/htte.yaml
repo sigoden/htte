@@ -3,13 +3,14 @@ clients:
   pkg: htte-client-http
   options:
     baseUrl: https://htte-realworld.herokuapp.com/api
+    timeout: 10000
 modules:
-# - auth
-# - profile
-# - article
-# - comment
+- auth
+- profile
+- article
+- comment
 - tag
-# - afterall
+- afterall
 exports:
   register:
     req:

@@ -9,18 +9,21 @@ function diff(context, expected, actual, strict = true) {
     case 'null':
     case 'undefined':
       diffPrimitive(context, expected, actual);
+      break;
     case 'function':
       try {
         expected(context, actual);
       } catch (err) {
-        context.throw(`cannot diff, ${err.message}`);
+        context.throw(err.message);
       }
+      break;
     case 'array':
       diffArray(context, expected, actual, strict);
+      break;
     default:
       diffObject(context, expected, actual, strict);
   }
-};
+}
 
 /**
  * Diff the expected and the actual when the expected is primitive

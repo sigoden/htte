@@ -174,7 +174,8 @@
           articles: []
           articlesCount: 0
     - describe: tom feed 
-      api: getFeed
+      metadata:
+        requires: getFeed
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]

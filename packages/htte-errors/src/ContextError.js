@@ -1,7 +1,7 @@
 const util = require('util');
 
-const ContextError = function(msg, segs = []) {
-  Error.captureStackTrace(this);
+const ContextError = function(msg, segs = [], boundray) {
+  Error.captureStackTrace(this, boundray);
   this.message = msg;
   this.segs = segs;
 };

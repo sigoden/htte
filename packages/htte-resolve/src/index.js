@@ -13,7 +13,7 @@ function resolve(context, data) {
       try {
         return data(context);
       } catch (err) {
-        context.throw(`cannot resolve value, ${err.message}`);
+        context.throw(err.message);
       }
     case 'array':
       return data.map(function(elem, index) {
