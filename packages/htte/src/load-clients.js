@@ -2,7 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const defaultClients = [{ name: 'http', pkg: 'htte-client-http', options: {} }];
 
-module.exports = function loadClients(dir, clients = defaultClients) {
+module.exports = function loadClients(dir, htteConfig, clients = defaultClients) {
   if (!_.isArray(clients)) {
     throw new Error('clients must be array');
   }
@@ -14,7 +14,7 @@ module.exports = function loadClients(dir, clients = defaultClients) {
     if (!_.isString(item.pkg)) {
       throw new Error(`client must have property pkg, wrong client ${JSON.stringify(item)}`);
     }
-    result[item.name] = requireClient(dir, item.pkg)(item.options);
+    result[item.name] = requireClient(dir, item.pkg)(htteConfig, item.options);
   }
   return result;
 };

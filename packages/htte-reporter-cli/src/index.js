@@ -1,6 +1,6 @@
 const util = require('util');
 
-module.exports = function(options) {
+module.exports = function(htte, options) {
   let current;
   return function(emiter) {
     emiter.on('start', function(args) {

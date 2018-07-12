@@ -1,4 +1,4 @@
-module.exports = function(options) {
+module.exports = function(htte, options) {
   return [
     require('./!@and')(options),
     require('./!@array')(options),

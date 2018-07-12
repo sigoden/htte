@@ -2,7 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const defaultReporters = [{ name: 'cli', pkg: 'htte-reporter-cli', options: {} }];
 
-module.exports = function loadReporters(dir, reporters = defaultReporters) {
+module.exports = function loadReporters(dir, htteConfig, reporters = defaultReporters) {
   if (!_.isArray(reporters)) {
     throw new Error('reporters must be array');
   }
@@ -14,7 +14,7 @@ module.exports = function loadReporters(dir, reporters = defaultReporters) {
     if (!_.isString(item.pkg)) {
       throw new Error(`reporter must have property pkg, wrong reporter ${JSON.stringify(item)}`);
     }
-    result[item.name] = requireReporter(dir, item.pkg)(item.options || {});
+    result[item.name] = requireReporter(dir, item.pkg)(htteConfig, item.options || {});
   }
   return result;
 };

@@ -20,7 +20,7 @@ const reqChecks = [
   { key: 'headers', type: 'object', required: false }
 ];
 
-module.exports = function init(options) {
+module.exports = function init(htte, options) {
   options = _.merge(defaultOptions, options);
   return {
     run: function(req, expectedRes, saveClientData) {

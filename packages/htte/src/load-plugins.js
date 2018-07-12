@@ -2,14 +2,14 @@ const path = require('path');
 const _ = require('lodash');
 const defaultPlugins = [{ pkg: 'htte-plugin-common', options: {} }];
 
-module.exports = function loadPlugins(dir, plugins = defaultPlugins) {
+module.exports = function loadPlugins(dir, htteConfig, plugins = defaultPlugins) {
   if (!_.isArray(plugins)) {
     throw new Error('plugins must be array');
   }
   let yamlTags = [];
   for (let item of plugins) {
     let plugin = requirePlugin(dir, item.pkg);
-    yamlTags = yamlTags.concat(plugin(item.options));
+    yamlTags = yamlTags.concat(plugin(htteConfig, item.options));
   }
   return yamlTags;
 };

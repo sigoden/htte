@@ -13,6 +13,7 @@ const initModule = require('./init-module');
 const initYamlLoader = require('./init-yamlloader');
 const initSession = require('./init-session');
 const initExports = require('./init-exports');
+const pkg = require('../package.json');
 
 exports.init = function(options) {
   let {
@@ -24,13 +25,17 @@ exports.init = function(options) {
     reportersDir = 'reporters'
   } = options;
   let config = loadConfig(configFile, patch);
+  let htteConfig = {
+    baseDir: config.baseDir,
+    version: pkg.version
+  };
   clientsDir = path.resolve(config.baseDir, clientsDir);
   pluginsDir = path.resolve(config.baseDir, pluginsDir);
   modulesDir = path.resolve(config.baseDir, modulesDir);
   reportersDir = path.resolve(config.baseDir, reportersDir);
-  let clients = loadClients(clientsDir, config.clients);
-  let yamlTags = loadPlugins(pluginsDir, config.plugins);
-  let reporters = loadReporters(reportersDir, config.reporters);
+  let clients = loadClients(clientsDir, htteConfig, config.clients);
+  let yamlTags = loadPlugins(pluginsDir, htteConfig, config.plugins);
+  let reporters = loadReporters(reportersDir, htteConfig, config.reporters);
   let yamlLoader = initYamlLoader(yamlTags);
   let mods = loadModules(modulesDir, config.modules, yamlLoader);
   let session = initSession(config.session || defaultSessionFile(configFile));
