@@ -1,6 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
-const defaultPlugins = [{ pkg: 'htte-plugin-common', options: {} }];
+const defaultPlugins = [{ pkg: 'htte-plugin-builtin', options: {} }];
 
 module.exports = function loadPlugins(dir, htteConfig, plugins = defaultPlugins) {
   if (!_.isArray(plugins)) {

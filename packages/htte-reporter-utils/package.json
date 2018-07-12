@@ -1,14 +1,13 @@
 {
-  "name": "htte-plugin-common",
+  "name": "htte-reporter-utils",
   "version": "0.4.0",
-  "description": "htte plugin common",
+  "description": "utils for htte reporter extensions",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
   },
   "keywords": [
     "htte",
-    "htte-plugin",
     "http",
     "declartive",
     "test",
@@ -23,9 +22,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sigoden/htte.git"
-  },
-  "dependencies": {
-    "dateformat": "^3.0.3",
-    "timestring": "^5.0.1"
   }
 }

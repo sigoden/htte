@@ -1,14 +1,14 @@
 {
-  "name": "htte-reporter-cli",
+  "name": "htte-plugin-builtin",
   "version": "0.4.0",
-  "description": "htte reporter cli",
+  "description": "htte plugin builtin",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
   },
   "keywords": [
     "htte",
-    "htte-reporter",
+    "htte-plugin",
     "http",
     "declartive",
     "test",
@@ -25,6 +25,7 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "htte-reporter-utils": "^0.4.0"
+    "dateformat": "^3.0.3",
+    "timestring": "^5.0.1"
   }
 }
