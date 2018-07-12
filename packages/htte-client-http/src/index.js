@@ -68,7 +68,6 @@ module.exports = function init(options) {
             default:
               res.body = data;
           }
-          let tidyHeaders;
           if (expectedRes) {
             if (utils.type(expectedRes.headers) === 'object') {
               res.headers = _.pick(headers, Object.keys(expectedRes.headers));
@@ -81,6 +80,9 @@ module.exports = function init(options) {
             let { status, headers, data } = err.response;
             return { status, headers, body: data };
           } else {
+            if (!err instanceof ClientError) {
+              err = new ClientError(err.message);
+            }
             return Promise.reject(err);
           }
         })

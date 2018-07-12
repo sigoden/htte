@@ -19,7 +19,8 @@ module.exports = function(options) {
       current = unit;
       console.log(`run unit: ${unit.name}`);
     });
-    emiter.on('doneUnit', function() {
+    emiter.on('doneUnit', function(args) {
+      let { unit } = args;
       console.log(`done unit`);
     });
     emiter.on('errorUnit', function(err) {

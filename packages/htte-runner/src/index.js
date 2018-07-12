@@ -26,9 +26,10 @@ function run(options) {
       return promise.then(function() {
         if (stop) return Promise.resolve();
         return task(session, clients, emitter)
-          .then(function() {
+          .then(function(unit) {
+            unit.session.pass = true;
             session.set(CURSOR_KEY, ++cursor);
-            emitter.emit('doneUnit');
+            emitter.emit('doneUnit', { unit });
           })
           .catch(function(err) {
             emitter.emit('errorUnit', err);
@@ -43,6 +44,7 @@ function run(options) {
 }
 
 function runUnit(unit) {
+  unit.session = {};
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
@@ -67,7 +69,7 @@ function runUnit(unit) {
       } catch (err) {
         reject(err);
       }
-      unit.session = { req };
+      unit.session.req = req;
       session.set(['data', unit.ctx.module, unit.name, 'req'].join('.'), req);
       let saveClientData = function(data) {
         unit.session.client = data;
@@ -87,7 +89,7 @@ function runUnit(unit) {
               reject(err);
             }
           }
-          resolve();
+          resolve(unit);
         })
         .catch(reject);
     });
