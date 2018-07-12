@@ -11,13 +11,14 @@ function run(options) {
     reporter(emitter);
   });
   emitter.emit('start', options);
-  let cursor;
+  let cursor = 0;
   if (controls.continue) {
     session.load();
-    cursor = session.get(CURSOR_KEY) || 0;
+    let startAt = session.get(CURSOR_KEY);
+    if (startAt) cursor = startAt;
   }
-  let pauseAt = findPauseIndex(units, cursor);
-  let tasks = units.slice(cursor, pauseAt).map(function(unit, index) {
+  let stopAt = stopUnitAt(units, cursor);
+  let tasks = units.slice(cursor, stopAt).map(function(unit, index) {
     return runUnit(unit);
   });
   let stop = false;
@@ -26,10 +27,9 @@ function run(options) {
       return promise.then(function() {
         if (stop) return Promise.resolve();
         return task(session, clients, emitter)
-          .then(function(unit) {
-            unit.session.pass = true;
+          .then(function() {
             session.set(CURSOR_KEY, ++cursor);
-            emitter.emit('doneUnit', { unit });
+            emitter.emit('doneUnit');
           })
           .catch(function(err) {
             emitter.emit('errorUnit', err);
@@ -44,7 +44,7 @@ function run(options) {
 }
 
 function runUnit(unit) {
-  unit.session = {};
+  unit.session = { state: 'fail' };
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
@@ -52,7 +52,8 @@ function runUnit(unit) {
       }
       if (unit.metadata.skip) {
         emitter.emit('skipUnit', { unit });
-        return Promise.resolve();
+        unit.session.state = 'skip';
+        return resolve();
       }
       emitter.emit('runUnit', { unit });
       let client;
@@ -89,20 +90,21 @@ function runUnit(unit) {
               reject(err);
             }
           }
-          resolve(unit);
+          unit.session.state = 'pass';
+          resolve();
         })
         .catch(reject);
     });
   };
 }
 
-function findPauseIndex(units, cursor) {
+function stopUnitAt(units, cursor) {
   let i = cursor;
   for (; i < units.length; i++) {
     let unit = units[i];
-    if (unit.metadata.pause) return i;
+    if (unit.metadata.stop) break;
   }
-  return i;
+  return i + 1;
 }
 
 exports.run = run;

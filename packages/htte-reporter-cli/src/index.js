@@ -19,8 +19,7 @@ module.exports = function(htte, options) {
       current = unit;
       console.log(`run unit: ${unit.name}`);
     });
-    emiter.on('doneUnit', function(args) {
-      let { unit } = args;
+    emiter.on('doneUnit', function() {
       console.log(`done unit`);
     });
     emiter.on('errorUnit', function(err) {
