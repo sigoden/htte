@@ -5,20 +5,20 @@ module.exports = function(options) {
       console.log(`enter group: ${units.ctx.groups}`);
     });
     emiter.on('skipUnit', function(args) {
-      let { units } = args;
-      console.log(`skip unit: ${units.name}`);
+      let { unit } = args;
+      console.log(`skip unit: ${unit.name}`);
     });
     emiter.on('runUnit', function(args) {
-      let { units } = args;
-      console.log(`run unit: ${units.name}`);
+      let { unit } = args;
+      console.log(`run unit: ${unit.name}`);
     });
     emiter.on('debugUnit', function(args) {
-      let { units } = args;
-      console.log(`debug unit: ${units.name}`);
+      let { unit } = args;
+      console.log(`debug unit: ${unit.name}`);
     });
     emiter.on('doneUnit', function(args) {
-      let { units } = args;
-      console.log(`done unit: ${units.name}`);
+      let { unit } = args;
+      console.log(`done unit: ${unit.name}`);
     });
     emiter.on('error', function(err) {
       console.log(err);

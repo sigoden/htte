@@ -2,14 +2,17 @@ const _ = require('lodash');
 const utils = require('htte-utils');
 
 module.exports = function(name, mod, expts) {
-  if (_.isArray(mod)) {
+  if (!_.isArray(mod)) {
     throw new Error(`module ${name} must be array`);
   }
   let output = [];
   for (let item of mod) {
-    if (item.group) {
-      procGroup(output, { module: name, groups: [item.group], expts }, item);
-    } else if (item.unit) {
+    if (!_.isString(item.describe)) {
+      throw new Error(`module must have property describe, wrong module ${JSON.stringify(item)}`);
+    }
+    if (item.units) {
+      procGroup(output, { module: name, groups: [item.describe], expts }, item);
+    } else {
       procUnit(output, { module: name, groups: [], expts }, item);
     }
   }
@@ -29,11 +32,12 @@ function procUnit(output, ctx, unit) {
   unit.ctx = ctx;
   unit.index = output.length;
   unit.metadata = unit.metadata || {};
-  unit.name = getUnitName(unit);
-  return ctx.expts.apply(unit);
+  if (!_.isString(unit.name)) {
+    unit.name = getUnitName(unit);
+  }
+  output.push(ctx.expts.apply(unit));
 }
 
 function getUnitName(unit) {
-  if (unit.name) return unit.name;
-  return utils.md5x(unit.index + unit.unit, 8);
+  return utils.md5x(unit.index + unit.describe, 8);
 }

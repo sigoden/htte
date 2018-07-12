@@ -46,7 +46,7 @@ exports.md5x = function(str, size) {
     .join('');
 };
 
-exports.completeUrlParams = function(url, paramsObj) {
+exports.completeUrlParams = function(url, reqParams) {
   let expectedParams = url
     .split('/')
     .filter(function(seg) {
@@ -55,7 +55,7 @@ exports.completeUrlParams = function(url, paramsObj) {
     .map(function(seg) {
       return seg.slice(1, -1);
     });
-  let actualParams = Object.keys(paramsObj);
+  let actualParams = Object.keys(reqParams);
   let missedParams = expectedParams.filter(function(param) {
     return actualParams.indexOf(param) === -1;
   });

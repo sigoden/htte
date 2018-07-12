@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
 
-module.exports = function(context, expected, actual, strict = true) {
+function diff(context, expected, actual, strict = true) {
   switch (utils.type(expected)) {
     case 'number':
     case 'boolean':
@@ -84,3 +84,5 @@ function matchKeys(context, expected, actual) {
   }
   context.throw(`props diff` + errMsg);
 }
+
+module.exports = diff;

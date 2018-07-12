@@ -5,8 +5,8 @@ const utils = require('htte-utils');
 
 const runner = require('htte-runner');
 const loadConfig = require('./load-config');
-const loadClients = require('./load-modules');
-const loadPlugins = require('./load-modules');
+const loadClients = require('./load-clients');
+const loadPlugins = require('./load-plugins');
 const loadReporters = require('./load-reporters');
 const loadModules = require('./load-modules');
 const initModule = require('./init-module');
@@ -32,13 +32,13 @@ exports.init = function(options) {
   let yamlTags = loadPlugins(pluginsDir, config.plugins);
   let reporters = loadReporters(reportersDir, config.reporters);
   let yamlLoader = initYamlLoader(yamlTags);
-  let mods = loadModules(config.baseDir, config.modules, yamlLoader);
-  let session = initSession(config.session || defaultSessionFile(baseFile));
-  let expts = initExports(config.exports);
+  let mods = loadModules(modulesDir, config.modules, yamlLoader);
+  let session = initSession(config.session || defaultSessionFile(configFile));
+  let expts = initExports(config.exports || {});
   let units = _.flatMap(
     Object.keys(mods).map(function(key) {
       let mod = mods[key];
-      return initModule(key, mod, config.exports || {}, expts);
+      return initModule(key, mod, expts);
     })
   );
 
@@ -51,6 +51,6 @@ exports.init = function(options) {
 
 function defaultSessionFile(baseFile) {
   let name = path.basename(utils.trimYamlExt(baseFile));
-  let file = path.join(os.tmpdir(), name + '-' + utils.md5x(baseFile, 6));
+  let file = path.join(os.tmpdir(), name + '-' + utils.md5x(baseFile, 6) + '.json');
   return file;
 }

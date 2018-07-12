@@ -16,7 +16,8 @@ htte v0.4 将优化这里信息打印模块，提供统一的接口从更个部�
 ```yaml
 session: # 指定会话文件保存位置
 reporters:
-- name: pkg-name
+- name: cli
+  pkg: pkg-name
   options:
 modules: # 本次测试需要加载的模块文件
 - foo # 加载 foo.yaml 文件，模块变量名 foo
@@ -42,7 +43,7 @@ exports:
 
 ### 模块选项整理
 ```yaml
-- group: 功能模块
+- describe: 功能模块
   exports:
     auth1:
         req:
@@ -51,7 +52,7 @@ exports:
         req:
             headers: !$concat [ Bearer, !$query $$auth.loginBaz.res.body.token ]
   units:
-  - unit: 接口1
+  - describe: 接口1
     name: ep1
     metadata: # 元标签
         requires: [ login, auth1 ]
@@ -66,7 +67,7 @@ exports:
         status:
         headers:
         body:
-  - unit: RPC 接口2
+  - describe: RPC 接口2
     metadata: # 元标签
         requires: auth
         skip:   # 跳过该测试
@@ -85,5 +86,6 @@ exports:
 ├── htte.yaml      # 配置文件
 ├── htte.prod.yaml # 配置补丁文件
 ├── modules        # 测试模块文件
-└── plugins        # 插件
+├── plugins        # 插件
+└── reporters      # 可以报告输出
 ```

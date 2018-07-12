@@ -1,6 +1,8 @@
 const resolve = require('htte-resolve');
 const query = require('htte-query');
 
+const ContextError = require('./error');
+
 function resolver(store, unit, segs = []) {
   let self = { segs: [] };
   self.exec = function(tagType, handler, literal) {
@@ -12,14 +14,14 @@ function resolver(store, unit, segs = []) {
     return handler(self, value);
   };
   self.enter = function(seg) {
-    return diff(store, unit, segs.concat(seg));
+    return resolver(store, unit, segs.concat(seg));
   };
   self.resolve = function(value) {
     return resolve(self, value);
   };
   self.query = query(store, unit);
-  self.log = function(msg) {
-    throw new Error(`${segs.join('⊳')} ${msg}`);
+  self.throw = function(msg) {
+    throw new ContextError(msg, segs);
   };
   return self;
 }

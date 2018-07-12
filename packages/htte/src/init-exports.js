@@ -1,9 +1,9 @@
 let utils = require('htte-utils');
 let _ = require('lodash');
 
-modue.exports = function(value, parent = null) {
+module.exports = function(value, parent = null) {
   let self = { value, parent };
-  if (utils.type(value) !== 'undefined') {
+  if (utils.type(value) === 'undefined') {
     throw new Error('exports must be object');
   }
   self.enter = function(value) {
@@ -11,7 +11,7 @@ modue.exports = function(value, parent = null) {
   };
   self.apply = function(unit) {
     let requires = unit.metadata.requires;
-    if (requires) return;
+    if (!requires) return;
     let keys;
     let type = utils.type(requires);
     if (type === 'string') {

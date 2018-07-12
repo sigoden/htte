@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
 
-module.exports = function(context, data) {
+function resolve(context, data) {
   switch (utils.type(data)) {
     case 'number':
     case 'boolean':
@@ -24,4 +24,6 @@ module.exports = function(context, data) {
         return resolve(context.enter(key), value);
       });
   }
-};
+}
+
+module.exports = resolve;

@@ -1,4 +1,5 @@
 const yaml = require('js-yaml');
+const fs = require('fs');
 
 const TAG_TYPES = {
   UNKNOWN: 'unknown',
@@ -21,10 +22,10 @@ module.exports = function(yamlTags) {
 function tagToType(yamlTag) {
   let { tag, kind, handler } = yamlTag;
   let tagType = getTagType(tag);
-  if (tagToType === TAG_TYPES.UNKNOWN) {
+  if (tagType === TAG_TYPES.UNKNOWN) {
     throw new Error(`plugin ${tag} type is invalid`);
   }
-  return new yaml.Type(tag, { kind, constructor: createTypeConstructor(tagType, handler) });
+  return new yaml.Type(tag, { kind, construct: createTypeConstructor(tagType, handler) });
 }
 
 function getTagType(tag) {

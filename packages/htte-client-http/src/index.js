@@ -1,12 +1,12 @@
 const axios = require('axios');
 const qs = require('querystring');
-const { completeUrlParams } = require('htte-utils');
+const { type, completeUrlParams } = require('htte-utils');
 const mime = require('mime-types');
 const _ = require('lodash');
 
 module.exports = function init(options) {
   return {
-    run: function(req) {
+    run: function(req, expectedRes = { status: 200 }) {
       let url = req.url;
       if (!url) {
         return Promise.reject({ err: `req.url must be string` });
@@ -15,7 +15,12 @@ module.exports = function init(options) {
         url = options.baseUrl + url;
       }
       try {
-        url = completeUrlParams(url, req.params);
+        if (!_.isUndefined(req.params)) {
+          if (!type(req.params) !== 'object') {
+            throw new Error('req.params must be object');
+          }
+          url = completeUrlParams(url, req.params);
+        }
       } catch (err) {
         return Promise.reject({ err });
       }
@@ -38,12 +43,12 @@ module.exports = function init(options) {
       return axios({ url, method, body, headers, timeout })
         .then(function(result) {
           let { status, headers, data } = result;
-          let res = { status, headers };
+          let res = { status, headers: _.pick(headers, Object.keys(expectedRes.headers || {})) };
           let type = mime.extension(headers['content-type']);
           try {
             switch (type) {
               case 'json':
-                res.body = JSON.parse(data);
+                res.body = data;
                 break;
               default:
                 throw new Error('');

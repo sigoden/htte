@@ -5,8 +5,9 @@ const context = require('htte-context');
 function run(options) {
   let { session, clients, units, reporters, controls } = options;
   let emitter = new EventEmitter();
-  reporters.forEach(function(reporter) {
-    reporter(emiter);
+  Object.keys(reporters).forEach(function(name) {
+    let reporter = reporters[name];
+    reporter(emitter);
   });
   emitter.emit('start', options);
   let cursor = getCursor(session, controls);
@@ -24,6 +25,7 @@ function run(options) {
             emitter.emit('doneUnit');
           })
           .catch(function(err) {
+            emitter.emit('failUnit');
             return emitter.emit('error', err);
             if (controls.bail) stop = true;
           });
@@ -45,7 +47,7 @@ function getCursor(session, controls) {
   return 0;
 }
 
-function runUnit(units, cursor) {
+function runUnit(unit, cursor) {
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
@@ -56,7 +58,12 @@ function runUnit(units, cursor) {
         return Promise.resolve();
       }
       emitter.emit('runUnit', { unit });
-      let client = clients[unit.client];
+      let client;
+      if (_.isUndefined(unit.client)) {
+        client = clients[Object.keys(clients)[0]];
+      } else {
+        client = clients[unit.client];
+      }
       if (!client) return reject(`client ${unit.client} is unsupported`);
       let resolver = context.resolver(session.get('data'), unit);
       let req;
@@ -66,34 +73,30 @@ function runUnit(units, cursor) {
         reject(err);
       }
       session.set([unit.ctx.module, unit.name, 'req'].join('.'), req);
-      client
-        .run(req)
-        .then(function(res) {
-          session.set([unit.ctx.module, unit.name, 'res'].join('.'), res);
-          if (res.err) reject(err);
-          let differ = context.differ(session.get('data'), unit);
-          try {
-            Object.keys(unit.res).forEach(function(key) {
-              differ.diff(unit.res[key], res[key], true);
-            });
-          } catch (err) {
-            reject(err);
-          }
-          session.set('metadata.cusor', cursor);
-          if (unit.metadata.debug) {
-            emitter.emit('debugUnit', { unit, req, res });
-          }
-          resolve();
-        })
-        .catch(function(err) {
+      client.run(req, unit.res).then(function(res) {
+        session.set([unit.ctx.module, unit.name, 'res'].join('.'), res);
+        if (res.err) reject(err);
+        let differ = context.differ(session.get('data'), unit);
+        try {
+          Object.keys(unit.res).forEach(function(key) {
+            differ.enter(key).diff(unit.res[key], res[key], true);
+          });
+        } catch (err) {
           reject(err);
-        });
+        }
+        session.set('metadata.cusor', cursor);
+        if (unit.metadata.debug) {
+          emitter.emit('debugUnit', { unit, req, res });
+        }
+        resolve();
+      });
     });
   };
 }
 
 function findPauseIndex(units, cursor) {
-  for (let i = cursor; i < units.length; i++) {
+  let i = cursor;
+  for (; i < units.length; i++) {
     let unit = units[i];
     if (unit.metadata.pause) return i;
   }
