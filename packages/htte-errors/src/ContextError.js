@@ -1,9 +1,9 @@
 const util = require('util');
 
-const ContextError = function(msg, segs = [], boundray) {
+const ContextError = function(msg, parts = [], boundray) {
   Error.captureStackTrace(this, boundray);
   this.message = msg;
-  this.segs = segs;
+  this.parts = parts;
 };
 
 util.inherits(ContextError, Error);

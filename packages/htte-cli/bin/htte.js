@@ -19,6 +19,9 @@ program
         patch: cmd.patch
       });
     } catch (err) {
+      if (process.env.DEBUG) {
+        throw err;
+      }
       console.error(err.message || err);
       process.exit(1);
     }

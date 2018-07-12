@@ -1,9 +1,9 @@
 const util = require('util');
 
-const ClientError = function(msg, segs = []) {
+const ClientError = function(msg, parts = []) {
   Error.captureStackTrace(this);
   this.message = msg;
-  this.segs = segs;
+  this.parts = parts;
 };
 
 util.inherits(ClientError, Error);

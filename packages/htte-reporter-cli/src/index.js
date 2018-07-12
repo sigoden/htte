@@ -12,12 +12,12 @@ module.exports = function(htte, options) {
     });
     emiter.on('skipUnit', function(args) {
       let { unit } = args;
-      console.log(`skip unit: ${unit.name}`);
+      console.log(`skip unit: ${unit.describe}`);
     });
     emiter.on('runUnit', function(args) {
       let { unit } = args;
       current = unit;
-      console.log(`run unit: ${unit.name}`);
+      console.log(`run unit: ${unit.describe}`);
     });
     emiter.on('doneUnit', function() {
       console.log(`done unit`);

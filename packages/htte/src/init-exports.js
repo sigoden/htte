@@ -1,7 +1,7 @@
 let utils = require('htte-utils');
 let _ = require('lodash');
 
-module.exports = function(value, parent = null) {
+function expt(value, parent = null) {
   let self = { value, parent };
   if (utils.type(value) === 'undefined') {
     throw new Error('exports must be object');
@@ -36,3 +36,5 @@ module.exports = function(value, parent = null) {
   };
   return self;
 };
+
+module.exports = expt;

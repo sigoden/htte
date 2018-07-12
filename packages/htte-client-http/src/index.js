@@ -80,7 +80,7 @@ module.exports = function init(htte, options) {
             let { status, headers, data } = err.response;
             return { status, headers, body: data };
           } else {
-            if (!err instanceof ClientError) {
+            if (!(err instanceof ClientError)) {
               err = new ClientError(err.message);
             }
             return Promise.reject(err);

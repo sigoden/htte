@@ -2,6 +2,7 @@ const _ = require('lodash');
 const os = require('os');
 const path = require('path');
 const utils = require('htte-utils');
+const { ModuleError } = require('htte-errors');
 
 const runner = require('htte-runner');
 const loadConfig = require('./load-config');
@@ -40,12 +41,7 @@ exports.init = function(options) {
   let mods = loadModules(modulesDir, config.modules, yamlLoader);
   let session = initSession(config.session || defaultSessionFile(configFile));
   let expts = initExports(config.exports || {});
-  let units = _.flatMap(
-    Object.keys(mods).map(function(key) {
-      let mod = mods[key];
-      return initModule(key, mod, expts);
-    })
-  );
+  let units = modulesToUnits(mods, expts);
 
   let app = {};
   app.run = function(controls) {
@@ -58,4 +54,13 @@ function defaultSessionFile(baseFile) {
   let name = path.basename(utils.trimYamlExt(baseFile));
   let file = path.join(os.tmpdir(), name + '-' + utils.md5x(baseFile, 6) + '.json');
   return file;
+}
+
+function modulesToUnits(mods, expts) {
+  return _.flatMap(
+    Object.keys(mods).map(function(key) {
+      let mod = mods[key];
+      return initModule(key, mod, expts);
+    })
+  );
 }
