@@ -8,7 +8,7 @@ module.exports = function loadClients(dir, clients = defaultClients) {
   }
   let result = {};
   for (let item of plugins) {
-    result[item] = requireClient(dir, item.name)(options);
+    result[item.name] = requireClient(dir, item.pkg)(options);
   }
   return result;
 }

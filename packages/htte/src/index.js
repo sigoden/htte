@@ -12,17 +12,18 @@ const loadModules = require("./load-modules");
 const initModule = require("./init-module");
 const initYamlLoader = require("./init-yamlloader");
 const initSession = require('./init-session');
+const initExports = require('./init-exports');
 
 exports.init = function(options) {
   let {
-    baseFile,
+    configFile,
     patch,
     clientsDir = "clients",
     pluginsDir = "plugins",
     modulesDir = "modules",
     reportersDir = "reporters",
   } = options;
-  let config = loadConfig(baseFile, patch);
+  let config = loadConfig(configFile, patch);
   let clientsDir = path.resolve(config.baseDir, clientsDir);
   let pluginsDir = path.resolve(config.baseDir, pluginsDir);
   let modulesDir = path.resolve(config.baseDir, modulesDir);
@@ -33,11 +34,17 @@ exports.init = function(options) {
   let yamlLoader = initYamlLoader(yamlTags);
   let mods = loadModules(config.baseDir, config.modules, yamlLoader);
   let session = initSession(config.session || defaultSessionFile(baseFile));
+  let expts = initExports(config.exports);
   let units = _.flatMap(Object.keys(mods).map(function(key) {
     let mod = mods[key];
-    return initModule(key, mod, config.exports || {});
+    return initModule(key, mod, config.exports || {}, expts);
   }));
-  return { clients, reporters, session, units };
+  
+  let app = {};
+  app.run = function(controls) {
+    return runner.run({ session, clients, units, reporters, controls });
+  }
+  return app;
 }
 
 function defaultSessionFile(baseFile) {

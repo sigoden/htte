@@ -30,8 +30,7 @@ function procUnit(output, ctx, unit) {
   unit.index = output.length;
   unit.metadata = unit.metadata || {};
   unit.name = getUnitName(unit);
-  ctx.expts.apply(unit);
-  return unit;
+  return ctx.expts.apply(unit);
 }
 
 function getUnitName(unit) {

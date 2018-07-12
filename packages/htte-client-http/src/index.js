@@ -1,13 +1,24 @@
 const axios = require("axios");
 const qs = require("querystring");
-const { templateString } = require("htte-utils");
+const { completeUrlParams } = require("htte-utils");
 const mime = require("mime-types");
 const _ = require("lodash");
 
 module.exports = function init(options) {
   return {
     run: function (req) {
-      let url = templateString(req.url, req.params);
+      let url = req.url
+      if (!url) {
+        return Promise.reject({ err: `req.url must be string` });
+      }
+      if (/^\//.test(url)) {
+        url = options.baseUrl + url;
+      }
+      try {
+        url = completeUrlParams(url, req.params);
+      } catch (err) {
+        return Promise.reject({ err });
+      }
       let method = req.method || "get";
       let timeout = req.timeout || options.timeout || 30000;
       if (req.query) url += "?" + qs.stringify(req.query);

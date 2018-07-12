@@ -1,6 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
-const defaultPlugins = [{name: 'htte-plugin-common', options: {}}];
+const defaultPlugins = [{pkg: 'htte-plugin-common', options: {}}];
 
 module.exports = function loadPlugins(dir, plugins = defaultPlugins) {
   if (!_.isArray(plugins)) {
@@ -8,7 +8,7 @@ module.exports = function loadPlugins(dir, plugins = defaultPlugins) {
   }
   let yamlTags = [];
   for (let item of plugins) {
-    let plugin = requirePlugin(dir, item.name);
+    let plugin = requirePlugin(dir, item.pkg);
     yamlTags = yamlTags.concat(plugin(item.options));
   }
   return yamlTags;

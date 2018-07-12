@@ -22,19 +22,22 @@ modules: # 本次测试需要加载的模块文件
 - foo # 加载 foo.yaml 文件，模块变量名 foo
 - foo/bar # 加载 foo/bar.yaml 文件，模块变量名 foobar
 plugins: # 插件配置
-- name: pkg-name # 模块包名，模块文件位置
+- pkg: pkg-name # 模块包名，模块文件位置
   options:  # 模块选项
 clients:
-- name: pkg-name # 模块包名，模块文件位置
+- name: http 
+  pkg: pkg-name # 模块包名，模块文件位置
   options:
 exports:
     login:
         client: http
-        method: post
-        uri: /login
+        req:
+            method: post
+            uri: /login
     auth:
         client: grpc
-        rpc: auth
+        req:
+            rpc: auth
 ```
 
 ### 模块选项整理
