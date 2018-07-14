@@ -35,6 +35,6 @@ function expt(value, parent = null) {
     throw new Error(`requries ${key} cannot be found`);
   };
   return self;
-};
+}
 
 module.exports = expt;

@@ -21,7 +21,7 @@ function procNode(output, ctx, node) {
     }
     if (node.exports) {
       ctx.expts = ctx.expts.enter(node.exports);
-    } 
+    }
     node.units.forEach(function(child, index) {
       let localCtx = _.pick(ctx, ['module', 'groups', 'expts']);
       if (!ctx.groups) {
@@ -49,7 +49,11 @@ function procUnit(output, ctx, unit) {
     throw new ModuleError(`unit must have property req with object type`, ctx.module, ctx.groups.concat(unit.describe));
   }
   if (!_.isUndefined(unit.res) && utils.type(unit.res) !== 'object') {
-    throw new ModuleError(`unit must have property res with object type if exists`, ctx.module, ctx.groups.concat(unit.describe));
+    throw new ModuleError(
+      `unit must have property res with object type if exists`,
+      ctx.module,
+      ctx.groups.concat(unit.describe)
+    );
   }
   output.push(unit);
 }

@@ -1,4 +1,4 @@
-const utils = require('htte-reporter-utils')
+const utils = require('htte-reporter-utils');
 const defaultOptions = {
   slow: 1000
 };
@@ -30,9 +30,9 @@ module.exports = function(htte, options) {
       let { unit } = args;
       current = unit;
       clearSpinner = utils.spinner(function(mark) {
-        return utils.sprintf(utils.color('pending', '%s  %s%s'), mark, indent(unit.ctx.groups.length), unit.describe)
+        return utils.sprintf(utils.color('pending', '%s  %s%s'), mark, indent(unit.ctx.groups.length), unit.describe);
       }, 120);
-    })
+    });
 
     emiter.on('doneUnit', function() {
       clearSpinner();
@@ -40,10 +40,7 @@ module.exports = function(htte, options) {
       let fmt;
       let speed = utils.speed(unit.session.duration, options.slow);
       if (speed === 'fast') {
-        fmt =
-          indent(unit.ctx.groups.length) +
-          utils.color('okmark', utils.symbols.ok) +
-          utils.color('pass', '  %s');
+        fmt = indent(unit.ctx.groups.length) + utils.color('okmark', utils.symbols.ok) + utils.color('pass', '  %s');
         utils.print(fmt, unit.describe);
       } else {
         fmt =

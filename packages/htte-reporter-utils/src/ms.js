@@ -32,9 +32,7 @@ module.exports = function(val) {
  * @return {number}
  */
 function parse(str) {
-  let match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(
-    str
-  );
+  let match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(str);
   if (!match) {
     return;
   }

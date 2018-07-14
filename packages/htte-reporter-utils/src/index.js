@@ -61,7 +61,7 @@ function color(type, str) {
     return String(str);
   }
   return '\u001b[' + colors[type] + 'm' + str + '\u001b[0m';
-};
+}
 
 /**
  * Output the units failures as a list.
@@ -70,13 +70,15 @@ function color(type, str) {
 function listFailures(units) {
   print();
   units
-    .filter(function(unit) { return unit.session.err })
+    .filter(function(unit) {
+      return unit.session.err;
+    })
     .forEach(function(unit, i) {
       let err = unit.session.err;
       if (err) {
         let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
-        let indents = ' '.repeat(i+3);
-        print(color('title', '%d) %s'), i+1, title);
+        let indents = ' '.repeat(i + 3);
+        print(color('title', '%d) %s'), i + 1, title);
         if (err.parts) {
           print(color('error', indents + 'at %s, throw %s'), err.parts.join(symbols.dot), err.message);
         } else {
@@ -87,13 +89,17 @@ function listFailures(units) {
           print(color('content', '%s'), dump({ req, res }));
         }
       }
-    })
-};
+    });
+}
 
 function dump(obj, indents = '') {
-  return yaml.safeDump(obj).split(os.EOL).map(function(line) {
-    return indents + line;
-  }).join(os.EOL);
+  return yaml
+    .safeDump(obj)
+    .split(os.EOL)
+    .map(function(line) {
+      return indents + line;
+    })
+    .join(os.EOL);
 }
 
 /**
@@ -101,8 +107,7 @@ function dump(obj, indents = '') {
  * the bundled reporters.
  *
  */
-exports.epilogue = function({ units, duration}) {
-
+exports.epilogue = function({ units, duration }) {
   let stats = { skips: 0, failures: 0, passes: 0 };
   units.map(function(unit) {
     if (unit.session.state === 'fail') {
@@ -117,9 +122,7 @@ exports.epilogue = function({ units, duration}) {
   let fmt;
   print();
   // passes
-  fmt =
-    color('green', '%d passing') +
-    color('ms', ' (%s)');
+  fmt = color('green', '%d passing') + color('ms', ' (%s)');
 
   print(fmt, stats.passes || 0, ms(duration));
 
@@ -147,7 +150,9 @@ exports.epilogue = function({ units, duration}) {
 function listDebugs(units) {
   print();
   units
-    .filter(function(unit) { return !unit.session.err && unit.metadata.debug })
+    .filter(function(unit) {
+      return !unit.session.err && unit.metadata.debug;
+    })
     .forEach(function(unit, i) {
       let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
       print(color('title', '%s'), title);
@@ -167,7 +172,7 @@ exports.speed = function(duration, basis) {
   } else {
     return 'fast';
   }
-}
+};
 
 /**
  * Show spinner
@@ -183,17 +188,15 @@ exports.spinner = function(print, interval, spinnerMarks = '◴◷◶◵') {
   return function() {
     process.stdout.cursorTo(0);
     clearInterval(handler);
-  }
-}
+  };
+};
 
 /**
  * Expose term window size, with some defaults for when stderr is not a tty.
  */
 exports.window = { width: 75 };
 if (isatty) {
-  exports.window.width = process.stdout.getWindowSize
-    ? process.stdout.getWindowSize(1)[0]
-    : tty.getWindowSize()[1];
+  exports.window.width = process.stdout.getWindowSize ? process.stdout.getWindowSize(1)[0] : tty.getWindowSize()[1];
 }
 
 exports.sprintf = sprintf;

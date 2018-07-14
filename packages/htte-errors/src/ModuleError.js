@@ -5,8 +5,12 @@ const ModuleError = function(msg, mod, parts = []) {
   this.msg = msg;
   this.mod = mod;
   this.parts = parts;
-  let joined = this.parts.map(function(v) { return `"${v}"`}).join(' > ');
-  this.message = `${this.msg} at ${this.mod} @ ${joined}`
+  let joined = this.parts
+    .map(function(v) {
+      return `"${v}"`;
+    })
+    .join(' > ');
+  this.message = `${this.msg} at ${this.mod} @ ${joined}`;
 };
 
 util.inherits(ModuleError, Error);

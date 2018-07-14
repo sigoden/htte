@@ -41,7 +41,7 @@ function run(options) {
     .then(function() {
       session.save();
       let [s, n] = process.hrtime(hrstart);
-      let duration = (s * 1000) +  Math.round(n /1000000);
+      let duration = s * 1000 + Math.round(n / 1000000);
       emitter.emit('done', { units, duration });
     });
 }
@@ -80,7 +80,7 @@ function runUnit(unit) {
         .run(req, unit.res)
         .then(function(res) {
           let [s, n] = process.hrtime(hrstart);
-          unit.session.duration = (s * 1000) + Math.round(n / 1000000);
+          unit.session.duration = s * 1000 + Math.round(n / 1000000);
           unit.session.res = res;
           session.set(['data', unit.ctx.module, unit.name, 'res'].join('.'), res);
           if (unit.res) {
