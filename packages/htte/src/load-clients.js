@@ -14,6 +14,10 @@ module.exports = function loadClients(dir, htteConfig, clients = defaultClients)
     if (!_.isString(item.pkg)) {
       throw new Error(`client must have property pkg, wrong client ${JSON.stringify(item)}`);
     }
+    item.options = item.options || {};
+    if (!_.isPlainObject(item.options)) {
+      throw new Error(`client property options must be object, wrong client ${JSON.stringify(item)}`);
+    }
     result[item.name] = requireClient(dir, item.pkg)(htteConfig, item.options);
   }
   return result;

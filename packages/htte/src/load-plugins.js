@@ -8,6 +8,13 @@ module.exports = function loadPlugins(dir, htteConfig, plugins = defaultPlugins)
   }
   let yamlTags = [];
   for (let item of plugins) {
+    if (!_.isString(item.pkg)) {
+      throw new Error(`plugin must have property pkg, wrong plugin ${JSON.stringify(item)}`);
+    }
+    item.options = item.options || {};
+    if (!_.isPlainObject(item.options)) {
+      throw new Error(`plugin property options must be object, wrong plugin ${JSON.stringify(item)}`);
+    }
     let plugin = requirePlugin(dir, item.pkg);
     yamlTags = yamlTags.concat(plugin(htteConfig, item.options));
   }

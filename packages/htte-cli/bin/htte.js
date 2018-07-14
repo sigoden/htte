@@ -10,7 +10,6 @@ program
   .option('--patch', 'Specify a patch config file to override the options in default config file')
   .option('--silent', 'Prevents newman from showing output to CLI.')
   .option('--disable-unicode', 'Forces unicode compliant symbols to be replaced by their plain text equivalents')
-  .option('--no-color', 'Disable colored output.')
   .action(function(configFile, cmd) {
     let app;
     try {

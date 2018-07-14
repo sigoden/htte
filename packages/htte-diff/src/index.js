@@ -30,7 +30,7 @@ function diff(context, expected, actual, strict = true) {
  */
 function diffPrimitive(context, expected, actual) {
   if (_.isEqual(expected, actual)) return;
-  context.throw(`value diff, ${JSON.stringify(expected)} ≠ ${JSON.stringify(actual)}`);
+  context.throw(`diff value, ${JSON.stringify(expected)} ≠ ${JSON.stringify(actual)}`);
 }
 
 /*
@@ -40,7 +40,7 @@ function diffArray(context, expected, actual, strict) {
   diffType(context, expected, actual);
   let sameLength = expected.length === actual.length;
   if (strict && !sameLength) {
-    context.throw(`size diff, ${expected.length} ≠ ${actual.length}`);
+    context.throw(`diff size , ${expected.length} ≠ ${actual.length}`);
   }
   expected.forEach(function(elem, index) {
     diff(context.enter(`[${index}]`), elem, actual[index]);
@@ -49,7 +49,7 @@ function diffArray(context, expected, actual, strict) {
 
 function diffType(context, expected, actual) {
   if (utils.type(expected) === utils.type(actual)) return;
-  context.throw(`type diff, ${utils.type(expected)} ≠ ${utils.type(actual)}`);
+  context.throw(`diff type, ${utils.type(expected)} ≠ ${utils.type(actual)}`);
 }
 
 /*
@@ -85,7 +85,7 @@ function matchKeys(context, expected, actual) {
   if (includes.length) {
     errMsg += `, -- ${includes.join('|')}`;
   }
-  context.throw(`props diff` + errMsg);
+  context.throw(`diff properties` + errMsg);
 }
 
 module.exports = diff;

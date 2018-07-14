@@ -53,7 +53,6 @@ module.exports = function init(htte, options) {
             return Promise.reject(new ClientError('is unsupported', ['req', 'type']));
         }
       }
-      let hrstart = process.hrtime();
       let clientData = { url, method, data: body, headers, timeout };
       saveClientData(clientData);
       return axios(clientData)
@@ -85,11 +84,6 @@ module.exports = function init(htte, options) {
             }
             return Promise.reject(err);
           }
-        })
-        .then(function(res) {
-          let time = process.hrtime(hrstart)[1] / 1000000;
-          res.time = time;
-          return res;
         });
     }
   };

@@ -16,14 +16,14 @@ function procNode(output, ctx, node) {
     throw new ModuleError(`must have property "describe"`, ctx.module, ctx.groups.concat('?'));
   }
   if (node.units) {
-    let localCtx = { expts: ctx.expts, module: ctx.module };
     if (!_.isArray(node.units)) {
       throw new ModuleError(`must have property "units" in array`, ctx.module, ctx.groups.concat(node.describe));
     }
     if (node.exports) {
-      localCtx.expts = localCtx.expts.enter(node.exports);
+      ctx.expts = ctx.expts.enter(node.exports);
     } 
     node.units.forEach(function(child, index) {
+      let localCtx = _.pick(ctx, ['module', 'groups', 'expts']);
       if (!ctx.groups) {
         localCtx.groups = []; // top level
       } else {

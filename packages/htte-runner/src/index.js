@@ -4,13 +4,14 @@ const context = require('htte-context');
 const CURSOR_KEY = 'metadata.cursor';
 
 function run(options) {
-  let { session, clients, units, reporters, controls } = options;
+  let { session, clients, reporters, units, controls } = options;
   let emitter = new EventEmitter();
   Object.keys(reporters).forEach(function(name) {
     let reporter = reporters[name];
     reporter(emitter);
   });
-  emitter.emit('start', options);
+  let hrstart = process.hrtime();
+  emitter.emit('start', { units });
   let cursor = 0;
   if (controls.continue) {
     session.load();
@@ -39,12 +40,14 @@ function run(options) {
     }, Promise.resolve())
     .then(function() {
       session.save();
-      emitter.emit('done');
+      let [s, n] = process.hrtime(hrstart);
+      let duration = (s * 1000) +  Math.round(n /1000000);
+      emitter.emit('done', { units, duration });
     });
 }
 
 function runUnit(unit) {
-  unit.session = { state: 'fail' };
+  unit.session = {};
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
@@ -75,9 +78,12 @@ function runUnit(unit) {
       let saveClientData = function(data) {
         unit.session.client = data;
       };
+      let hrstart = process.hrtime();
       client
         .run(req, unit.res, saveClientData)
         .then(function(res) {
+          let [s, n] = process.hrtime(hrstart);
+          unit.session.duration = (s * 1000) + Math.round(n / 1000000);
           unit.session.res = res;
           session.set(['data', unit.ctx.module, unit.name, 'res'].join('.'), res);
           if (unit.res) {
@@ -94,6 +100,10 @@ function runUnit(unit) {
           resolve();
         })
         .catch(reject);
+    }).catch(function(err) {
+      unit.session.state = 'fail';
+      unit.session.err = err;
+      return Promise.reject(err);
     });
   };
 }

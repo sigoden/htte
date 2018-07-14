@@ -40,7 +40,7 @@
       user:
         email: !@exist
         username: !@exist
-        token: !@exist
+        # token: !@exist
 - describe: update user
   metadata:
     requires: updateUser

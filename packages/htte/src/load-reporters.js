@@ -14,6 +14,10 @@ module.exports = function loadReporters(dir, htteConfig, reporters = defaultRepo
     if (!_.isString(item.pkg)) {
       throw new Error(`reporter must have property pkg, wrong reporter ${JSON.stringify(item)}`);
     }
+    item.options = item.options || {};
+    if (!_.isPlainObject(item.options)) {
+      throw new Error(`reporter property options must be object, wrong reporter ${JSON.stringify(item)}`);
+    }
     result[item.name] = requireReporter(dir, item.pkg)(htteConfig, item.options || {});
   }
   return result;

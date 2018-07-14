@@ -1,33 +1,72 @@
 const utils = require('htte-reporter-utils')
+const defaultOptions = {
+  slow: 1000
+};
 
 module.exports = function(htte, options) {
-  let current;
+  options = Object.assign(defaultOptions, options);
   return function(emiter) {
+    let clearSpinner;
+    let current;
+    let counterr = 0;
+
     emiter.on('start', function(args) {
-      console.log();
+      utils.print();
     });
+
     emiter.on('enterGroup', function(args) {
       let { unit } = args;
-      console.log(`enter group: ${unit.ctx.groups}`);
+      unit.ctx.groups.map(function(group, index) {
+        utils.print(utils.color('group', '%s%s'), indent(index), group);
+      });
     });
+
     emiter.on('skipUnit', function(args) {
       let { unit } = args;
-      console.log(`skip unit: ${unit.describe}`);
+      utils.print(utils.color('skip', '%s %s%s'), utils.symbols.dot, indent(unit.ctx.groups.length), unit.describe);
     });
+
     emiter.on('runUnit', function(args) {
       let { unit } = args;
       current = unit;
-      console.log(`run unit: ${unit.describe}`);
-    });
+      clearSpinner = utils.spinner(function(mark) {
+        return utils.sprintf(utils.color('pending', '%s %s%s'), mark, indent(unit.ctx.groups.length), unit.describe)
+      }, 120);
+    })
+
     emiter.on('doneUnit', function() {
-      console.log(`done unit`);
+      clearSpinner();
+      let unit = current;
+      let fmt;
+      let speed = utils.speed(unit.session.duration, options.slow);
+      if (speed === 'fast') {
+        fmt =
+          indent(unit.ctx.groups.length) +
+          utils.color('okmark', utils.symbols.ok) +
+          utils.color('pass', '  %s');
+        utils.print(fmt, unit.describe);
+      } else {
+        fmt =
+          indent(unit.ctx.groups.length) +
+          utils.color('okmark', utils.symbols.ok) +
+          utils.color('pass', '  %s') +
+          utils.color(speed, ' (%dms)');
+        utils.print(fmt, unit.describe, unit.session.duration);
+      }
     });
+
     emiter.on('errorUnit', function(err) {
-      console.log(err);
-      // console.log(util.inspect(current.session, { depth: 6 }));
+      clearSpinner();
+      utils.print(indent() + utils.color('fail', '%d) %s'), ++counterr, current.describe);
     });
-    emiter.on('done', function() {
-      console.log('done');
+
+    emiter.on('done', function(args) {
+      clearSpinner();
+      utils.epilogue(args);
     });
   };
 };
+
+function indent(n = 0) {
+  return Array(n + 1).join('  ');
+}
