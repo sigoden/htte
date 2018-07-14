@@ -75,12 +75,9 @@ function runUnit(unit) {
       }
       unit.session.req = req;
       session.set(['data', unit.ctx.module, unit.name, 'req'].join('.'), req);
-      let saveClientData = function(data) {
-        unit.session.client = data;
-      };
       let hrstart = process.hrtime();
       client
-        .run(req, unit.res, saveClientData)
+        .run(req, unit.res)
         .then(function(res) {
           let [s, n] = process.hrtime(hrstart);
           unit.session.duration = (s * 1000) + Math.round(n / 1000000);

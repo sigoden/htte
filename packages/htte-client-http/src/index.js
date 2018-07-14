@@ -23,7 +23,7 @@ const reqChecks = [
 module.exports = function init(htte, options) {
   options = _.merge(defaultOptions, options);
   return {
-    run: function(req, expectedRes, saveClientData) {
+    run: function(req, expectedRes) {
       try {
         checkReq(reqChecks, req);
       } catch (err) {
@@ -54,7 +54,6 @@ module.exports = function init(htte, options) {
         }
       }
       let clientData = { url, method, data: body, headers, timeout };
-      saveClientData(clientData);
       return axios(clientData)
         .then(function(result) {
           let { status, headers, data } = result;

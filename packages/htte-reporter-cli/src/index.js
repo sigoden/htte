@@ -17,20 +17,20 @@ module.exports = function(htte, options) {
     emiter.on('enterGroup', function(args) {
       let { unit } = args;
       unit.ctx.groups.map(function(group, index) {
-        utils.print(utils.color('group', '%s%s'), indent(index), group);
+        utils.print(utils.color('title', '%s%s'), indent(index), group);
       });
     });
 
     emiter.on('skipUnit', function(args) {
       let { unit } = args;
-      utils.print(utils.color('skip', '%s %s%s'), utils.symbols.dot, indent(unit.ctx.groups.length), unit.describe);
+      utils.print(utils.color('skip', '%s  %s%s'), utils.symbols.dot, indent(unit.ctx.groups.length), unit.describe);
     });
 
     emiter.on('runUnit', function(args) {
       let { unit } = args;
       current = unit;
       clearSpinner = utils.spinner(function(mark) {
-        return utils.sprintf(utils.color('pending', '%s %s%s'), mark, indent(unit.ctx.groups.length), unit.describe)
+        return utils.sprintf(utils.color('pending', '%s  %s%s'), mark, indent(unit.ctx.groups.length), unit.describe)
       }, 120);
     })
 

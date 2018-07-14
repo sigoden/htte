@@ -1,29 +1,32 @@
-
-
 const tty = require('tty');
+const os = require('os');
 const isatty = tty.isatty(1) && tty.isatty(2);
 const supportsColor = require('supports-color');
 const ms = require('./ms');
 const { sprintf } = require('sprintf-js');
+const yaml = require('js-yaml');
 
 const useColors = supportsColor.stdout && !process.env.NO_COLOR;
 
 function print() {
-  let txt = sprintf.apply(sprintf, arguments);
-  process.stdout.write(txt + '\n');
+  let string = arguments[0];
+  if (arguments.length !== 1) {
+    string = sprintf.apply(sprintf, arguments);
+  }
+  process.stdout.write(string + os.EOL);
 }
 
 /**
  * Default color map.
  */
 const colors = {
+  title: 0,
+  content: 90,
   pass: 90,
   skip: 36,
   fail: 31,
   pending: 36,
-  group: 0,
-  'error title': 0,
-  'error message': 31,
+  error: 31,
   okmark: 32,
   errmark: 200,
   fast: 90,
@@ -60,57 +63,38 @@ function color(type, str) {
   return '\u001b[' + colors[type] + 'm' + str + '\u001b[0m';
 };
 
-
-/**
- * Expose some basic cursor interactions that are common among reporters.
- */
-
-const cursor = {
-  hide: function() {
-    isatty && process.stdout.write('\u001b[?25l');
-  },
-
-  show: function() {
-    isatty && process.stdout.write('\u001b[?25h');
-  },
-
-  deleteLine: function() {
-    isatty && process.stdout.write('\u001b[2K');
-  },
-
-  beginningOfLine: function() {
-    isatty && process.stdout.write('\u001b[0G');
-  },
-
-  CR: function() {
-    if (isatty) {
-      cursor.deleteLine();
-      cursor.beginningOfLine();
-    } else {
-      process.stdout.write('\r');
-    }
-  }
-}
-
 /**
  * Output the units failures as a list.
  *
  */
-function list(units) {
+function listFailures(units) {
   print();
   units
-    .filter(function(unit) {
-      return unit.session.err
-    })
+    .filter(function(unit) { return unit.session.err })
     .forEach(function(unit, i) {
       let err = unit.session.err;
-      let title = [unit.ctx.module, unit.describe].concat(err.parts).join('-> ');
-      print(color('error title', '%d) %s:'), i + 1, title);
-      err.message.split('\n').map(function(msg) {
-        print(color('error message', String(i+1).replace(/./g, ' ') + '  %s'), msg);
-      });
+      if (err) {
+        let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
+        let indents = ' '.repeat(i+3);
+        print(color('title', '%d) %s'), i+1, title);
+        if (err.parts) {
+          print(color('error', indents + 'at %s, throw %s'), err.parts.join(symbols.dot), err.message);
+        } else {
+          print(color('error', indents + err.message));
+        }
+        if (unit.metadata.debug) {
+          let { req, res = {} } = unit.session;
+          print(color('content', '%s'), dump({ req, res }));
+        }
+      }
     })
 };
+
+function dump(obj, indents = '') {
+  return yaml.safeDump(obj).split(os.EOL).map(function(line) {
+    return indents + line;
+  }).join(os.EOL);
+}
 
 /**
  * Output common epilogue used by many of
@@ -152,13 +136,25 @@ exports.epilogue = function({ units, duration}) {
 
     print(fmt, stats.failures);
 
-    list(units);
+    listFailures(units);
+    listDebugs(units);
     print();
   }
 
   print();
 };
 
+function listDebugs(units) {
+  print();
+  units
+    .filter(function(unit) { return !unit.session.err && unit.metadata.debug })
+    .forEach(function(unit, i) {
+      let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
+      print(color('title', '%s'), title);
+      let { req, res = {} } = unit.session;
+      print(color('content', '%s'), dump({ req, res }));
+    });
+}
 
 /**
  * Detect the speed of unit.
@@ -205,10 +201,9 @@ exports.colors = colors;
 exports.ms = ms;
 exports.color = color;
 exports.print = print;
-exports.cursor = cursor;
 exports.symbols = symbols;
 exports.useColors = useColors;
-exports.list = list;
+exports.listFailures = listFailures;
 
 // With node.js on Windows: use symbols available in terminal default fonts
 if (process.platform === 'win32') {
@@ -216,3 +211,4 @@ if (process.platform === 'win32') {
   exports.symbols.err = '\u00D7';
   exports.symbols.dot = '*';
 }
+exports.listDebugs = listDebugs;
