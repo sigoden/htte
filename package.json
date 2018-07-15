@@ -10,6 +10,11 @@
 	"eslintIgnore": [
 		"node_modules"
 	],
+	"jest": {
+		"testPathIgnorePatterns": [
+			"/packages/htte-utils/src/__tests__/fixtures/"
+		]
+	},
 	"prettier": {
 		"singleQuote": true,
 		"printWidth": 120

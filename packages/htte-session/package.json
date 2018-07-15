@@ -1,7 +1,7 @@
 {
-  "name": "htte-errors",
+  "name": "htte-session",
   "version": "0.4.0",
-  "description": "custom errors for htte",
+  "description": "session manager for htte",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
@@ -20,5 +20,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sigoden/htte.git"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {
+    "htte-utils": "^0.4.0"
   }
 }

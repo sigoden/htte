@@ -12,9 +12,7 @@
     "declartive",
     "test",
     "testing",
-    "gabbi",
-    "postman",
-    "framework"
+    "ddt"
   ],
   "homepage": "https://sigoden.github.io/htte/",
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
@@ -27,6 +25,7 @@
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.10",
     "htte-runner": "^0.4.0",
+    "htte-session": "^0.4.0",
     "htte-errors": "^0.4.0",
     "htte-utils": "^0.4.0",
     "htte-client-http": "^0.4.0",

@@ -4,6 +4,7 @@ const program = require('commander');
 
 program
   .command('run <config-file>')
+  .description('run htte project')
   .usage('<config-file> [options]')
   .option('--bail', 'Specify whether or not to gracefully stop a htte run on encountering an error')
   .option('--continue', 'Specify whether or not to continue run from abort unit')

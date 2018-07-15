@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const path = require('path');
+const os = require('os');
 
 exports.type = function(value) {
   let type = typeof value;
@@ -50,7 +52,7 @@ exports.completeUrlParams = function(url, reqParams = {}) {
   let expectedParams = url
     .split('/')
     .filter(function(seg) {
-      seg && /^\{.*\}$/.test(seg);
+      return seg && /^\{.*\}$/.test(seg);
     })
     .map(function(seg) {
       return seg.slice(1, -1);
@@ -66,3 +68,19 @@ exports.completeUrlParams = function(url, reqParams = {}) {
   }
   return result;
 };
+
+
+exports.tryRequireExtension = function(dir, name) {
+  try {
+    return require(path.resolve(dir, name));
+  } catch (err) {}
+  try {
+    return require(name);
+  } catch (err) {}
+  throw new Error(`cannot be required`);
+}
+
+exports.tmpfile = function(file) {
+  let name = exports.trimYamlExt(path.basename(file));
+  return path.join(os.tmpdir(), name + '-' + exports.md5x(file, 6) + '.json');
+}

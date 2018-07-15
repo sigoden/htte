@@ -1,8 +1,8 @@
 const util = require('util');
 
-const ContextError = function(msg, parts = [], boundray) {
+const ContextError = function(message, parts = [], boundray) {
   Error.captureStackTrace(this, boundray);
-  this.message = msg;
+  this.message = message;
   this.parts = parts;
 };
 

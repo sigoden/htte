@@ -5,36 +5,36 @@ const defaultOptions = {
 
 module.exports = function(htte, options) {
   options = Object.assign(defaultOptions, options);
-  return function(emiter) {
+  return function({ emitter }) {
     let clearSpinner;
     let current;
     let counterr = 0;
 
-    emiter.on('start', function(args) {
+    emitter.on('start', function(args) {
       utils.print();
     });
 
-    emiter.on('enterGroup', function(args) {
+    emitter.on('enterGroup', function(args) {
       let { unit } = args;
       unit.ctx.groups.map(function(group, index) {
         utils.print(utils.color('title', '%s%s'), indent(index), group);
       });
     });
 
-    emiter.on('skipUnit', function(args) {
+    emitter.on('skipUnit', function(args) {
       let { unit } = args;
       utils.print(utils.color('skip', '%s  %s%s'), utils.symbols.dot, indent(unit.ctx.groups.length), unit.describe);
     });
 
-    emiter.on('runUnit', function(args) {
+    emitter.on('runUnit', function(args) {
       let { unit } = args;
       current = unit;
       clearSpinner = utils.spinner(function(mark) {
-        return utils.sprintf(utils.color('pending', '%s  %s%s'), mark, indent(unit.ctx.groups.length), unit.describe);
-      }, 120);
+        return utils.sprintf(utils.color('pending', '%s%s  %s'), indent(unit.ctx.groups.length), mark, unit.describe);
+      }, utils.spinnerInterval);
     });
 
-    emiter.on('doneUnit', function() {
+    emitter.on('doneUnit', function() {
       clearSpinner();
       let unit = current;
       let fmt;
@@ -47,17 +47,17 @@ module.exports = function(htte, options) {
           indent(unit.ctx.groups.length) +
           utils.color('okmark', utils.symbols.ok) +
           utils.color('pass', '  %s') +
-          utils.color(speed, ' (%dms)');
-        utils.print(fmt, unit.describe, unit.session.duration);
+          utils.color(speed, ' (%s)');
+        utils.print(fmt, unit.describe, utils.ms(unit.session.duration));
       }
     });
 
-    emiter.on('errorUnit', function(err) {
+    emitter.on('errorUnit', function(err) {
       clearSpinner();
-      utils.print(indent() + utils.color('fail', '%d) %s'), ++counterr, current.describe);
+      utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d)  %s'), ++counterr, current.describe);
     });
 
-    emiter.on('done', function(args) {
+    emitter.on('done', function(args) {
       clearSpinner();
       utils.epilogue(args);
     });

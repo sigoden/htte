@@ -2,6 +2,8 @@ const _ = require('lodash');
 const os = require('os');
 const path = require('path');
 const utils = require('htte-utils');
+const initSession = require('htte-session');
+const EventEmitter = require('events');
 const { ModuleError } = require('htte-errors');
 
 const runner = require('htte-runner');
@@ -12,7 +14,6 @@ const loadReporters = require('./load-reporters');
 const loadModules = require('./load-modules');
 const initModule = require('./init-module');
 const initYamlLoader = require('./init-yamlloader');
-const initSession = require('./init-session');
 const initExports = require('./init-exports');
 const pkg = require('../package.json');
 
@@ -45,7 +46,8 @@ exports.init = function(options) {
 
   let app = {};
   app.run = function(controls) {
-    return runner.run({ session, clients, units, reporters, controls });
+    let emitter = new EventEmitter();
+    return runner.run({ session, clients, units, emitter, reporters, controls });
   };
   return app;
 };

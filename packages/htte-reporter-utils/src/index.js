@@ -2,11 +2,9 @@ const tty = require('tty');
 const os = require('os');
 const isatty = tty.isatty(1) && tty.isatty(2);
 const supportsColor = require('supports-color');
-const ms = require('./ms');
+const ms = require('ms');
 const { sprintf } = require('sprintf-js');
 const yaml = require('js-yaml');
-
-const useColors = supportsColor.stdout && !process.env.NO_COLOR;
 
 function print() {
   let string = arguments[0];
@@ -33,7 +31,7 @@ const colors = {
   medium: 33,
   slow: 31,
   green: 32,
-  ms: 90
+  time: 90
 };
 
 /**
@@ -57,7 +55,7 @@ const symbols = {
  * @api private
  */
 function color(type, str) {
-  if (!useColors) {
+  if (!exports.useColors) {
     return String(str);
   }
   return '\u001b[' + colors[type] + 'm' + str + '\u001b[0m';
@@ -75,31 +73,43 @@ function listFailures(units) {
     })
     .forEach(function(unit, i) {
       let err = unit.session.err;
-      if (err) {
-        let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
-        let indents = ' '.repeat(i + 3);
-        print(color('title', '%d) %s'), i + 1, title);
-        if (err.parts) {
-          print(color('error', indents + 'at %s, throw %s'), err.parts.join(symbols.dot), err.message);
-        } else {
-          print(color('error', indents + err.message));
-        }
-        if (unit.metadata.debug) {
-          let { req, res = {} } = unit.session;
-          print(color('content', '%s'), dump({ req, res }));
-        }
+      let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('-> ');
+      let indents = ' '.repeat(String(i + 1).length + 2);
+      print(color('title', '%d) %s'), i + 1, title);
+      if (err.parts) {
+        print(color('error', indents + 'at %s, throw error: %s'), err.parts.join(symbols.dot) || symbols.dot, err.message);
+      } else {
+        print(color('error', indents + err.message));
+      }
+      if (unit.metadata.debug) {
+        let { req, res = {} } = unit.session;
+        print(color('content', '%s'), dump({ req, res }, indents));
       }
     });
 }
 
 function dump(obj, indents = '') {
   return yaml
-    .safeDump(obj)
+    .safeDump(obj, { skipInvalid: true })
     .split(os.EOL)
     .map(function(line) {
       return indents + line;
     })
     .join(os.EOL);
+}
+
+function listDebugs(units) {
+  print();
+  units
+    .filter(function(unit) {
+      return !unit.session.err && unit.session.state !== 'skip' && unit.metadata.debug;
+    })
+    .forEach(function(unit, i) {
+      let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('-> ');
+      print(color('title', '%s'), title);
+      let { req, res = {} } = unit.session;
+      print(color('content', '%s'), dump({ req, res }, '  '));
+    });
 }
 
 /**
@@ -122,44 +132,25 @@ exports.epilogue = function({ units, duration }) {
   let fmt;
   print();
   // passes
-  fmt = color('green', '%d passing') + color('ms', ' (%s)');
+  fmt = color('green', '%d passing') + color('time', ' (%s)');
 
   print(fmt, stats.passes || 0, ms(duration));
 
   // skip
   if (stats.skips) {
     fmt = color('skip', '%d skipping');
-
     print(fmt, stats.skips);
   }
 
   // failures
   if (stats.failures) {
     fmt = color('fail', '%d failing');
-
     print(fmt, stats.failures);
-
     listFailures(units);
-    listDebugs(units);
-    print();
   }
 
-  print();
+  listDebugs(units);
 };
-
-function listDebugs(units) {
-  print();
-  units
-    .filter(function(unit) {
-      return !unit.session.err && unit.metadata.debug;
-    })
-    .forEach(function(unit, i) {
-      let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('->');
-      print(color('title', '%s'), title);
-      let { req, res = {} } = unit.session;
-      print(color('content', '%s'), dump({ req, res }));
-    });
-}
 
 /**
  * Detect the speed of unit.
@@ -178,13 +169,13 @@ exports.speed = function(duration, basis) {
  * Show spinner
  */
 
-exports.spinner = function(print, interval, spinnerMarks = '◴◷◶◵') {
+exports.spinner = function(print, interval) {
   let i = 0;
   let handler = setInterval(function() {
     process.stdout.cursorTo(0);
-    i = (i + 1) % spinnerMarks.length;
-    process.stdout.write(print(spinnerMarks[i]));
-  }, interval);
+    i = (i + 1) % exports.spinnerMarks.length;
+    process.stdout.write(print(exports.spinnerMarks[i]));
+  }, exports.spinnerInterval);
   return function() {
     process.stdout.cursorTo(0);
     clearInterval(handler);
@@ -205,7 +196,6 @@ exports.ms = ms;
 exports.color = color;
 exports.print = print;
 exports.symbols = symbols;
-exports.useColors = useColors;
 exports.listFailures = listFailures;
 
 // With node.js on Windows: use symbols available in terminal default fonts
@@ -215,3 +205,7 @@ if (process.platform === 'win32') {
   exports.symbols.dot = '*';
 }
 exports.listDebugs = listDebugs;
+
+exports.useColors = supportsColor.stdout && !process.env.NO_COLOR;
+exports.spinnerInterval = 120;
+exports.spinnerMarks = '◴◷◶◵'

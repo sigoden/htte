@@ -13,9 +13,7 @@
     "declartive",
     "test",
     "testing",
-    "gabbi",
-    "postman",
-    "framework"
+    "ddt"
   ],
   "homepage": "https://sigoden.github.io/htte/",
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
@@ -25,7 +23,6 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "cli-spinner": "^0.2.8",
     "htte-reporter-utils": "^0.4.0"
   }
 }

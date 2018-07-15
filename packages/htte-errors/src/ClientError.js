@@ -1,8 +1,8 @@
 const util = require('util');
 
-const ClientError = function(msg, parts = []) {
+const ClientError = function(message, parts = []) {
   Error.captureStackTrace(this);
-  this.message = msg;
+  this.message = message;
   this.parts = parts;
 };
 

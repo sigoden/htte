@@ -1,2 +1,2 @@
-exports.differ = require('./differ');
-exports.resolver = require('./resolver');
+exports.Differ = require('./differ');
+exports.Resolver = require('./resolver');

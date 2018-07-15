@@ -3,26 +3,31 @@ const query = require('htte-query');
 
 const { ContextError } = require('htte-errors');
 
-function resolver(store, unit, segs = []) {
-  let self = { segs: [] };
-  self.exec = function(tagType, handler, literal) {
-    if (tagType !== 'resolver') {
-      self.throw('differ plugin is forbidden in resolver context');
-    }
-    let value = self.resolve(literal);
-    return handler(self, value);
-  };
-  self.enter = function(seg) {
-    return resolver(store, unit, segs.concat(seg));
-  };
-  self.resolve = function(value) {
-    return resolve(self, value);
-  };
-  self.query = query(store, unit);
-  self.throw = function(msg) {
-    throw new ContextError(msg, segs, self.throw);
-  };
-  return self;
+function Resolver(store, unit, segs = []) {
+  this.store = store;
+  this.unit = unit;
+  this.segs = segs;
 }
 
-module.exports = resolver;
+Resolver.prototype.exec = function (tagType, handler, literal) {
+  if (tagType !== 'resolver') {
+    this.throw('differ plugin is forbidden in resolver context');
+  }
+  let value = this.resolve(literal);
+  return handler(this, value);
+};
+Resolver.prototype.enter = function (seg) {
+  return new Resolver(this.store, this.unit, this.segs.concat(seg));
+};
+Resolver.prototype.resolve = function (value) {
+  return resolve(this, value);
+};
+Resolver.prototype.query = function (path) {
+  return query(this.store, this.unit)(path);
+}
+
+Resolver.prototype.throw = function (msg) {
+  throw new ContextError(msg, this.segs);
+};
+
+module.exports = Resolver;
