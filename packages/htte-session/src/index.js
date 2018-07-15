@@ -24,7 +24,7 @@ module.exports = function(file) {
       try {
         fs.writeFileSync(file, content, 'utf8');
       } catch (err) {
-        throw new Error(`session ${file} must be writable`);
+        throw new Error(`cannot write session to ${file}`);
       }
     }
   };

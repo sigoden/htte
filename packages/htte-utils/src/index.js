@@ -69,17 +69,6 @@ exports.completeUrlParams = function(url, reqParams = {}) {
   return result;
 };
 
-
-exports.tryRequireExtension = function(dir, name) {
-  try {
-    return require(path.resolve(dir, name));
-  } catch (err) {}
-  try {
-    return require(name);
-  } catch (err) {}
-  throw new Error(`cannot be required`);
-}
-
 exports.tmpfile = function(file) {
   let name = exports.trimYamlExt(path.basename(file));
   return path.join(os.tmpdir(), name + '-' + exports.md5x(file, 6) + '.json');

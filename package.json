@@ -12,7 +12,7 @@
 	],
 	"jest": {
 		"testPathIgnorePatterns": [
-			"/packages/htte-utils/src/__tests__/fixtures/"
+			"/packages/htte/src/__tests__/fixtures"
 		]
 	},
 	"prettier": {

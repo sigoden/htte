@@ -13,6 +13,6 @@ module.exports = function(store, unit) {
     result = _.get(store, path);
     if (!_.isUndefined(result)) return result;
 
-    throw new Error(`query ${path} failed`);
+    throw new Error(`cannot query ${path}`);
   };
 };

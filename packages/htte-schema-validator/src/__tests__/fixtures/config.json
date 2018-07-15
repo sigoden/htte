@@ -1,0 +1,49 @@
+{
+    "session": "mysession.json",
+    "modules": [
+        "auth",
+        "article"
+    ],
+    "reporters": [
+        {
+            "name": "cli",
+            "pkg": "htte-reporter-cli",
+            "options": {
+                "slow": 500
+            }
+        }
+    ],
+    "clients": [
+        {
+            "name": "http",
+            "pkg": "htte-client-http"
+        },
+        {
+            "name": "grpc",
+            "pkg": "htte-client-grpc",
+            "options": {
+                "proto": "myproto.proto"
+            }
+        }
+    ],
+    "plugins": [
+        {
+            "pkg": "htte-plugin-builtin"
+        }
+    ],
+	"defines": {
+		"login": {
+			"client": "http",
+			"req": {
+				"method": "post",
+				"uri": "/login"
+			}
+		},
+		"auth": {
+			"client": "grpc",
+			"req": {
+				"method": "auth"
+			}
+		}
+	}
+}

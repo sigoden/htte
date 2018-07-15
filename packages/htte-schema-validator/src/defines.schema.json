@@ -1,0 +1,23 @@
+{
+  "$id": "http://example.com/defines.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "patternProperties": {
+    ".*": {
+      "type": "object",
+      "properties": {
+        "client": {
+          "type": "string"
+        },
+        "req": {
+          "type": "object"
+        },
+        "res": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

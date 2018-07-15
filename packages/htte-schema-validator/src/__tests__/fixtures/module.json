@@ -1,0 +1,55 @@
+[
+    {
+        "describe": "功能模块",
+        "defines": {
+            "auth1": {
+                "req": {
+                    "headers": {
+                        "Authorization": "..."
+                    }
+                }
+            },
+            "auth2": {
+                "res": {
+                    "body": { "msg": "OK"}
+                }
+            }
+        },
+        "units": [
+            {
+                "describe": "接口1",
+                "name": "ep1",
+                "includes": [
+                    "login",
+                    "auth1"
+                ],
+                "metadata": {
+                    "skip": true,
+                    "stop": true,
+                    "debug": false
+                },
+                "req": {
+                    "headers": {},
+                    "params": {},
+                    "query": {},
+                    "body": {}
+                },
+                "res": {
+                    "status": 200,
+                    "headers": {},
+                    "body": {}
+                }
+            },
+            {
+                "describe": "RPC 接口2",
+                "includes": "auth",
+                "req": {
+                    "body": {}
+                },
+                "res": {
+                    "body": {}
+                }
+            }
+        ]
+    }
+]

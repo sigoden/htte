@@ -1,6 +1,5 @@
 - describe: register john
-  metadata:
-    requires: register
+  includes: register
   name: registerJohn
   req:
     body:
@@ -15,8 +14,7 @@
         username: !@query req.body.user.username
         token: !@exist
 - describe: login
-  metadata:
-    requires: login
+  includes: login
   name: loginJohn
   req:
     body:
@@ -30,8 +28,7 @@
         username: !@exist
         token: !@exist
 - describe: current user
-  metadata:
-    requires: getUser
+  includes: getUser
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -42,8 +39,7 @@
         username: !@exist
         token: !@exist
 - describe: update user
-  metadata:
-    requires: updateUser
+  includes: updateUser
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -58,8 +54,7 @@
         token: !@exist
 - describe: register tom
   name: registerTom
-  metadata:
-    requires: register
+  includes: register
   req:
     body:
       user:

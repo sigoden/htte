@@ -11,7 +11,7 @@ modules:
 - comment
 - tag
 - afterall
-exports:
+defines:
   register:
     req:
       method: post

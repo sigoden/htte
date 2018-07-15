@@ -1,6 +1,5 @@
 - describe: get profile
-  metadata:
-    requires: getProfile
+  includes: getProfile
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]
@@ -13,8 +12,7 @@
         image: !@exist
         following: false
 - describe: follow profile
-  metadata:
-    requires: followProfile
+  includes: followProfile
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]
@@ -30,8 +28,7 @@
         image: !@exist
         following: true
 - describe: unfollow profile
-  metadata:
-    requires: unfollowProfile
+  includes: unfollowProfile
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]
@@ -42,8 +39,7 @@
       profile: !@object
         following: false
 - describe: follow profile agagin
-  metadata:
-    requires: followProfile
+  includes: followProfile
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]

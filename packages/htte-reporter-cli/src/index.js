@@ -3,7 +3,7 @@ const defaultOptions = {
   slow: 1000
 };
 
-module.exports = function(htte, options) {
+module.exports = function(htte, options = {}) {
   options = Object.assign(defaultOptions, options);
   return function({ emitter }) {
     let clearSpinner;

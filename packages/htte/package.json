@@ -28,6 +28,9 @@
     "htte-session": "^0.4.0",
     "htte-errors": "^0.4.0",
     "htte-utils": "^0.4.0",
+    "htte-units": "^0.4.0",
+    "fast-json-patch": "^2.0.6",
+    "htte-schema-validator": "^0.4.0",
     "htte-client-http": "^0.4.0",
     "htte-plugin-builtin": "^0.4.0",
     "htte-reporter-cli": "^0.4.0"

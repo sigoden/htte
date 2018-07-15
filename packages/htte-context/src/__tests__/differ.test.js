@@ -23,7 +23,7 @@ describe('#exec', function() {
     let actual = {}
     differ.exec('differ', handler, literal, actual)
     expect(handler).toHaveBeenCalledWith(differ, literal, actual);
-    expect(() => differ.exec('resolver', handler, literal, actual)).toThrow();
+    expect(() => differ.exec('resolver', handler, literal, actual)).toThrow('resolver plugin is forbidden in differ context');
   });
 });
 

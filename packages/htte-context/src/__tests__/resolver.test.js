@@ -24,7 +24,7 @@ describe('#exec', function() {
     resolver.exec('resolver', handler, value)
     expect(resolve).toHaveBeenCalledWith(resolver, value);
     expect(handler).toHaveBeenCalledWith(resolver, value);
-    expect(() => resolver.exec('differ', handler, value)).toThrow();
+    expect(() => resolver.exec('differ', handler, value)).toThrow('differ plugin is forbidden in resolver context');
   });
 });
 

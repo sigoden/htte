@@ -1,6 +1,5 @@
 - describe: all tags
-  metadata:
-    requires: listTags
+  includes: listTags
   res:
     body:
       tags: ['dragons', 'training']

@@ -56,18 +56,6 @@ describe('completeUrlParams', function() {
   });
 });
 
-describe('tryRequireExtension', function() {
-  test('require module from special dir', function() {
-    let localMod = utils.tryRequireExtension(path.resolve(__dirname, './fixtures'), 'path');
-    expect(localMod.local).toBe(true);
-    let npmMode = utils.tryRequireExtension(path.resolve('./fixtures'), 'path');
-    expect(npmMode.local).toBeUndefined();
-  })
-  test('throw error when module can not be required', function() {
-    expect(() => utils.tryRequireExtension(process.cwd, '404')).toThrow();
-  });
-})
-
 describe('tmpfile', function() {
   test('generate tmpfile ', function() {
     let tmpfile = utils.tmpfile(path.resolve(__dirname, 'htte-utils'));

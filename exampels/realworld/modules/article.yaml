@@ -1,7 +1,6 @@
 - describe: create article
   name: createArticleTrainDragon
-  metadata:
-    requires: createArticle
+  includes: createArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -28,8 +27,7 @@
           image: !@exist
           following: false
 - describe: single article by slug
-  metadata:
-    requires: getArticle
+  includes: getArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -53,8 +51,7 @@
           following: false
 - describe: update article
   name: updateArticleTrainDragon
-  metadata:
-    requires: updateArticle
+  includes: updateArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -68,8 +65,7 @@
       article: !@object
         body: !@query req.body.article.body
 - describe: favorite article
-  metadata:
-    requires: favoriteArticle
+  includes: favoriteArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -81,8 +77,7 @@
         favorited: true
         favoritesCount: 1
 - describe: unfavorite article
-  metadata:
-    requires: unfavoriteArticle
+  includes: unfavoriteArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -96,8 +91,7 @@
 - describe: article with auth
   units:
     - describe: all articles
-      metadata:
-        requires: listArticles
+      includes: listArticles
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -108,8 +102,7 @@
               slug: !@regexp /^how-to-train-your-dragon/
           articlesCount: !@exist
     - describe: articles by author
-      metadata:
-        requires: listArticles
+      includes: listArticles
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -119,8 +112,7 @@
         body: !@object
           articlesCount: 1
     - describe: articles favorited by username
-      metadata:
-        requires: listArticles
+      includes: listArticles
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -131,8 +123,7 @@
           articles: []
           articlesCount: 0
     - describe: articles by tag
-      metadata:
-        requires: listArticles
+      includes: listArticles
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -141,8 +132,7 @@
 - describe: article without auth
   units:
     - describe: all articles
-      metadata:
-        requires: listArticles
+      includes: listArticles
       res:
         body:
           articles: !@array
@@ -164,8 +154,7 @@
 - describe: article feed
   units:
     - describe: john feed 
-      metadata:
-        requires: getFeed
+      includes: getFeed
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -174,8 +163,7 @@
           articles: []
           articlesCount: 0
     - describe: tom feed 
-      metadata:
-        requires: getFeed
+      includes: getFeed
       req:
         headers:
           Authorization: !$concat ['Token', ' ', !$query auth.registerTom.res.body.user.token]

@@ -10,7 +10,7 @@ function Differ(store, unit, segs = []) {
 
 Differ.prototype.exec = function (tagType, handler, literal, actual) {
   if (tagType !== 'differ') {
-    this.throw('resolver plugin is forbidden in Differ context');
+    this.throw('resolver plugin is forbidden in differ context');
   }
   return handler(this, literal, actual);
 }

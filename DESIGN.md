@@ -17,19 +17,23 @@ htte v0.4 将优化这里信息打印模块，提供统一的接口从更个部�
 session: # 指定会话文件保存位置
 reporters:
 - name: cli
-  pkg: pkg-name
-  options:
+  pkg: htte-reporter-cli
+  options: 
+    slow: 500
 modules: # 本次测试需要加载的模块文件
 - foo # 加载 foo.yaml 文件，模块变量名 foo
 - foo/bar # 加载 foo/bar.yaml 文件，模块变量名 foobar
 plugins: # 插件配置
-- pkg: pkg-name # 模块包名，模块文件位置
-  options:  # 模块选项
+- pkg: htte-plugin-builtin # 模块包名，模块文件位置
+  options: {}  # 模块选项
 clients:
 - name: http 
-  pkg: pkg-name # 模块包名，模块文件位置
+  pkg: htte-client-http # 模块包名，模块文件位置
+- name: grpc 
+  pkg: htte-client-grpc
   options:
-exports:
+    proto: myproto.proto
+defines:
     login:
         client: http
         req:
@@ -38,45 +42,44 @@ exports:
     auth:
         client: grpc
         req:
-            rpc: auth
+            method: auth
 ```
 
 ### 模块选项整理
 ```yaml
 - describe: 功能模块
-  exports:
+  defines:
     auth1:
         req:
-            headers: !$concat [ Bearer, !$query $$auth.loginFoo.res.body.token ]
+            headers:
+              Authorization: !$concat [ Bearer, !$query $$auth.loginFoo.res.body.token ]
     auth2:
-        req:
-            headers: !$concat [ Bearer, !$query $$auth.loginBaz.res.body.token ]
+        res:
+            body:
+                msg: ok
   units:
   - describe: 接口1
     name: ep1
+    includes: [ login, auth1 ]
     metadata: # 元标签
-        requires: [ login, auth1 ]
-        skip:   # 跳过该测试
-        pause:  # 运行当前测试后停止执行
-        debug:  # 打印本条测试详情
+        skip: true  # 跳过该测试
+        stop:  true # 运行当前测试后停止执行
+        debug:  false # 打印本条测试详情
     req:
-        headers:
-        query:
-        body:
+        headers: {}
+        params: {}
+        query: {}
+        body: {}
     res:
-        status:
-        headers:
-        body:
+        status: 200
+        headers: {}
+        body: {}
   - describe: RPC 接口2
-    metadata: # 元标签
-        requires: auth
-        skip:   # 跳过该测试
-        pause:  # 运行当前测试后停止执行
-        debug:  # 打印本条测试详情
+    includes: auth
     req:
-        body:
+        body: {}
     res:
-        body:
+        body: {}
 ```
 
 ### 推荐目录结构

@@ -1,6 +1,5 @@
 - describe: all comments for article
-  metadata:
-    requires: listCommentsForActicle
+  includes: listCommentsForActicle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
@@ -10,8 +9,7 @@
     body:
       comments: []
 - describe: create comments
-  metadata:
-    requires: createComment
+  includes: createComment
   name: createCommentTrainDragon
   req:
     headers:
@@ -29,8 +27,7 @@
         createdAt: !@exist
         author: !@exist
 - describe: delete comments
-  metadata:
-    requires: deleteComment
+  includes: deleteComment
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]

@@ -1,6 +1,5 @@
 - describe: remove article
-  metadata:
-    requires: deleteArticle
+  includes: deleteArticle
   req:
     headers:
       Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]

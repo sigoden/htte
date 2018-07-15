@@ -1,14 +1,23 @@
 const path = require('path');
 const yaml = require('js-yaml');
 const fs = require('fs');
+const { applyPatch } = require('fast-json-patch');
+const validator = require('htte-schema-validator');
+const { ValidateError } = require('htte-errors');
 
 module.exports = function loadConfig(baseFile, patch) {
   let baseDir = getBaseDir(baseFile);
   let config = loadYaml(baseFile);
+  if (!validator.config(config)) {
+    throw new ValidateError('config', validator.config.errors);
+  }
   if (patch) {
     let patchFile = getPatchFile(baseFile, patch);
-    let patchConfig = loadYaml(path.resolve(patchDir, patchFile));
-    config = _.merge(baseConfig, patchConfig);
+    let patchOps = loadYaml(path.resolve(baseDir, patchFile));
+    if (!validator.patch(patchOps)) {
+      throw new ValidateError('patch', validator.patch.errors);
+    }
+    applyPatch(config, patchOps, false, true);
   }
   config.baseDir = baseDir;
   return config;

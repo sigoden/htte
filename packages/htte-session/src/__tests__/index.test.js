@@ -1,10 +1,10 @@
-const initSession = require('../');
+const Session = require('../');
 const path = require('path');
 const utils = require('htte-utils');
 
 const tmpfile = utils.tmpfile(path.resolve(__dirname, 'htte-session'));
 
-const session = initSession(tmpfile);
+const session = Session(tmpfile);
 
 describe('session', function() {
   test('get & set', function() {
@@ -15,7 +15,7 @@ describe('session', function() {
     });
   });
   test('save', function() {
-    expect(() => session.save()).not.toThrow();
+    expect(() => session.save()).not.toThrow('');
   });
   test('load', function() {
     expect(session.load()).toEqual({ a: { b: { c: 3 }, d: [{ a: 3 }, [2, 4]], f: true } });
