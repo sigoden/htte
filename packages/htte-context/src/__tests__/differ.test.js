@@ -10,7 +10,7 @@ const store = {};
 const unit = {};
 
 function init(segs) {
-  return new Differ(store, unit, segs)
+  return new Differ(store, unit, segs);
 }
 
 afterEach(() => jest.clearAllMocks());
@@ -19,11 +19,13 @@ describe('#exec', function() {
   test('wrap yaml tag handler', function() {
     let differ = init();
     let handler = jest.fn();
-    let literal = {}
-    let actual = {}
-    differ.exec('differ', handler, literal, actual)
+    let literal = {};
+    let actual = {};
+    differ.exec('differ', handler, literal, actual);
     expect(handler).toHaveBeenCalledWith(differ, literal, actual);
-    expect(() => differ.exec('resolver', handler, literal, actual)).toThrow('resolver plugin is forbidden in differ context');
+    expect(() => differ.exec('resolver', handler, literal, actual)).toThrow(
+      'resolver plugin is forbidden in differ context'
+    );
   });
 });
 
@@ -34,7 +36,7 @@ describe('#enter', function() {
     expect(scopedDiffer.segs).toEqual(['abc']);
     expect(scopedDiffer).toBeInstanceOf(Differ);
   });
-})
+});
 
 describe('#diff', function() {
   test('wrap htte-diff', function() {
@@ -42,14 +44,14 @@ describe('#diff', function() {
     let expected = {};
     let actual = {};
     let strict = true;
-    differ.diff(expected, actual, strict)
+    differ.diff(expected, actual, strict);
     expect(diff).toHaveBeenCalledWith(differ, expected, actual, strict);
   });
-})
+});
 
 describe('#query', function() {
   let queryInner = jest.fn();
-  query.mockReturnValue(queryInner)
+  query.mockReturnValue(queryInner);
   test('wrap htte-query', function() {
     let differ = init();
     let path = 'req.body.msg';
@@ -70,4 +72,4 @@ describe('#throw', function() {
       expect(err.parts).toEqual(['req', 'body']);
     }
   });
-})
+});

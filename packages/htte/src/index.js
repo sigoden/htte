@@ -10,10 +10,7 @@ const loadConfig = require('./load-config');
 const loadExtensions = require('./load-extensions');
 
 exports.init = function(options) {
-  let {
-    configFile,
-    patch
-  } = options;
+  let { configFile, patch } = options;
   let config = loadConfig(configFile, patch);
   let htteConfig = {
     baseDir: config.baseDir,

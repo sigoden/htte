@@ -22,7 +22,7 @@ const reqChecks = [
 
 module.exports = function init(htte, options = {}) {
   options = _.merge(defaultOptions, options);
-  return function ({req, res}) {
+  return function({ req, res }) {
     try {
       checkReqproperties(reqChecks, req);
     } catch (err) {
@@ -61,7 +61,7 @@ module.exports = function init(htte, options = {}) {
         }
         throw new ClientError(err.message);
       })
-      .then(function (result) {
+      .then(function(result) {
         let { status, headers, data } = result;
         let actualRes = { status };
         let type = mime.extension(headers['content-type']);
@@ -77,13 +77,13 @@ module.exports = function init(htte, options = {}) {
         }
         return actualRes;
       })
-      .catch(function (err) {
+      .catch(function(err) {
         if (!(err instanceof ClientError)) {
           err = new ClientError(err.message);
         }
         return Promise.reject(err);
       });
-  }
+  };
 };
 
 function checkReqproperties(checks, req) {

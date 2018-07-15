@@ -30,7 +30,7 @@ describe('Definition', function() {
       expect(unit.req).toEqual({ body: {}, url: '/auth' });
     });
     test('works on includes with multiple value', function() {
-      let defines= {  http: { client: 'http' }, auth: { req: { url: '/auth' } } };
+      let defines = { http: { client: 'http' }, auth: { req: { url: '/auth' } } };
       let def = new Definition(defines);
       let unit = { includes: ['auth', 'http'], req: { body: {} } };
       def.resolve(unit);

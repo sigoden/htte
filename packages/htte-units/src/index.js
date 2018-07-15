@@ -1,5 +1,5 @@
 const load = require('./load');
-const createSchema = require('./create-schema');
+const createSchema = require('./schema');
 const parse = require('./parse');
 const Definition = require('./definition');
 const _ = require('lodash');

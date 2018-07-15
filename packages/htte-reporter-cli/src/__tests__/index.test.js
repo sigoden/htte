@@ -11,7 +11,7 @@ utils.epilogue = jest.fn();
 
 let emitter = new EventEmitter();
 let stdoutWrite = (process.stdout.write = jest.fn());
-utils.spinnerMarks = '◵'
+utils.spinnerMarks = '◵';
 
 afterEach(() => jest.clearAllMocks());
 
@@ -31,13 +31,13 @@ describe('reporter', function() {
 
   test('@skipUnit', function() {
     let unit = mockUnit(1, 'skip');
-    emitter.emit("skipUnit", { unit });
+    emitter.emit('skipUnit', { unit });
     expect(stdoutWrite.mock.calls.join('')).toBe(`•      describe1\n`);
   });
 
   test('@runUnit & doneUnit', function(done) {
     let unit = mockUnit(1, 'pass');
-    emitter.emit("runUnit", { unit });
+    emitter.emit('runUnit', { unit });
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('doneUnit');
@@ -49,7 +49,7 @@ describe('reporter', function() {
   test('@runUnit & doneUnit slow', function(done) {
     let unit = mockUnit(1, 'pass');
     unit.session.duration = 10000;
-    emitter.emit("runUnit", { unit });
+    emitter.emit('runUnit', { unit });
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('doneUnit');
@@ -60,7 +60,7 @@ describe('reporter', function() {
 
   test('@runUnit & errorUnit', function(done) {
     let unit = mockUnit(1, 'fail');
-    emitter.emit("runUnit", { unit });
+    emitter.emit('runUnit', { unit });
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('errorUnit');
@@ -70,12 +70,11 @@ describe('reporter', function() {
   });
 
   test('@done', function() {
-    let args = {}
-    emitter.emit("done", args);
+    let args = {};
+    emitter.emit('done', args);
     expect(utils.epilogue).toHaveBeenCalledWith(args);
-  })
-})
-
+  });
+});
 
 function mockUnit(index, state, debug) {
   let unit = {

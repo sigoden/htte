@@ -7,7 +7,7 @@ module.exports = function(options) {
       let [min, max, ref = 0] = literal;
       min = Number(min);
       max = Number(max);
-      ref = Number(ref)
+      ref = Number(ref);
       if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(ref)) {
         context.throw('literal value [min,max,ref] must be number');
       }

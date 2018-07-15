@@ -18,7 +18,9 @@ try {
     patch: program.patch
   });
 } catch (err) {
-  console.error(err.message);
+  console.log();
+  console.log(`\u001b[31m${err.name}: ${err.message}\u001b[0m`);
+  console.log();
   process.exit(1);
 }
 

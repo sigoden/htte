@@ -1,4 +1,4 @@
-const createSchema = require('../create-schema');
+const createSchema = require('../schema');
 const yaml = require('js-yaml');
 
 describe('schema', function() {

@@ -6,10 +6,10 @@ module.exports = function(options) {
     kind: 'scalar',
     resolve: function(context, literal) {
       if (typeof literal !== 'string') {
-        context.throw('literal value must be string')
+        context.throw('literal value must be string');
       }
       let { timestr, direction, refdate } = parseLiteral(literal);
-      let date = parseReftime(refdate)
+      let date = parseReftime(refdate);
       let time = timestring(timestr);
       date.setSeconds(date.getSeconds() + time * direction);
       return date;
@@ -34,13 +34,13 @@ function parseLiteral(literal) {
     direction = 1;
     timestr = literal;
   }
-  return { timestr, direction, refdate }
+  return { timestr, direction, refdate };
 }
 
 function parseReftime(refdate) {
   try {
     return new Date(refdate);
   } catch (err) {
-    throw new Error(`literal value has invalid part${refdate}`)
+    throw new Error(`literal value has invalid part${refdate}`);
   }
 }

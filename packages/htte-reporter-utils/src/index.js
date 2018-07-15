@@ -77,7 +77,11 @@ function listFailures(units) {
       let indents = ' '.repeat(String(i + 1).length + 2);
       print(color('title', '%d) %s'), i + 1, title);
       if (err.parts) {
-        print(color('error', indents + 'at %s, throw error: %s'), err.parts.join(symbols.dot) || symbols.dot, err.message);
+        print(
+          color('error', indents + 'at %s, throw error: %s'),
+          err.parts.join(symbols.dot) || symbols.dot,
+          err.message
+        );
       } else {
         print(color('error', indents + err.message));
       }
@@ -208,4 +212,4 @@ exports.listDebugs = listDebugs;
 
 exports.useColors = supportsColor.stdout && !process.env.NO_COLOR;
 exports.spinnerInterval = 120;
-exports.spinnerMarks = '◴◷◶◵'
+exports.spinnerMarks = '◴◷◶◵';

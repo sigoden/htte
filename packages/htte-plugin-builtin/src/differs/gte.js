@@ -5,7 +5,9 @@ module.exports = function(options) {
     name: 'gte',
     kind: 'scalar',
     diff: function(context, literal, actual) {
-      let fn = function(v1, v2) { return v1 >= v2 }
+      let fn = function(v1, v2) {
+        return v1 >= v2;
+      };
       if (!diffNumber(context, literal, actual, fn)) {
         context.throw('literal do not gte actual');
       }

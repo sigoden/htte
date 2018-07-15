@@ -10,7 +10,7 @@ const store = {};
 const unit = {};
 
 function init(segs) {
-  return new Resolver(store, unit, segs)
+  return new Resolver(store, unit, segs);
 }
 
 afterEach(() => jest.clearAllMocks());
@@ -19,9 +19,9 @@ describe('#exec', function() {
   test('wrap yaml tag handler', function() {
     let resolver = init();
     let handler = jest.fn();
-    let value = {}
+    let value = {};
     resolve.mockReturnValue(value);
-    resolver.exec('resolver', handler, value)
+    resolver.exec('resolver', handler, value);
     expect(resolve).toHaveBeenCalledWith(resolver, value);
     expect(handler).toHaveBeenCalledWith(resolver, value);
     expect(() => resolver.exec('differ', handler, value)).toThrow('differ plugin is forbidden in resolver context');
@@ -35,20 +35,20 @@ describe('#enter', function() {
     expect(scopedResolver.segs).toEqual(['abc']);
     expect(scopedResolver).toBeInstanceOf(Resolver);
   });
-})
+});
 
 describe('#resolve', function() {
   test('wrap htte-resolve', function() {
     let resolver = init();
     let value = {};
-    resolver.resolve(value)
+    resolver.resolve(value);
     expect(resolve).toHaveBeenCalledWith(resolver, value);
   });
-})
+});
 
 describe('#query', function() {
   let queryInner = jest.fn();
-  query.mockReturnValue(queryInner)
+  query.mockReturnValue(queryInner);
   test('wrap htte-query', function() {
     let resolver = init();
     let path = 'req.body.msg';
@@ -69,4 +69,4 @@ describe('#throw', function() {
       expect(err.parts).toEqual(['req', 'body']);
     }
   });
-})
+});

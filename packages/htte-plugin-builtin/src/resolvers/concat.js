@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'concat',
     kind: 'sequence',
     resolve: function(context, literal) {
-      if (!Array.isArray(literal)) return ''
+      if (!Array.isArray(literal)) return '';
       return literal.join('');
     }
   };

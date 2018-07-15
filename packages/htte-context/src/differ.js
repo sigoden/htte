@@ -8,27 +8,27 @@ function Differ(store, unit, segs = []) {
   this.segs = segs;
 }
 
-Differ.prototype.exec = function (tagType, handler, literal, actual) {
+Differ.prototype.exec = function(tagType, handler, literal, actual) {
   if (tagType !== 'differ') {
     this.throw('resolver plugin is forbidden in differ context');
   }
   return handler(this, literal, actual);
-}
+};
 
 Differ.prototype.enter = function(seg) {
-    return new Differ(this.store, this.unit, this.segs.concat(seg));
-}
+  return new Differ(this.store, this.unit, this.segs.concat(seg));
+};
 
-Differ.prototype.diff = function (expected, actual, strict) {
+Differ.prototype.diff = function(expected, actual, strict) {
   diff(this, expected, actual, strict);
-}
+};
 
-Differ.prototype.query = function (path) {
+Differ.prototype.query = function(path) {
   return query(this.store, this.unit)(path);
-}
+};
 
-Differ.prototype.throw = function (msg) {
+Differ.prototype.throw = function(msg) {
   throw new ContextError(msg, this.segs);
-}
+};
 
 module.exports = Differ;

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
 
-module.exports = function (name, units, def) {
+module.exports = function(name, units, def) {
   let output = [];
   parseNode(output, { module: name, groups: false, def }, { units, describe: name });
   return output;
@@ -12,7 +12,7 @@ function parseNode(output, ctx, node) {
     if (node.defines) {
       ctx.def = ctx.def.scope(node.defines);
     }
-    node.units.forEach(function (child, index) {
+    node.units.forEach(function(child, index) {
       let localCtx = _.pick(ctx, ['module', 'groups', 'def']);
       if (!ctx.groups) {
         localCtx.groups = []; // top level
@@ -35,7 +35,7 @@ function parseUnit(output, ctx, unit) {
     unit.name = getUnitName(unit);
   }
   ctx.def.resolve(unit);
-  if (!unit.req) unit.req = {}
+  if (!unit.req) unit.req = {};
   if (!unit.res) unit.res = {};
   output.push(unit);
 }

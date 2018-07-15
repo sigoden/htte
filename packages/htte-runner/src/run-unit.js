@@ -60,4 +60,4 @@ module.exports = function(unit) {
       return Promise.reject(err);
     });
   };
-}
+};

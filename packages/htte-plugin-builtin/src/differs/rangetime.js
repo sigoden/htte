@@ -9,18 +9,18 @@ module.exports = function(options) {
         context.throw('literal value [min,max,_] must be number');
       }
       try {
-        ref = parseDate(ref)
-      } catch(err) {
+        ref = parseDate(ref);
+      } catch (err) {
         context.throw('literval value [_,_,ref] must be date object or string');
       }
 
       try {
-        actual = parseDate(actual)
+        actual = parseDate(actual);
       } catch (err) {
         context.throw('actual must be date object or string');
       }
 
-      let value = (ref.getTime() - actual.getTime()) / 1000 ;
+      let value = (ref.getTime() - actual.getTime()) / 1000;
       if (value >= min && value < max) return true;
       context.throw('time do not match range');
     }
@@ -29,7 +29,7 @@ module.exports = function(options) {
 
 function parseDate(value) {
   if (value instanceof Date) {
-    return value
+    return value;
   }
-  return new Date(String(value))
+  return new Date(String(value));
 }

@@ -48,6 +48,6 @@ describe('parse', function() {
     let def = new Definition({});
     let result = parse('m1', [unit], def);
     expect(result).toHaveLength(1);
-    expect(result[0].res).toEqual({status: 200});
+    expect(result[0].res).toEqual({ status: 200 });
   });
 });

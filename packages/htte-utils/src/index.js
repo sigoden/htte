@@ -72,4 +72,4 @@ exports.completeUrlParams = function(url, reqParams = {}) {
 exports.tmpfile = function(file) {
   let name = exports.trimYamlExt(path.basename(file));
   return path.join(os.tmpdir(), name + '-' + exports.md5x(file, 6) + '.json');
-}
+};

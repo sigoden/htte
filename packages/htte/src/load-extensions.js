@@ -7,8 +7,8 @@ const defaultExts = {
   reporters: [{ name: 'cli', pkg: 'htte-reporter-cli', options: {} }]
 };
 
-module.exports = function (config, htteConfig) {
-  return Object.keys(defaultExts).reduce(function (acc, type) {
+module.exports = function(config, htteConfig) {
+  return Object.keys(defaultExts).reduce(function(acc, type) {
     let dir = path.resolve(config.baseDir, type);
     acc[type] = load(type, dir, config[type] || defaultExts[type], _.clone(htteConfig));
     return acc;
@@ -17,7 +17,7 @@ module.exports = function (config, htteConfig) {
 
 function load(type, dir, exts, htteConfig) {
   let result = {};
-  exts.forEach(function (ext, index) {
+  exts.forEach(function(ext, index) {
     try {
       htteConfig.name = ext.name;
       result[ext.name] = tryRequireExtension(dir, ext.pkg)(htteConfig, ext.options);
@@ -28,10 +28,9 @@ function load(type, dir, exts, htteConfig) {
   return result;
 }
 
-
 function tryRequireExtension(dir, name) {
   try {
     return require(path.resolve(dir, name));
-  } catch (err) { }
+  } catch (err) {}
   return require(name);
 }

@@ -8,4 +8,4 @@ module.exports = function(context, literal, actual, fn) {
     context.throw('actual value cannot convert to number');
   }
   return fn(numLiteral, numActual);
-}
+};

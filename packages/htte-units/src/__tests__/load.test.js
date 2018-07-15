@@ -1,6 +1,6 @@
 const load = require('../load');
 const path = require('path');
-const createSchema = require('../create-schema');
+const createSchema = require('../schema');
 
 const shcmea = createSchema({});
 
@@ -22,7 +22,7 @@ describe('load', function() {
     };
     let modules = load(config, shcmea);
     expect(modules.subdirm1).toEqual([{ client: 'http', describe: 'test1', req: { url: '/login' } }]);
-  })
+  });
   test('load failed', function() {
     let config = {
       baseDir: path.resolve(__dirname, './fixtures'),
