@@ -6,28 +6,6 @@ const { ClientError, ValidateError } = require('htte-errors');
 const validate = require('./validate');
 const { loadProtoFile } = require('./utils');
 
-/**
- * Usage
- * ```yaml
- *  - name: mysrv
- *    pkg: htte-client-grpc
- *    options:
- *      proto: mysrv.proto
- *      package: helloworld
- *      services:
- *      - name: Greeter
- *        url: localhost:50051
- *        credentials:
- *          type: no
- *      - name: Greeter2
- *        url: localhost:50052
- *        ssl:
- *          ca: certs/ca.crt
- *          clientKey: certs/client.key
- *          clientCert: certs/client.crt
- * ```
- */
-
 module.exports = function init(htte, options = {}) {
   if (!validate(options)) {
     throw new ValidateError(`client.${htte.name}.options`, validate.errors);
@@ -70,8 +48,11 @@ module.exports = function init(htte, options = {}) {
     }
     return new Promise(function(resolve, reject) {
       rpcs[serviceName][fnName](req.body, function(err, response) {
-        if (err) return reject(new ClientError(err.message));
-        resolve(response);
+        if (err) {
+          resolve({ error: err.message });
+          return;
+        }
+        resolve({ body: response });
       });
     });
   };
