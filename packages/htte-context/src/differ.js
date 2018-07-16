@@ -1,6 +1,7 @@
 const diff = require('htte-diff');
 const query = require('htte-query');
 const { ContextError } = require('htte-errors');
+const Resolver = require('./resolver');
 
 function Differ(store, unit, segs = []) {
   this.store = store;
@@ -12,7 +13,9 @@ Differ.prototype.exec = function(tagType, handler, literal, actual) {
   if (tagType !== 'differ') {
     this.throw('resolver plugin is forbidden in differ context');
   }
-  return handler(this, literal, actual);
+  let resolveCtx = new Resolver(this.store, this.unit, this.segs);
+  let resolvedLiteral = resolveCtx.resolve(literal);
+  return handler(this, resolvedLiteral, actual);
 };
 
 Differ.prototype.enter = function(seg) {

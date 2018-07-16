@@ -27,6 +27,15 @@ describe('#exec', function() {
       'resolver plugin is forbidden in differ context'
     );
   });
+  test('will resolve literal first', function() {
+    let differ = init();
+    let handler = jest.fn();
+    let resolverLiteral = {};
+    let literal = jest.fn(() => resolverLiteral);
+    let actual = {};
+    differ.exec('differ', handler, literal, actual);
+    expect(handler).toHaveBeenCalledWith(differ, resolverLiteral, actual);
+  });
 });
 
 describe('#enter', function() {

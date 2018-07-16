@@ -31,8 +31,10 @@ function typeToYamlType(type) {
 
 function createTypeConstructor(tagType, handler) {
   return function(literal) {
-    return function(context, actual) {
+    let fn = function(context, actual) {
       return context.exec(tagType, handler, literal, actual);
     };
+    fn.type = tagType;
+    return fn;
   };
 }

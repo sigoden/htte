@@ -10,6 +10,9 @@ function resolve(context, data) {
     case 'undefined':
       return data;
     case 'function':
+      if (data.type === 'differ') {
+        return data;
+      }
       try {
         return data(context);
       } catch (err) {

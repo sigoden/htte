@@ -25,9 +25,12 @@ describe('resolve', function() {
     let fn2 = jest.fn(() => {
       throw new Error('foo');
     });
+    let fn3 = jest.fn(() => v);
+    fn3.type = 'differ';
     expect(resolve(context, fn1)).toBe(v);
     expect(fn1.mock.calls[0][0]).toBe(context);
     expect(() => resolve(context, fn2)).toThrow('foo');
+    expect(resolve(context, fn3)).toBe(fn3);
   });
   test('resolve array', function() {
     let fn1 = jest.fn(() => 2);
