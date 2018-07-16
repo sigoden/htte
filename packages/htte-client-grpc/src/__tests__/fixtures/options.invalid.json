@@ -1,0 +1,6 @@
+{
+  "proto": "mysrv.proto",
+  "services": [
+    {"name": "Greeter", "url": "localhost:50051"}
+  ]
+}

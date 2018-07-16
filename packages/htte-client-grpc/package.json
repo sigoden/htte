@@ -1,0 +1,32 @@
+{
+  "name": "htte-client-grpc",
+  "version": "0.4.0",
+  "description": "echo client plugin for htte",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "htte-client",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://sigoden.github.io/htte/",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.3.0",
+    "ajv": "^6.5.2",
+    "grpc": "^1.13.0",
+    "htte-errors": "^0.4.0",
+    "lodash": "^4.17.10"
+  }
+}

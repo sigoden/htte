@@ -1,0 +1,15 @@
+{
+  "proto": "mysrv.proto",
+  "package": "helloworld",
+  "services": [
+    {
+      "name": "Greeter",
+      "url": "localhost:50052",
+      "ssl": {
+        "ca": "certs/ca.crt",
+        "clientKey": "certs/client.key",
+        "clientCert": "certs/client.crt"
+      }
+    }
+  ]
+}
