@@ -1,3 +1,4 @@
+const path = require('path');
 const _ = require('lodash');
 const utils = require('htte-utils');
 const Session = require('htte-session');
@@ -16,7 +17,7 @@ exports.init = function(options) {
     baseDir: config.baseDir,
     version: pkg.version
   };
-  let session = Session(config.session || utils.tmpfile(configFile));
+  let session = Session(getSessionFile(config));
   let { clients, reporters, plugins } = loadExtensions(config, htteConfig);
   let units = loadUnits({ config, plugins });
 
@@ -27,3 +28,8 @@ exports.init = function(options) {
   };
   return app;
 };
+
+function getSessionFile(config) {
+  if (!config.session) return utils.tmpfile(config.configFile);
+  return path.resolve(config.baseDir, config.session);
+}

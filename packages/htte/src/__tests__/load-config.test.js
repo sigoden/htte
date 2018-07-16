@@ -6,6 +6,7 @@ describe('loadConfig', function() {
     let configFile = path.resolve(__dirname, './fixtures/c1.yaml');
     let config = loadConfig(configFile);
     expect(config).toEqual({
+      configFile,
       baseDir: path.dirname(configFile),
       modules: ['foo', 'bar']
     });
