@@ -1,4 +1,4 @@
-const utils = require('htte-reporter-utils');
+const utils = require('./utils');
 const defaultOptions = {
   slow: 1000
 };

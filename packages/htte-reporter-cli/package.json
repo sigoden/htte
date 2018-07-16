@@ -23,6 +23,9 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "htte-reporter-utils": "^0.4.0"
+    "js-yaml": "^3.12.0",
+    "ms": "^2.1.1",
+    "sprintf-js": "^1.1.1",
+    "supports-color": "^5.4.0"
   }
 }

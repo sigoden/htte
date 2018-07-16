@@ -96,6 +96,7 @@ function mockUnit(module, name, options = {}) {
     client: options.client,
     ctx: { module, firstChild: !!options.firstChild },
     metadata: { skip: !!options.skip },
+    session: {},
     name,
     req: {
       body: {}

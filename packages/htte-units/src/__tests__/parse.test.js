@@ -12,6 +12,7 @@ describe('parse', function() {
       ctx: { def, firstChild: true, groups: [], module: 'm1' },
       describe: 'test1',
       index: 0,
+      session: {},
       metadata: {},
       name: 'fijjonmc',
       req: { url: '/login' },

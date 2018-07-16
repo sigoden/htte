@@ -1,4 +1,4 @@
-const utils = require('../');
+const utils = require('../utils');
 
 utils.useColors = false;
 

@@ -1,7 +1,6 @@
 const createReporter = require('../');
 const EventEmitter = require('events');
-const os = require('os');
-const utils = require('htte-reporter-utils');
+const utils = require('../utils');
 
 const htte = {};
 const options = {};
