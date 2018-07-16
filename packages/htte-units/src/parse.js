@@ -37,6 +37,7 @@ function parseUnit(output, ctx, unit) {
   ctx.def.resolve(unit);
   if (!unit.req) unit.req = {};
   if (!unit.res) unit.res = {};
+  unit.session = {};
   output.push(unit);
 }
 

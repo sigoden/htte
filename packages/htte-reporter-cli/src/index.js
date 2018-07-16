@@ -58,7 +58,7 @@ module.exports = function(htte, options = {}) {
     });
 
     emitter.on('done', function(args) {
-      clearSpinner();
+      if (clearSpinner) clearSpinner();
       utils.epilogue(args);
     });
   };

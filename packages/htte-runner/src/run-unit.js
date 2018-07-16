@@ -3,7 +3,6 @@ const _ = require('lodash');
 const { ClientError } = require('htte-errors');
 
 module.exports = function(unit) {
-  unit.session = {};
   return function(session, clients, emitter) {
     return new Promise(function(resolve, reject) {
       if (unit.ctx.firstChild) {
