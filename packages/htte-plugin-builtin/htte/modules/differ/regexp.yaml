@@ -1,0 +1,7 @@
+- describe: regexp test
+  req:
+    body:
+      v: '123'
+  res:
+    body:
+      v: !@regexp \d{3}

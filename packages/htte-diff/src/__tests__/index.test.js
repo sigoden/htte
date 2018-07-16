@@ -4,7 +4,8 @@ let context = {
   throw: err => {
     throw err;
   },
-  enter: jest.fn(() => context)
+  enter: jest.fn(() => context),
+  toResolver: () => context
 };
 
 afterEach(function() {
@@ -33,6 +34,12 @@ describe('diff', function() {
     expect(fn1.mock.calls[0][0]).toBe(context);
     expect(fn1.mock.calls[0][1]).toBe(v);
     expect(() => diff(context, fn2, v)).toThrow('foo');
+  });
+  test('resolve the resolver then diff', function() {
+    let value = {};
+    let fn = jest.fn(() => value);
+    fn.type = 'resolver';
+    expect(() => diff(context, fn, value)).not.toThrow();
   });
   test('diff diffArray', function() {
     expect(() => diff(context, [1, 2, 3], [1, 2, 3])).not.toThrow();

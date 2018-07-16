@@ -18,6 +18,10 @@ try {
     patch: program.patch
   });
 } catch (err) {
+  if (process.env.HTTE_DEBUG) {
+    console.error(err);
+    return;
+  }
   console.log();
   console.log(`\u001b[31m${err.name}: ${err.message}\u001b[0m`);
   console.log();

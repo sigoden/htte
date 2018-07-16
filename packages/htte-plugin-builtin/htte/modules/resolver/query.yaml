@@ -1,0 +1,14 @@
+- describe: prepare data
+  name: u1
+  req:
+    body:
+      a:
+        b: v1
+      c:
+      - d: v2
+
+- describe: query data in other unit
+  req:
+    body: 
+      v1: !$query u1.req.body.a.b
+      v2: !$query u1.req.body.c[0].d

@@ -1,0 +1,7 @@
+- describe: generate random int between [min, max]
+  req:
+    body:
+      v: !$randint [1, 5]
+  res:
+    body:
+      v: !@range [1, 5]

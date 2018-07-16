@@ -1,14 +1,14 @@
 {
-  "name": "htte-plugin-builtin",
+  "name": "htte-client-echo",
   "version": "0.4.0",
-  "description": "htte plugin builtin",
+  "description": "echo client plugin for htte",
   "main": "src/index.js",
   "scripts": {
     "test": "jest"
   },
   "keywords": [
     "htte",
-    "htte-plugin",
+    "htte-client",
     "http",
     "declartive",
     "test",
@@ -21,12 +21,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sigoden/htte.git"
-  },
-  "dependencies": {
-    "numeral": "^2.0.6",
-    "timestring": "^5.0.1"
-  },
-  "devDependencies": {
-    "htte-client-echo": "^0.4.0"
   }
 }

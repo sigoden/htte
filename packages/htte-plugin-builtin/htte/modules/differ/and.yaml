@@ -1,0 +1,17 @@
+- describe: all pass will pass
+  req:
+    body: 3
+  res:
+    body: !@and
+    - !@compare {op: gt, value: 1}
+    - !@compare {op: gt, value: 2}
+
+- describe: any fail will fail
+  req:
+    body: 3
+  res:
+    body: !@trycatch
+      try: !@and
+        - !@compare {op: gt, value: 1}
+        - !@compare {op: gt, value: 4}
+      catch: 'res->body: actual dont gt literal'

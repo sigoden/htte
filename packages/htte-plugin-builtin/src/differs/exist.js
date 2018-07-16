@@ -7,7 +7,8 @@ module.exports = function(options) {
       if (actual === undefined) context.throw('actual value do not exist');
       if (literal === '' || literal === null) return;
       if (actual === null && literal === 'null') return;
-      if (typeof actual !== literal) context.throw(`actual value do not match type ${literal}`);
+      if (Array.isArray(actual) & (literal === 'array')) return;
+      if (typeof actual !== literal) context.throw(`actual value is not ${literal}`);
     }
   };
 };

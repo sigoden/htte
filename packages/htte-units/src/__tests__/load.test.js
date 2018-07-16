@@ -28,7 +28,7 @@ describe('load', function() {
       baseDir: path.resolve(__dirname, './fixtures'),
       modules: ['m404']
     };
-    expect(() => load(config, shcmea)).toThrow('cannot load modules at m404, cannot find yaml file');
+    expect(() => load(config, shcmea)).toThrow('cannot load module m404 because of cannot find yaml file');
   });
   test('validate failed', function() {
     let config = {

@@ -20,8 +20,8 @@ module.exports = function(options) {
         context.throw('actual must be date object or string');
       }
 
-      let value = (ref.getTime() - actual.getTime()) / 1000;
-      if (value >= min && value < max) return true;
+      let value = (actual.getTime() - ref.getTime()) / 1000;
+      if (value >= min && value < max) return;
       context.throw('time do not match range');
     }
   };
@@ -31,5 +31,9 @@ function parseDate(value) {
   if (value instanceof Date) {
     return value;
   }
-  return new Date(String(value));
+  let date = new Date(value);
+  if (date.toString() === 'Invalid Date') {
+    throw new Error();
+  }
+  return date;
 }

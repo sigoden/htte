@@ -17,7 +17,7 @@ module.exports = function load(config, schema) {
       let content = fs.readFileSync(file, 'utf8');
       modules[name] = yaml.load(content, { schema });
     } catch (err) {
-      throw new Error(`cannot load modules at ${item}, ${err.message}`);
+      throw new Error(`cannot load module ${item} because of ${err.message}`);
     }
     if (!validator.module(modules[name])) {
       throw new ValidateError(`modules ${name}`, validator.module.errors);

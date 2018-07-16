@@ -9,12 +9,12 @@ function Resolver(store, unit, segs = []) {
   this.segs = segs;
 }
 
-Resolver.prototype.exec = function(tagType, handler, literal) {
-  if (tagType !== 'resolver') {
-    this.throw('differ plugin is forbidden in resolver context');
+Resolver.prototype.exec = function(handler, literal) {
+  if (handler.type !== 'resolver') {
+    this.throw('expect resolver plugin instead of differ plugin');
   }
-  let value = this.resolve(literal);
-  return handler(this, value);
+  literal = this.resolve(literal);
+  return handler(this, literal);
 };
 Resolver.prototype.enter = function(seg) {
   return new Resolver(this.store, this.unit, this.segs.concat(seg));

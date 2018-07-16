@@ -1,0 +1,7 @@
+- describe: generate random float between [min, max]
+  req:
+    body:
+      v: !$randfloat [1, 5]
+  res:
+    body:
+      v: !@range [1, 5]

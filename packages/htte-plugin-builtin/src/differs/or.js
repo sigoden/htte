@@ -12,7 +12,7 @@ module.exports = function(options) {
           context.diff(item, actual);
           return;
         } catch (err) {
-          errors.push(err.segs.join('.') + ': ' + err.message);
+          errors.push(err.parts.join('.') + ': ' + err.message);
         }
       }
       context.throw(errors.join(os.EOL));

@@ -1,0 +1,23 @@
+- describe: object will be diffed by all keys in normal
+  req:
+    body:
+      v:
+        k1: a
+        k2: b
+  res:
+    body: !@trycatch
+      try:
+        v:
+          k1: a
+      catch: 'res->body->v: diff properties, -- k2'
+      
+- describe: use object plugin to diff key only interested
+  req:
+    body:
+      v:
+        k1: a
+        k2: b
+  res:
+    body:
+      v: !@object
+        k1: a

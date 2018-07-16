@@ -21,10 +21,12 @@ describe('#exec', function() {
     let handler = jest.fn();
     let value = {};
     resolve.mockReturnValue(value);
-    resolver.exec('resolver', handler, value);
+    handler.type = 'resolver';
+    resolver.exec(handler, value);
     expect(resolve).toHaveBeenCalledWith(resolver, value);
     expect(handler).toHaveBeenCalledWith(resolver, value);
-    expect(() => resolver.exec('differ', handler, value)).toThrow('differ plugin is forbidden in resolver context');
+    handler.type = 'differ';
+    expect(() => resolver.exec(handler, value)).toThrow('expect resolver plugin instead of differ plugin');
   });
 });
 

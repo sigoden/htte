@@ -9,13 +9,10 @@ function Differ(store, unit, segs = []) {
   this.segs = segs;
 }
 
-Differ.prototype.exec = function(tagType, handler, literal, actual) {
-  if (tagType !== 'differ') {
-    this.throw('resolver plugin is forbidden in differ context');
-  }
-  let resolveCtx = new Resolver(this.store, this.unit, this.segs);
-  let resolvedLiteral = resolveCtx.resolve(literal);
-  return handler(this, resolvedLiteral, actual);
+Differ.prototype.exec = function(handler, literal, actual) {
+  let resolver = this.toResolver();
+  literal = resolver.resolve(literal);
+  return handler(this, literal, actual);
 };
 
 Differ.prototype.enter = function(seg) {
@@ -32,6 +29,10 @@ Differ.prototype.query = function(path) {
 
 Differ.prototype.throw = function(msg) {
   throw new ContextError(msg, this.segs);
+};
+
+Differ.prototype.toResolver = function() {
+  return new Resolver(this.store, this.unit, this.segs);
 };
 
 module.exports = Differ;

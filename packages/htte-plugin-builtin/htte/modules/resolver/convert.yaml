@@ -1,0 +1,79 @@
+- describe: null to string
+  req:
+    body: !$convert
+      to: string
+      value:
+  res:
+    body: 'null'
+- describe: number to string
+  req:
+    body: !$convert
+      to: string
+      value: 3.2
+  res:
+    body: '3.2'
+- describe: boolean to string
+  req:
+    body: !$convert
+      to: string
+      value: true
+  res:
+    body: 'true'
+- describe: array to string
+  req:
+    body: !$convert
+      to: string
+      value: [1, 2, 3]
+  res:
+    body: '[1,2,3]'
+- describe: object to string
+  req:
+    body: !$convert
+      to: string
+      value:
+        a: 3
+        b: 4
+  res:
+    body: '{"a":3,"b":4}'
+- describe: string to number
+  req:
+    body: !$convert
+      to: number
+      value: '3.2'
+  res:
+    body: 3.2
+- describe: value to boolean
+  req:
+    body: !$convert
+      to: boolean
+      value: 0
+    res:
+      body: false
+- describe: string to integer
+  req:
+    body: !$convert
+      to: integer
+      value: '3.2'
+  res:
+    body: 3
+- describe: number to integer
+  req:
+    body: !$convert
+      to: integer
+      value: 3.2
+  res:
+    body: 3
+- describe: wrap into array
+  req:
+    body: !$convert
+      to: array
+      value: 3
+  res:
+    body: [3]
+- describe: array to array have no change
+  req:
+    body: !$convert
+      to: array
+      value: [3]
+  res:
+    body: [3]

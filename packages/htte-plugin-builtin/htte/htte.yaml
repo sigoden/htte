@@ -1,0 +1,25 @@
+clients:
+- name: echo
+  pkg: ../../../htte-client-echo/src
+plugins:
+- name: ''
+  pkg: '../../src'
+modules:
+- differ/and
+- differ/array
+- differ/compare
+- differ/exist
+- differ/object
+- differ/or
+- differ/query
+- differ/range
+- differ/rangetime
+- differ/regexp
+- resolver/concat
+- resolver/convert
+- resolver/query
+- resolver/randfloat
+- resolver/randint
+- resolver/randstr
+- resolver/time
+- mix

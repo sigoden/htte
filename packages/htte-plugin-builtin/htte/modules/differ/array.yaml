@@ -1,0 +1,23 @@
+- describe: each elements exist
+  req:
+    body:
+    - 3
+    - 4
+    - 5
+  res:
+    body: !@array
+    - 3
+    - 4
+
+- describe: any element do not exist will fail
+  req:
+    body:
+    - 3
+    - 4
+    - 5
+  res:
+    body: !@trycatch
+      try: !@array
+      - 3
+      - 2
+      catch: 'res->body: 2th element dont exist'

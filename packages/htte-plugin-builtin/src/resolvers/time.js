@@ -5,14 +5,17 @@ module.exports = function(options) {
     name: 'time',
     kind: 'scalar',
     resolve: function(context, literal) {
-      if (typeof literal !== 'string') {
+      if (literal === null) {
+        literal = '0';
+      } else if (typeof literal === 'number') {
+        literal = String(literal);
+      } else if (typeof literal !== 'string') {
         context.throw('literal value must be string');
       }
       let { timestr, direction, refdate } = parseLiteral(literal);
-      let date = parseReftime(refdate);
       let time = timestring(timestr);
-      date.setSeconds(date.getSeconds() + time * direction);
-      return date;
+      refdate.setSeconds(refdate.getSeconds() + time * direction);
+      return refdate;
     }
   };
 };
@@ -34,13 +37,13 @@ function parseLiteral(literal) {
     direction = 1;
     timestr = literal;
   }
-  return { timestr, direction, refdate };
-}
-
-function parseReftime(refdate) {
-  try {
-    return new Date(refdate);
-  } catch (err) {
-    throw new Error(`literal value has invalid part${refdate}`);
+  if (!refdate) {
+    refdate = new Date();
+  } else {
+    refdate = new Date(refdate);
+    if (refdate.toString() === 'Invalid Date') {
+      throw new Error(`literal value has invalid part of ${refdate}`);
+    }
   }
+  return { timestr, direction, refdate };
 }

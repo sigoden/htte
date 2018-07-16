@@ -1,0 +1,39 @@
+- describe: assert value must match type
+  req:
+    body:
+      e1: null
+      e2: {}
+      e3: true
+      e4: 3.2
+      e5: abc
+      e6: []
+  res:
+    body: 
+      e1: !@exist 'null'
+      e2: !@exist object
+      e3: !@exist boolean
+      e4: !@exist number
+      e5: !@exist string
+      e6: !@exist array
+
+
+- describe: asset property must exist
+  req:
+    body:
+      value: {}
+  res:
+    body: !@trycatch
+      try:
+        value:
+          a: !@exist
+      catch: 'res->body->value: diff properties, ++ a'
+
+- describe: fail when type mismatch
+  req:
+    body:
+      v: true
+  res:
+    body: !@trycatch
+      try:
+        v: !@exist string
+      catch: 'res->body->v: actual value is not string'

@@ -19,22 +19,23 @@ function typeToYamlType(type) {
   if (type.resolve) {
     return new yaml.Type(`!$${type.name}`, {
       kind: type.kind,
-      construct: createTypeConstructor('resolver', type.resolve)
+      construct: makeConstruct('resolver', type.resolve)
     });
   } else if (type.diff) {
     return new yaml.Type(`!@${type.name}`, {
       kind: type.kind,
-      construct: createTypeConstructor('differ', type.diff)
+      construct: makeConstruct('differ', type.diff)
     });
   }
 }
 
-function createTypeConstructor(tagType, handler) {
+function makeConstruct(tagType, handler) {
   return function(literal) {
-    let fn = function(context, actual) {
-      return context.exec(tagType, handler, literal, actual);
+    handler.type = tagType;
+    let yamlf = function(context, actual) {
+      return context.exec(handler, literal, actual);
     };
-    fn.type = tagType;
-    return fn;
+    yamlf.type = tagType;
+    return yamlf;
   };
 }

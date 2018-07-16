@@ -22,6 +22,9 @@ function load(type, dir, exts, htteConfig) {
       htteConfig.name = ext.name;
       result[ext.name] = tryRequireExtension(dir, ext.pkg)(htteConfig, ext.options);
     } catch (err) {
+      if (process.env.HTTE_DEBUG) {
+        console.error(err);
+      }
       throw new Error(`${type} ${ext.pkg} cannot be loaded, maybe run "npm install -g ${ext.pkg}" to install it`);
     }
   });

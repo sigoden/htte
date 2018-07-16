@@ -1,0 +1,16 @@
+- describe: diff with query data
+  name: u1
+  req:
+    body:
+      v1: v1
+  res:
+    body:
+      v1: !@query req.body.v1
+
+- describe: diff with query data in other unit
+  req:
+    body:
+      v1: v1
+  res:
+    body:
+      v1: !@query u1.req.body.v1

@@ -21,11 +21,8 @@ describe('#exec', function() {
     let handler = jest.fn();
     let literal = {};
     let actual = {};
-    differ.exec('differ', handler, literal, actual);
+    differ.exec(handler, literal, actual);
     expect(handler).toHaveBeenCalledWith(differ, literal, actual);
-    expect(() => differ.exec('resolver', handler, literal, actual)).toThrow(
-      'resolver plugin is forbidden in differ context'
-    );
   });
   test('will resolve literal first', function() {
     let differ = init();
@@ -33,7 +30,7 @@ describe('#exec', function() {
     let resolverLiteral = {};
     let literal = jest.fn(() => resolverLiteral);
     let actual = {};
-    differ.exec('differ', handler, literal, actual);
+    differ.exec(handler, literal, actual);
     expect(handler).toHaveBeenCalledWith(differ, resolverLiteral, actual);
   });
 });

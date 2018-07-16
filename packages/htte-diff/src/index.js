@@ -11,6 +11,10 @@ function diff(context, expected, actual, strict = true) {
       diffPrimitive(context, expected, actual);
       break;
     case 'function':
+      if (expected.type === 'resolver') {
+        diff(context, expected(context.toResolver()), actual);
+        break;
+      }
       try {
         expected(context, actual);
       } catch (err) {
