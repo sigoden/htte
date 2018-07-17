@@ -9,8 +9,10 @@ module.exports = function(htte, options = {}) {
     let clearSpinner;
     let current;
     let counterr = 0;
+    let tdd = false;
 
     emitter.on('start', function(args) {
+      tdd = !!args.tdd;
       utils.print();
     });
 
@@ -54,6 +56,7 @@ module.exports = function(htte, options = {}) {
 
     emitter.on('errorUnit', function(err) {
       clearSpinner();
+      if (tdd) current.metadata.debug = true;
       utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d)  %s'), ++counterr, current.describe);
     });
 

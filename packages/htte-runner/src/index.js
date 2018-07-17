@@ -8,7 +8,7 @@ function run({ session, clients, reporters, emitter, units, controls }) {
     reporter({ emitter });
   });
   let hrstart = process.hrtime();
-  emitter.emit('start', { units });
+  emitter.emit('start', { units, tdd: controls.bail });
   let cursor = 0;
   if (controls.continue) {
     session.load();

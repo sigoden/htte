@@ -18,7 +18,7 @@ describe('reporter', function() {
   let reporter = createReporter(htte, options)({ emitter });
 
   test('@start', function() {
-    emitter.emit('start');
+    emitter.emit('start', { units: [], tdd: false });
     expect(stdoutWrite.mock.calls.join('')).toBe('\n');
   });
 
@@ -72,6 +72,17 @@ describe('reporter', function() {
     let args = {};
     emitter.emit('done', args);
     expect(utils.epilogue).toHaveBeenCalledWith(args);
+  });
+
+  test('auto enable metadata.debug of last failed unit when tdd', function() {
+    let units = [mockUnit(1, 'pass'), mockUnit(2, 'fail')];
+    emitter.emit('start', { units, tdd: true });
+    emitter.emit('runUnit', { unit: units[1] });
+    setTimeout(() => {
+      emitter.emit('errorUnit');
+      expect(units[1].metadata.debug).toBe(true);
+      done();
+    }, utils.spinnerInterval + 1);
   });
 });
 
