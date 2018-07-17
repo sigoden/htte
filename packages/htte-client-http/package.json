@@ -26,7 +26,6 @@
     "axios": "^0.18.0",
     "lodash": "^4.17.10",
     "htte-utils": "^0.4.0",
-    "htte-errors": "^0.4.0",
-    "mime-types": "^2.1.18"
+    "htte-errors": "^0.4.0"
   }
 }

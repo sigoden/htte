@@ -1,7 +1,6 @@
 const axios = require('axios');
 const qs = require('querystring');
-const { type, completeUrlParams } = require('htte-utils');
-const mime = require('mime-types');
+const { completeUrlParams } = require('htte-utils');
 const _ = require('lodash');
 const { ClientError } = require('htte-errors');
 const utils = require('htte-utils');
@@ -49,7 +48,7 @@ module.exports = function init(htte, options = {}) {
           headers['Content-Type'] = 'application/json; charset=utf-8';
           break;
         default:
-          return Promise.reject(new ClientError('is unsupported', ['req', 'type']));
+          return Promise.reject(new ClientError('unsupported', ['req', 'type']));
       }
     }
     let clientData = { url, method, data: body, headers, timeout };
@@ -63,13 +62,7 @@ module.exports = function init(htte, options = {}) {
       })
       .then(function(result) {
         let { status, headers, data } = result;
-        let actualRes = { status };
-        let type = mime.extension(headers['content-type']);
-        switch (type) {
-          case 'json':
-          default:
-            actualRes.body = data;
-        }
+        let actualRes = { status, body: data };
         if (res) {
           if (utils.type(res.headers) === 'object') {
             actualRes.headers = _.pick(headers, Object.keys(res.headers));
