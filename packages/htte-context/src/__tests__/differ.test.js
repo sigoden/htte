@@ -9,8 +9,8 @@ const { ContextError } = require('htte-errors');
 const store = {};
 const unit = {};
 
-function init(segs) {
-  return new Differ(store, unit, segs);
+function init(parts) {
+  return new Differ(store, unit, parts);
 }
 
 afterEach(() => jest.clearAllMocks());
@@ -39,7 +39,7 @@ describe('#enter', function() {
   test('enter child scope', function() {
     let differ = init();
     let scopedDiffer = differ.enter('abc');
-    expect(scopedDiffer.segs).toEqual(['abc']);
+    expect(scopedDiffer.parts).toEqual(['abc']);
     expect(scopedDiffer).toBeInstanceOf(Differ);
   });
 });

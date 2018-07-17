@@ -1,19 +1,19 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
 
-module.exports = function(name, units, def) {
+module.exports = function(name, units, macro) {
   let output = [];
-  parseNode(output, { module: name, groups: false, def }, { units, describe: name });
+  parseNode(output, { module: name, groups: false, macro }, { units, describe: name });
   return output;
 };
 
 function parseNode(output, ctx, node) {
   if (node.units) {
     if (node.defines) {
-      ctx.def = ctx.def.scope(node.defines);
+      ctx.macro = ctx.macro.scope(node.defines);
     }
     node.units.forEach(function(child, index) {
-      let localCtx = _.pick(ctx, ['module', 'groups', 'def']);
+      let localCtx = _.pick(ctx, ['module', 'groups', 'macro']);
       if (!ctx.groups) {
         localCtx.groups = []; // top level
       } else {
@@ -34,7 +34,7 @@ function parseUnit(output, ctx, unit) {
   if (!_.isString(unit.name)) {
     unit.name = getUnitName(unit);
   }
-  ctx.def.resolve(unit);
+  ctx.macro.resolve(unit);
   if (!unit.req) unit.req = {};
   if (!unit.res) unit.res = {};
   unit.session = {};

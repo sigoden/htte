@@ -1,22 +1,22 @@
 const utils = require('htte-utils');
 const _ = require('lodash');
 
-function Definition(defs, parent = null) {
+function Macro(defs, parent = null) {
   this.parent = parent;
   this.defs = defs;
 }
 
-Definition.prototype.scope = function(defs) {
-  return new Definition(defs, this);
+Macro.prototype.scope = function(defs) {
+  return new Macro(defs, this);
 };
 
-Definition.prototype.search = function(key) {
+Macro.prototype.search = function(key) {
   if (this.defs[key]) return this.defs[key];
   if (this.parent) return this.parent.search(key);
   throw new Error(`cannot find definition ${key}`);
 };
 
-Definition.prototype.resolve = function(unit) {
+Macro.prototype.resolve = function(unit) {
   let includes = unit.includes;
   if (!includes) return unit;
   if (utils.type(includes) === 'string') {
@@ -28,4 +28,4 @@ Definition.prototype.resolve = function(unit) {
   }
 };
 
-module.exports = Definition;
+module.exports = Macro;

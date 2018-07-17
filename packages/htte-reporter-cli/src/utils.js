@@ -1,7 +1,6 @@
 const tty = require('tty');
 const os = require('os');
 const isatty = tty.isatty(1) && tty.isatty(2);
-const supportsColor = require('supports-color');
 const ms = require('ms');
 const { sprintf } = require('sprintf-js');
 const yaml = require('js-yaml');
@@ -136,19 +135,19 @@ exports.epilogue = function({ units, duration }) {
   let fmt;
   print();
   // passes
-  fmt = color('green', '%d passing') + color('time', ' (%s)');
+  fmt = color('green', '%d passed') + color('time', ' (%s)');
 
   print(fmt, stats.passes || 0, ms(duration));
 
   // skip
   if (stats.skips) {
-    fmt = color('skip', '%d skipping');
+    fmt = color('skip', '%d pending');
     print(fmt, stats.skips);
   }
 
   // failures
   if (stats.failures) {
-    fmt = color('fail', '%d failing');
+    fmt = color('fail', '%d failed');
     print(fmt, stats.failures);
     listFailures(units);
   }
@@ -210,6 +209,6 @@ if (process.platform === 'win32') {
 }
 exports.listDebugs = listDebugs;
 
-exports.useColors = supportsColor.stdout && !process.env.NO_COLOR;
+exports.useColors = !process.env.NO_COLOR;
 exports.spinnerInterval = 120;
 exports.spinnerMarks = '◴◷◶◵';

@@ -3,10 +3,10 @@ const query = require('htte-query');
 
 const { ContextError } = require('htte-errors');
 
-function Resolver(store, unit, segs = []) {
+function Resolver(store, unit, parts = []) {
   this.store = store;
   this.unit = unit;
-  this.segs = segs;
+  this.parts = parts;
 }
 
 Resolver.prototype.exec = function(handler, literal) {
@@ -17,7 +17,7 @@ Resolver.prototype.exec = function(handler, literal) {
   return handler(this, literal);
 };
 Resolver.prototype.enter = function(seg) {
-  return new Resolver(this.store, this.unit, this.segs.concat(seg));
+  return new Resolver(this.store, this.unit, this.parts.concat(seg));
 };
 Resolver.prototype.resolve = function(value) {
   return resolve(this, value);
@@ -27,7 +27,7 @@ Resolver.prototype.query = function(path) {
 };
 
 Resolver.prototype.throw = function(msg) {
-  throw new ContextError(msg, this.segs);
+  throw new ContextError(msg, this.parts);
 };
 
 module.exports = Resolver;

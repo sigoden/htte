@@ -1,0 +1,4 @@
+- describe: heroku boot
+  req:
+    url: /_heroku
+    timeout: 60000

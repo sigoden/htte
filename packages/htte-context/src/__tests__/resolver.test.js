@@ -9,8 +9,8 @@ const { ContextError } = require('htte-errors');
 const store = {};
 const unit = {};
 
-function init(segs) {
-  return new Resolver(store, unit, segs);
+function init(parts) {
+  return new Resolver(store, unit, parts);
 }
 
 afterEach(() => jest.clearAllMocks());
@@ -34,7 +34,7 @@ describe('#enter', function() {
   test('enter child scope', function() {
     let resolver = init();
     let scopedResolver = resolver.enter('abc');
-    expect(scopedResolver.segs).toEqual(['abc']);
+    expect(scopedResolver.parts).toEqual(['abc']);
     expect(scopedResolver).toBeInstanceOf(Resolver);
   });
 });

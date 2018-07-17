@@ -53,9 +53,9 @@ describe('epilogue', function() {
     ];
     utils.epilogue({ units, duration: 4000 });
     expect(stdoutWrite.mock.calls.join('')).toBe(`
-3 passing (4s)
-2 skipping
-2 failing
+3 passed (4s)
+2 pending
+2 failed
 
 1) module2-> root-> grp2-> describe2
    at req•body, throw error: err2
