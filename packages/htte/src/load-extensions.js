@@ -1,5 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
+const resolveFrom = require('resolve-from');
 
 const defaultExts = {
   clients: [{ name: 'http', pkg: 'htte-client-http', options: {} }],
@@ -34,6 +35,9 @@ function load(type, dir, exts, htteConfig) {
 function tryRequireExtension(dir, name) {
   try {
     return require(path.resolve(dir, name));
+  } catch (err) {}
+  try {
+    return resolveFrom(dir, name);
   } catch (err) {}
   return require(name);
 }
