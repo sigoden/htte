@@ -12,7 +12,7 @@ afterEach(() => jest.clearAllMocks());
 describe('http', function() {
   test('check req', function(done) {
     initClient(htte)({ req: {}, res: {} }).catch(err => {
-      expectClientError(err, 'is required', ['req', 'url']);
+      expectClientError(err, 'required', ['req', 'url']);
       done();
     });
   });

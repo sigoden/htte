@@ -75,6 +75,7 @@ function listFailures(units) {
       let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('-> ');
       let indents = ' '.repeat(String(i + 1).length + 2);
       print(color('title', '%d) %s'), i + 1, title);
+      debugger;
       if (err.parts) {
         print(
           color('error', indents + 'at %s, throw error: %s'),

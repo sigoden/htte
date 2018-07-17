@@ -61,6 +61,18 @@ describe('run-unit', function() {
       done();
     });
   });
+  test('bypass ClientError', function(done) {
+    let unit = mockUnit('m1', 'u1');
+    unit.req.body = jest.fn(() => {
+      throw new ClientError('abc', ['req', 'body']);
+    });
+    runUnit(unit)(session, clients, emitter).catch(function(err) {
+      expect(err).toBeInstanceOf(ContextError);
+      expect(err.message).toBe('abc');
+      expect(err.parts).toEqual(['req', 'body']);
+      done();
+    });
+  });
   test('unit passed', function(done) {
     let unit = mockUnit('m1', 'u1');
     runUnit(unit)(session, clients, emitter).then(function() {

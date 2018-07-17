@@ -51,7 +51,11 @@ module.exports = function(unit) {
           resolve();
         })
         .catch(function(err) {
-          reject(new ClientError(err.message));
+          if (!(err instanceof ClientError)) {
+            reject(new ClientError(err.message));
+            return;
+          }
+          reject(err);
         });
     }).catch(function(err) {
       unit.session.state = 'fail';
