@@ -15,6 +15,7 @@ modules:
 - differ/range
 - differ/rangetime
 - differ/regexp
+- resolver/arraylike
 - resolver/concat
 - resolver/convert
 - resolver/query

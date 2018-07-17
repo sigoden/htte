@@ -1,0 +1,12 @@
+- describe: array to arraylike object
+  req:
+    body: !$arraylike
+    - 1
+    - 2
+    - 3
+  res:
+    body:
+      length: 3
+      0: 1
+      1: 2
+      2: 3
