@@ -26,7 +26,7 @@ module.exports = function(options) {
     name: 'compare',
     kind: 'mapping',
     diff: function(context, literal, actual) {
-      if (literal === null) return;
+      if (literal === null) context.throw('literal cannot be null');
       let fn = OP[literal.op];
       if (!fn) context.throw('literal {op} is not supported');
       if (!diffNumber(context, literal.value, actual, fn)) {

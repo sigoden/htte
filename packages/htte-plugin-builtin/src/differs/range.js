@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'range',
     kind: 'sequence',
     diff: function(context, literal, actual) {
-      if (!Array.isArray(literal)) return true;
+      if (!Array.isArray(literal)) context.throw('literal cannot be null');
       let [min, max, ref = 0] = literal;
       min = Number(min);
       max = Number(max);

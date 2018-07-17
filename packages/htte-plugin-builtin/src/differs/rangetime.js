@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'rangetime',
     kind: 'sequence',
     diff: function(context, literal, actual) {
-      if (!Array.isArray(literal)) return true;
+      if (!Array.isArray(literal)) context.throw('literal cannot be null');
       let [min, max, ref = new Date()] = literal;
       if (Number.isNaN(min) || Number.isNaN(max)) {
         context.throw('literal value [min,max,_] must be number');

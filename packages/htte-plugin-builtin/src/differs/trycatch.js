@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'trycatch',
     kind: 'mapping',
     diff: function(context, literal, actual) {
-      if (literal === null) return;
+      if (literal === null) context.throw('literal cannot be null');
       if (literal.try === undefined || literal.catch === undefined) context.throw('literval {try,catch} is invalid');
       try {
         context.diff(literal.try, actual);
