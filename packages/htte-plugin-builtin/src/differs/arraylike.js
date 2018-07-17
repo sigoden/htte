@@ -1,11 +1,16 @@
 module.exports = function(options) {
   return {
-    name: 'object',
+    name: 'arraylike',
     kind: 'mapping',
     diff: function(context, literal, actual) {
       if (literal === null) context.throw('literal cannot be null');
-      if (!isObject(actual)) context.throw('actual value must be object');
-      context.diff(literal, actual, false);
+      if (!Array.isArray(actual)) context.throw('actual must be array');
+      let obj = { length: actual.length };
+      actual.reduce(function(obj, item, index) {
+        obj[index] = item;
+        return obj;
+      }, obj);
+      context.diff(literal, obj, false);
     }
   };
 };

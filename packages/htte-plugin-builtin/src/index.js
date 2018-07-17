@@ -3,6 +3,7 @@ module.exports = function(htte, options = {}) {
   return [
     require('./differs/and')(opts),
     require('./differs/array')(opts),
+    require('./differs/arraylike')(opts),
     require('./differs/compare')(opts),
     require('./differs/exist')(opts),
     require('./differs/object')(opts),
@@ -13,7 +14,6 @@ module.exports = function(htte, options = {}) {
     require('./differs/rangetime')(opts),
     require('./differs/trycatch')(opts),
 
-    require('./resolvers/arraylike')(opts),
     require('./resolvers/concat')(opts),
     require('./resolvers/convert')(opts),
     require('./resolvers/query')(opts),

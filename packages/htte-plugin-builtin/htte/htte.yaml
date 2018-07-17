@@ -7,6 +7,7 @@ plugins:
 modules:
 - differ/and
 - differ/array
+- differ/arraylike
 - differ/compare
 - differ/exist
 - differ/object
@@ -15,7 +16,6 @@ modules:
 - differ/range
 - differ/rangetime
 - differ/regexp
-- resolver/arraylike
 - resolver/concat
 - resolver/convert
 - resolver/query

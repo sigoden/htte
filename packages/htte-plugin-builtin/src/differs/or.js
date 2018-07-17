@@ -5,7 +5,7 @@ module.exports = function(options) {
     name: 'or',
     kind: 'sequence',
     diff: function(context, literal, actual) {
-      if (!Array.isArray(literal)) context.throw('literal cannot be null');
+      if (literal === null) context.throw('literal cannot be null');
       let errors = [];
       for (let item of literal) {
         try {

@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'and',
     kind: 'sequence',
     diff: function(context, literal, actual) {
-      if (!Array.isArray(literal)) context.throw('literal cannot be null');
+      if (literal === null) context.throw('literal cannot be null');
       literal.forEach(function(item) {
         context.diff(item, actual);
       });
