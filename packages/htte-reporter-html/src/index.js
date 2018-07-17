@@ -7,6 +7,8 @@ const defaultOptions = {
   output: 'test-report.html'
 };
 
+dot.templateSettings.strip = false;
+
 module.exports = function(htte, options = {}) {
   options = Object.assign(defaultOptions, options);
   let outputFile = path.resolve(htte.baseDir, options.output);
