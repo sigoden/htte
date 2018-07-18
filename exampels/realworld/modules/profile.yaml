@@ -9,7 +9,7 @@
     body:
       profile:
         username: !@query req.params.id
-        image: !@exist
+        image: !@type
         following: false
 - describe: follow profile
   includes: followProfile
@@ -25,7 +25,7 @@
     body:
       profile:
         username: !@query req.params.id
-        image: !@exist
+        image: !@type
         following: true
 - describe: unfollow profile
   includes: unfollowProfile
@@ -52,5 +52,5 @@
     body:
       profile:
         username: !@query req.params.id
-        image: !@exist
+        image: !@type
         following: true

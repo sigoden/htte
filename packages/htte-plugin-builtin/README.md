@@ -64,29 +64,6 @@
       value: 2
 ```
 
-## !@exist scalar *
-
-判断实际值存在，如果有标签值，同时还判断实际值是标签值描述的类型
-
-```yaml
-- describe: we only care the existance of k2, not its value
-  req:
-    body:
-      k1: a
-      k2: b
-  res:
-    body:
-      k1: a
-      k2: !@exist
-- describe: v must be number
-  req:
-    body:
-      v: [] 
-  res:
-    body:
-      v: !@exist array
-```
-
 ## !@object mapping{op,value} mapping
 
 标签值是实际值的子集，则测试通过。
@@ -199,6 +176,30 @@
     body:
       v: !@regexp \d{3}
 ```
+
+## !@type scalar *
+
+判断实际值存在，如果有标签值，同时还判断实际值是标签值描述的类型
+
+```yaml
+- describe: we only care the existance of k2, not its value
+  req:
+    body:
+      k1: a
+      k2: b
+  res:
+    body:
+      k1: a
+      k2: !@type
+- describe: v must be number
+  req:
+    body:
+      v: [] 
+  res:
+    body:
+      v: !@type array
+```
+
 
 ## !$concat sequence
 

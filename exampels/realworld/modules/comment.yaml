@@ -22,10 +22,10 @@
   res:
     body:
       comment:
-        id: !@exist
+        id: !@type
         body: !@query req.body.comment.body
-        createdAt: !@exist
-        author: !@exist
+        createdAt: !@type
+        author: !@type
 - describe: delete comments
   includes: deleteComment
   req:

@@ -12,7 +12,7 @@
       user:
         email: !@query req.body.user.email
         username: !@query req.body.user.username
-        token: !@exist
+        token: !@type
 - describe: login
   includes: login
   name: loginJohn
@@ -24,9 +24,9 @@
   res:
     body:
       user:
-        email: !@exist
-        username: !@exist
-        token: !@exist
+        email: !@type
+        username: !@type
+        token: !@type
 - describe: current user
   includes: getUser
   req:
@@ -35,9 +35,9 @@
   res:
     body:
       user:
-        email: !@exist
-        username: !@exist
-        token: !@exist
+        email: !@type
+        username: !@type
+        token: !@type
 - describe: update user
   includes: updateUser
   req:
@@ -49,9 +49,9 @@
   res:
     body:
       user:
-        email: !@exist
-        username: !@exist
-        token: !@exist
+        email: !@type
+        username: !@type
+        token: !@type
 - describe: register tom
   name: registerTom
   includes: register
