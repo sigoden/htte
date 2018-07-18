@@ -31,7 +31,7 @@ describe('reporter', function() {
   test('@skipUnit', function() {
     let unit = mockUnit(1, 'skip');
     emitter.emit('skipUnit', { unit });
-    expect(stdoutWrite.mock.calls.join('')).toBe(`•      describe1\n`);
+    expect(stdoutWrite.mock.calls.join('')).toBe(`    •  describe1\n`);
   });
 
   test('@runUnit & doneUnit', function(done) {

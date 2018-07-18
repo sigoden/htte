@@ -25,7 +25,7 @@ module.exports = function(htte, options = {}) {
 
     emitter.on('skipUnit', function(args) {
       let { unit } = args;
-      utils.print(utils.color('skip', '%s  %s%s'), utils.symbols.dot, indent(unit.ctx.groups.length), unit.describe);
+      utils.print(utils.color('skip', '%s%s  %s'), indent(unit.ctx.groups.length), utils.symbols.dot, unit.describe);
     });
 
     emitter.on('runUnit', function(args) {

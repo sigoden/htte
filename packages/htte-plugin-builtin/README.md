@@ -1,49 +1,6 @@
 # HTTE 内置插件
 
-## 概念介绍
-
-插件以 YAML 自定义标签的形式呈现。在 HTTE 中，就是函数。
-
-有这样一段代码
-```yaml
-req:
-  body: !$concat [a, b, c]
-res:
-  body: !@regexp \w{3}
-```
-将插件 `!$concat` 和 `!@regexp` 用函数替换
-```js
-{
-    req:
-        body: function(ctx) {
-            return (function(literal) {
-                return literal.join('');
-            })(['a', 'b', 'c'])
-        }
-    res:
-        body: function(ctx, actual) {
-            (function(literal) {
-                let re = new Regexp(literal);
-                if (!re.test(actual)) {
-                    ctx.throw('不匹配正则')
-                }
-            })('\w{3}')
-        }
-}
-```
-上面就是 HTTE 执行引擎看到的代码原本面貌了。
-
-接口测试中主要存在两种需求，构造请求数据和校验相应数据。 所以 HTTE 中存在两种插件。
-- 构造器(resolver)，用来构造数据，标签前缀 `!$`
-- 比对器(differ)，用来比对校验数据，标签前缀 `!@`
-
-
-标签值(literal)数据类型，也就是 YAML 数据类型：
-- 纯量(scalar)：是最基本的、不可再分的值。包含数据类型: 字符串, 布尔值, 数值, null
-- 数组(sequence): 一组按次序排列的值，又成为序列/列表 `- Cat\n- Dog`，也可以采用内联形式 `[Cat, Dog]`
-- 对象(mapping): 键值对的集合，又称为映射/哈希/字典。 `name: tom\nage: 20`，也可采用形式 `{name: tom, aget: 20}`
-
-关于 YAML 标签，有必要补充一点，那就是标签是需要与数据类型绑定的。如 `!$concat` 就绑定了 `sequence`， `!$concat a` 会编译不通过。
+> 如果不清楚插件的概念，请查阅 [使用插件灵活生成请求校验响应](https://github.com/sigoden/htte#使用插件灵活生成请求校验响应)
 
 ## !@and sequence *
 

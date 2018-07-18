@@ -49,7 +49,7 @@ function tidy(data) {
     let tidiedUnit = {
       state,
       duration: ms(duration || 0),
-      describes: groups.concat(unit.describe).join('/'),
+      describes: groups.concat(unit.describe).join(' / '),
       module,
       dataJSON: JSON.stringify({ req, res }, null, 2),
       dataYAML: toYAML({ req, res })

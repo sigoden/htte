@@ -20,9 +20,8 @@ function load(type, dir, exts, htteConfig) {
   let result = {};
   exts.forEach(function(ext, index) {
     let initExtension = tryRequireExtension(dir, ext.pkg);
-    debugger;
     if (!initExtension) {
-      throw new Error(`${type} ${ext.pkg} cannot be loaded, maybe run "npm install -g ${ext.pkg}" to install it`);
+      throw new Error(`${type} ${ext.pkg} cannot be loaded, maybe run "npm install ${ext.pkg} -g" to install it`);
     }
     htteConfig.name = ext.name;
     result[ext.name] = initExtension(htteConfig, ext.options);

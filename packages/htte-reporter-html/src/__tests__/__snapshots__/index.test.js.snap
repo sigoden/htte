@@ -132,7 +132,7 @@ exports[`reporter-html generate html 1`] = `
         
         <div class=\\"unit pass\\">
             <header>
-                <div class=\\"describes\\">root/grp1/describe1</div>
+                <div class=\\"describes\\">root / grp1 / describe1</div>
                 
                 <div class=\\"state\\">passed in 0ms</div>
                   
@@ -167,7 +167,7 @@ res:
         
         <div class=\\"unit skip\\">
             <header>
-                <div class=\\"describes\\">root/grp2/describe2</div>
+                <div class=\\"describes\\">root / grp2 / describe2</div>
                  
                 <div class=\\"state\\">pending</div>
                  
@@ -197,7 +197,7 @@ res:
         
         <div class=\\"unit pass\\">
             <header>
-                <div class=\\"describes\\">root/grp3/describe3</div>
+                <div class=\\"describes\\">root / grp3 / describe3</div>
                 
                 <div class=\\"state\\">passed in 0ms</div>
                   
@@ -232,7 +232,7 @@ res:
         
         <div class=\\"unit fail\\">
             <header>
-                <div class=\\"describes\\">root/grp4/describe4</div>
+                <div class=\\"describes\\">root / grp4 / describe4</div>
                   
                 <div class=\\"state\\">failed</div>
                 

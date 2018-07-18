@@ -84,7 +84,6 @@ function checkReqproperties(checks, req) {
     let value = req[check.key];
     if (_.isUndefined(value)) {
       if (check.required) {
-        debugger;
         throw new ClientError('required', ['req', check.key]);
       }
       continue;

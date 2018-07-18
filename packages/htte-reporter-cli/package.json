@@ -15,12 +15,13 @@
     "testing",
     "ddt"
   ],
-  "homepage": "https://github.com/sigoden/htte#readme",
+  "homepage": "https://github.com/sigoden/htte/tree/master/packages/htte-reporter-cli#readme",
+
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sigoden/htte.git"
+    "url": "https://github.com/sigoden/htte/tree/master/packages/htte-reporter-cli"
   },
   "dependencies": {
     "js-yaml": "^3.12.0",

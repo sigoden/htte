@@ -14,3 +14,5 @@
 ```
 
 ## 屏幕快照
+
+![snapshot](images/snapshot.png)

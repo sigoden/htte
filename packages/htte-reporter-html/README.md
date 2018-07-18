@@ -16,3 +16,5 @@ npm install htte-reporter-html -g
 ```
 
 ## 屏幕快照
+
+![snapshot](images/snapshot.png)
