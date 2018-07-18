@@ -1,6 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
-const resolveFrom = require('resolve-from');
+const importFrom = require('import-from');
 
 const defaultExts = {
   clients: [{ name: 'http', pkg: 'htte-client-http', options: {} }],
@@ -19,15 +19,13 @@ module.exports = function(config, htteConfig) {
 function load(type, dir, exts, htteConfig) {
   let result = {};
   exts.forEach(function(ext, index) {
-    try {
-      htteConfig.name = ext.name;
-      result[ext.name] = tryRequireExtension(dir, ext.pkg)(htteConfig, ext.options);
-    } catch (err) {
-      if (process.env.HTTE_DEBUG) {
-        console.error(err);
-      }
+    let initExtension = tryRequireExtension(dir, ext.pkg);
+    debugger;
+    if (!initExtension) {
       throw new Error(`${type} ${ext.pkg} cannot be loaded, maybe run "npm install -g ${ext.pkg}" to install it`);
     }
+    htteConfig.name = ext.name;
+    result[ext.name] = initExtension(htteConfig, ext.options);
   });
   return result;
 }
@@ -37,7 +35,9 @@ function tryRequireExtension(dir, name) {
     return require(path.resolve(dir, name));
   } catch (err) {}
   try {
-    return resolveFrom(dir, name);
+    return importFrom(dir, name);
   } catch (err) {}
-  return require(name);
+  try {
+    return require(name);
+  } catch (err) {}
 }
