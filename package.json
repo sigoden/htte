@@ -7,6 +7,13 @@
 		"lerna": "^2.11.0",
 		"prettier": "^1.13.7"
 	},
+	"scripts": {
+		"bootstrap": "lerna bootstrap --hoist",
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "jest",
+		"test:plugins": "node packages/htte-cli/bin/htte.js packages/htte-plugin-builtin/htte/htte.yaml"
+	},
 	"eslintIgnore": [
 		"node_modules"
 	],

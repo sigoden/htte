@@ -17,6 +17,9 @@
     "testing",
     "ddt"
   ],
+  "engines": {
+    "node": ">= 6"
+  },
   "homepage": "https://github.com/sigoden/htte#readme",
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
