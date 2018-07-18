@@ -8,7 +8,7 @@
       v1: !@range [3, 3.000001]
       v2: !@range [-3, -2.999999]
 
-- describe: asset value minus ref value in range
+- describe: asset value minus basis value in range
   req:
     body:
       v1: 3

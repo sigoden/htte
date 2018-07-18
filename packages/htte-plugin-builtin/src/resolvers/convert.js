@@ -22,7 +22,6 @@ const TYPE = {
     return Math.round(num);
   },
   array: function(v) {
-    if (Array.isArray(v)) return v;
     return [v];
   }
 };

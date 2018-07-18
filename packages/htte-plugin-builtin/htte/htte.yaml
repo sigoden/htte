@@ -19,8 +19,7 @@ modules:
 - resolver/concat
 - resolver/convert
 - resolver/query
-- resolver/randfloat
-- resolver/randint
+- resolver/randnum
 - resolver/randstr
 - resolver/time
 - mix
