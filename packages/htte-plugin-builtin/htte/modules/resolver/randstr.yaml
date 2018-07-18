@@ -4,7 +4,7 @@
       v: !$randstr
   res:
     body:
-      v: !@regexp \w{6}
+      v: !@regexp \w{1,62}
 
 - describe: generate random str with length 10
   req:

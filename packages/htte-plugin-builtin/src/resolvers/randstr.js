@@ -19,7 +19,7 @@ function parseLiteral(literal) {
     throw new Error(`literal value must match patttern (?<length>[\d+])(:?<flag>[lun]+])?`);
   }
   let [length, flag = 'lun'] = literal.split(':');
-  length = parseInt(length || 6);
+  length = parseInt(length || randomLength(1, 62));
   return [length, flag];
 }
 
@@ -39,4 +39,8 @@ function randomString(length, flag) {
     result += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return result;
+}
+
+function randomLength(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
 }

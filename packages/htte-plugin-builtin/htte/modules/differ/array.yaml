@@ -1,4 +1,4 @@
-- describe: each elements exist
+- describe: each element must exist
   req:
     body:
     - 3

@@ -4,14 +4,14 @@ module.exports = function(options) {
     kind: 'sequence',
     diff: function(context, literal, actual) {
       if (literal === null) context.throw('literal cannot be null');
-      let [min, max, ref = new Date()] = literal;
+      let [min, max, basis = new Date()] = literal;
       if (Number.isNaN(min) || Number.isNaN(max)) {
         context.throw('literal value [min,max,_] must be number');
       }
       try {
-        ref = parseDate(ref);
+        basis = parseDate(basis);
       } catch (err) {
-        context.throw('literval value [_,_,ref] must be date object or string');
+        context.throw('literval value [_,_,basis] must be date object or string');
       }
 
       try {
@@ -20,7 +20,7 @@ module.exports = function(options) {
         context.throw('actual must be date object or string');
       }
 
-      let value = (actual.getTime() - ref.getTime()) / 1000;
+      let value = (actual.getTime() - basis.getTime()) / 1000;
       if (value >= min && value < max) return;
       context.throw('time do not match range');
     }

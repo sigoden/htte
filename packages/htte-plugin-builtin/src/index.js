@@ -17,8 +17,7 @@ module.exports = function(htte, options = {}) {
     require('./resolvers/concat')(opts),
     require('./resolvers/convert')(opts),
     require('./resolvers/query')(opts),
-    require('./resolvers/randfloat')(opts),
-    require('./resolvers/randint')(opts),
+    require('./resolvers/randnum')(opts),
     require('./resolvers/randstr')(opts),
     require('./resolvers/time')(opts)
   ];

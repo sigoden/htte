@@ -4,14 +4,14 @@ module.exports = function(options) {
     kind: 'sequence',
     diff: function(context, literal, actual) {
       if (!Array.isArray(literal)) context.throw('literal cannot be null');
-      let [min, max, ref = 0] = literal;
+      let [min, max, basis = 0] = literal;
       min = Number(min);
       max = Number(max);
-      ref = Number(ref);
-      if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(ref)) {
-        context.throw('literal value [min,max,ref] must be number');
+      basis = Number(basis);
+      if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(basis)) {
+        context.throw('literal value [min,max,basis] must be number');
       }
-      let value = actual - ref;
+      let value = actual - basis;
       if (value >= min && value < max) return true;
       context.throw('actual value do not match range');
     }

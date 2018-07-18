@@ -70,10 +70,3 @@
       value: 3
   res:
     body: [3]
-- describe: array to array have no change
-  req:
-    body: !$convert
-      to: array
-      value: [3]
-  res:
-    body: [3]

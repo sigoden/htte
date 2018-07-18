@@ -1,6 +1,6 @@
 module.exports = function(options) {
   return {
-    name: 'randfloat',
+    name: 'randnum',
     kind: 'sequence',
     resolve: function(context, literal) {
       if (!Array.isArray(literal)) return 0;
