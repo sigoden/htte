@@ -63,7 +63,7 @@ describe('reporter', function() {
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('errorUnit');
-      expect(stdoutWrite.mock.calls.slice(3).join('')).toBe(`    1)  describe1\n`);
+      expect(stdoutWrite.mock.calls.slice(3).join('')).toBe(`    1) describe1\n`);
       done();
     }, utils.spinnerInterval + 1);
   });

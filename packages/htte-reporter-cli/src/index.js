@@ -57,7 +57,7 @@ module.exports = function(htte, options = {}) {
     emitter.on('errorUnit', function(err) {
       clearSpinner();
       if (tdd) current.metadata.debug = true;
-      utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d)  %s'), ++counterr, current.describe);
+      utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d) %s'), ++counterr, current.describe);
     });
 
     emitter.on('done', function(args) {
