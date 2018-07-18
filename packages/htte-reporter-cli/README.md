@@ -14,5 +14,3 @@
 ```
 
 ## 屏幕快照
-
-[!snapshot](snapshot.jpg)
