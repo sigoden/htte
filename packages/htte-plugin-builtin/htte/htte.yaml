@@ -9,13 +9,13 @@ modules:
 - differ/array
 - differ/arraylike
 - differ/compare
+- differ/exist
 - differ/object
 - differ/or
 - differ/query
 - differ/range
 - differ/rangetime
 - differ/regexp
-- differ/type
 - resolver/concat
 - resolver/convert
 - resolver/query

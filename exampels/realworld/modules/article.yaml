@@ -17,14 +17,14 @@
         title: !@query req.body.article.title
         description: !@query req.body.article.description
         body: !@query req.body.article.body
-        createdAt: !@type
-        updatedAt: !@type
+        createdAt: !@exist
+        updatedAt: !@exist
         tagList: ['dragons', 'training']
         favorited: false
         favoritesCount: 0
         author: !@object
           username: !@query auth.registerJohn.req.body.user.username
-          image: !@type
+          image: !@exist
           following: false
 - describe: single article by slug
   includes: getArticle
@@ -40,14 +40,14 @@
         title: !@query createArticleTrainDragon.req.body.article.title
         description: !@query createArticleTrainDragon.req.body.article.description
         body: !@query createArticleTrainDragon.req.body.article.body
-        createdAt: !@type
-        updatedAt: !@type
+        createdAt: !@exist
+        updatedAt: !@exist
         tagList: ['dragons', 'training']
         favorited: false
         favoritesCount: 0
         author: !@object
           username: !@query auth.registerJohn.req.body.user.username
-          image: !@type
+          image: !@exist
           following: false
 - describe: update article
   name: updateArticleTrainDragon
@@ -100,7 +100,7 @@
           articles: !@array
           - !@object
             slug: !@regexp /^how-to-train-your-dragon/
-          articlesCount: !@type
+          articlesCount: !@exist
     - describe: articles by author
       includes: listArticles
       req:
@@ -140,16 +140,16 @@
             title: !@query createArticleTrainDragon.res.body.article.title
             description: !@query createArticleTrainDragon.res.body.article.description
             body: !@query updateArticleTrainDragon.res.body.article.body
-            createdAt: !@type
-            updatedAt: !@type
+            createdAt: !@exist
+            updatedAt: !@exist
             tagList: ['dragons', 'training']
             favorited: false
             favoritesCount: 0
             author: !@object
               username: !@query auth.registerJohn.req.body.user.username
-              image: !@type
+              image: !@exist
               following: false
-          articlesCount: !@type
+          articlesCount: !@exist
 - describe: article feed
   units:
     - describe: john feed 
@@ -173,13 +173,13 @@
               title: !@query createArticleTrainDragon.req.body.article.title
               description: !@query createArticleTrainDragon.req.body.article.description
               body: !@query updateArticleTrainDragon.res.body.article.body
-              createdAt: !@type
-              updatedAt: !@type
+              createdAt: !@exist
+              updatedAt: !@exist
               tagList: ['dragons', 'training']
               favorited: false
               favoritesCount: 0
               author: !@object
                 username: !@query auth.registerJohn.req.body.user.username
-                image: !@type
+                image: !@exist
                 following: false
           articlesCount: 1

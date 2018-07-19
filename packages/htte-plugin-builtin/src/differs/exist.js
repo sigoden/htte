@@ -1,6 +1,6 @@
 module.exports = function(options) {
   return {
-    name: 'type',
+    name: 'exist',
     kind: 'scalar',
     diff: function(context, literal, actual) {
       if (typeof literal !== 'string' && literal !== null) context.throw('literal value must be string or null');

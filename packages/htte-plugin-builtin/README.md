@@ -177,7 +177,7 @@
       v: !@regexp \d{3}
 ```
 
-## !@type scalar *
+## !@exist scalar *
 
 判断实际值存在，如果有标签值，同时还判断实际值是标签值描述的类型
 
@@ -190,14 +190,14 @@
   res:
     body:
       k1: a
-      k2: !@type
+      k2: !@exist
 - describe: v must be number
   req:
     body:
       v: [] 
   res:
     body:
-      v: !@type array
+      v: !@exist array
 ```
 
 

@@ -57,7 +57,7 @@ modules:
       user: 
         email: john@jacob.com
         username: johnjacob
-        token: !@type string
+        token: !@exist string
 - describe: john登录
   req:
     url: https://htte-realworld.herokuapp.com/api/users/login
@@ -71,7 +71,7 @@ modules:
       user:
         email: john@jacob.com
         username: johnjacob
-        token: !@type string
+        token: !@exist string
 ```
 
 - 执行测试
@@ -120,7 +120,7 @@ htte htte.yaml
       password: '123456'
   res:
     body:
-      token: !@type string
+      token: !@exist string
 - describe: 更改昵称
   req:
     url: /user
@@ -133,7 +133,7 @@ htte htte.yaml
       msg: ok
 ```
 
-尽管你现在可能还不理解 `!@type`, `!$concat`, `!$query`，但应该能粗略明白这两个接口的功能、请求响应数据格式。
+尽管你现在可能还不理解 `!@exist`, `!$concat`, `!$query`，但应该能粗略明白这两个接口的功能、请求响应数据格式。
 
 由于测试逻辑由文档承载，HTTE 轻而易举获得一些其它框架梦寐以求的优点：
 
@@ -352,7 +352,7 @@ HTTE 通过会话 + 插件处理这个问题。
       password: tom...
   res:
     body:
-      token: !@type string
+      token: !@exist string
 ```
 
 有一个修改用户名的接口，它是权限接口，必须有个 `Authorization` 请求头且带上登录返回的 `token` 才能使用。
