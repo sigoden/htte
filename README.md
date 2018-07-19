@@ -36,7 +36,7 @@ HTTE 中，文档就是测试。
 
 - 安装命令行
 ```
-npm install htte-cli -g
+npm i htte-cli -g
 ```
 
 - 编写配置文件 `htte.yaml`
@@ -323,19 +323,19 @@ res: { // Decoded Res
 
 `Reporter` 监听 `Runner` 发送的事件，生成相应的报告，或打印到终端，或生成 HTML 报告文件。
 
-### 接口协议可扩展，目前支持 HTTP/GRPC
+### 接口协议可扩展，目前已支持 HTTP/GRPC
 
 接口协议由客户端扩展提供。
 
 - [htte](packages/htte-client-http) - 适用于 HTTP 接口测试
 - [grpc](packages/htte-client-grpc) - 适用于 GRPC 接口测试
 
-### 报告生成器可扩展，目前支持 CLI/HTML
+### 报告生成器可扩展，目前已支持 CLI/HTML
 
 - [cli](packages/htte-reporter-cli) - 输出到命令行
 - [html](packages/htte-reporter-html) - 以 HTML 文件的形式输出测试报告
 
-### 优雅解决的数据耦合
+### 优雅解决的接口数据耦合
 
 接口间数据是存在耦合的。常见例子，先登录拿到 TOKEN 之后才有权限下订单，发朋友圈等。
 
