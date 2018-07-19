@@ -182,7 +182,7 @@ exports.spinner = function(print, interval) {
     process.stdout.write(print(exports.spinnerMarks[i]));
   }, exports.spinnerInterval);
   return function() {
-    process.stdout.cursorTo(0);
+    readline.cursorTo(process.stdout, 0);
     clearInterval(handler);
   };
 };
