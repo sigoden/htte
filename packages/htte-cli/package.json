@@ -28,7 +28,8 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
+    "commander": "^2.16.0",
     "htte": "^0.4.0",
-    "commander": "^2.16.0"
+    "update-notifier": "^2.5.0"
   }
 }

@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 const htte = require('htte');
 const program = require('commander');
+const updateNotifier = require('update-notifier');
+
+const pkg = require('../package.json');
+
+updateNotifier({ pkg }).notify();
 
 program
   .usage('<config-file> [options]')
