@@ -1,5 +1,0 @@
-dependencies:
-  - ./module1.yaml
-units:
-  - describe: get article
-    api: getArticle

@@ -1,5 +1,0 @@
-dependencies:
-  - ./module2.yaml
-units:
-  - describe: get feed
-    api: getFeed
