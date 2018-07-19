@@ -22,7 +22,7 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
-    "htte-utils": "^0.4.0"
+    "htte-utils": "^0.4.0",
+    "lodash": "^4.17.10"
   }
 }

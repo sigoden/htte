@@ -22,8 +22,8 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
     "htte-context": "^0.4.0",
-    "htte-errors": "^0.4.0"
+    "htte-errors": "^0.4.0",
+    "lodash": "^4.17.10"
   }
 }
