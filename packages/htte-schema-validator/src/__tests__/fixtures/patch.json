@@ -1,0 +1,7 @@
+[
+    {
+        "op": "replace",
+        "path": "/clients/0/options/baseUrl",
+        "value": "https://www.example.com"
+    }
+]

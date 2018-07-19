@@ -1,0 +1,19 @@
+- describe: asset actual gt literal
+  req:
+    body: 3
+  res:
+    body: !@compare
+      op: gt
+      value: 2
+
+- describe: fail when actual dont gt literal
+  req:
+    body: 3
+  res:
+    body: !@trycatch
+      try: !@compare
+        op: gt
+        value: 4
+      catch: 'res->body: actual dont gt literal'
+
+

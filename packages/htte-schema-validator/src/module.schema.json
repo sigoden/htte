@@ -1,0 +1,58 @@
+{
+    "$id": "http://example.com/module.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "describe": {
+                "type": "string"
+            },
+            "defines": {
+                "$ref": "defines.json"
+            },
+            "units": {
+                "$ref": "#"
+            },
+            "name": {
+                "type": "string"
+            },
+            "client": {
+                "type": "string"
+            },
+            "includes": {
+                "anyOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "metadata": {
+                "type": "object",
+                "properties": {
+                    "skip": {
+                        "type": "boolean"
+                    },
+                    "debug": {
+                        "type": "boolean"
+                    },
+                    "stop": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "req": {
+                "type": "object"
+            },
+            "res": {
+                "type": "object"
+            }
+        }
+    }
+}

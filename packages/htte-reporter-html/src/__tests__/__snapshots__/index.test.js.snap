@@ -1,0 +1,308 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reporter-html generate html 1`] = `
+"<!DOCTYPE html>
+<html lang=\\"en\\">
+
+<head>
+    <meta charset=\\"UTF-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+    <meta http-equiv=\\"X-UA-Compatible\\" content=\\"ie=edge\\">
+    <link rel=\\"stylesheet\\" href=\\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css\\" integrity=\\"sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=\\"
+        crossorigin=\\"anonymous\\" />
+    <style>
+        html,
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1rem;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        body {
+            padding: 1rem;
+            font-size: 0.85rem;
+        }
+
+        div,
+        pre,
+        code {
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .overview {
+            display: flex;
+            font-size: 1.1rem;
+            padding: .2rem;
+        }
+
+        .overview .summary {
+            font-weight: bold;
+            color: #999;
+        }
+
+        .overview .controls {
+            margin-left: auto;
+        }
+
+        .btn-link {
+            background-color: Transparent;
+            background-repeat: no-repeat;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #999;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .module {
+            margin-top: 1rem;
+        }
+
+        .module .name {
+            padding: 0.5rem;
+            font-size: 1.25rem;
+            background-color: #eee;
+            border-bottom: 1px solid #aaa;
+            color: #999;
+        }
+
+        .pass {
+            color: #4f8a10;
+            background-color: #dff2bf;
+        }
+
+        .skip {
+            color: #9f6000;
+            background-color: #feefb3;
+        }
+
+        .fail {
+            color: #d8000c;
+            background-color: #ffbaba;
+        }
+
+        .hljs {
+            background: none;
+        }
+
+        .unit {
+            border-bottom: 1px solid #aaa;
+            padding: 0.4rem 0.5rem;
+        }
+
+        .unit header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <title>HTTE HTML Reporter</title>
+</head>
+
+<body>
+    <header class=\\"header\\">
+        <h1>Test Report</h1>
+    </header>
+    <div class=\\"overview\\">
+        <div class=\\"summary\\">
+            Summary: 4 tests in 0ms -- 2 passes / 1 failures
+            / 1 pendings
+        </div>
+        <div class=\\"controls\\">
+            <button id=\\"btn-toogle-display\\" class=\\"btn-link\\" title=\\"show/hidden unit data\\">expand</button>
+            <button id=\\"btn-switch-format\\" class=\\"btn-link\\" title=\\"switch format between yaml and json\\">yaml</button>
+        </div>
+    </div>
+    
+    <div class=\\"module\\">
+         
+        <div class=\\"name\\">module1</div>
+        
+        <div class=\\"unit pass\\">
+            <header>
+                <div class=\\"describes\\">root / grp1 / describe1</div>
+                
+                <div class=\\"state\\">passed in 0ms</div>
+                  
+            </header>
+            
+            <div class=\\"data hidden\\">
+                <pre>
+                    <code class=\\"json\\">{
+  \\"req\\": {
+    \\"url\\": \\"/p1\\",
+    \\"body\\": \\"req1\\"
+  },
+  \\"res\\": {
+    \\"body\\": \\"res1\\"
+  }
+}</code>
+                    <code class=\\"yaml hidden\\">req:
+  url: /p1
+  body: req1
+res:
+  body: res1
+</code>
+                </pre>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class=\\"module\\">
+         
+        <div class=\\"name\\">module2</div>
+        
+        <div class=\\"unit skip\\">
+            <header>
+                <div class=\\"describes\\">root / grp2 / describe2</div>
+                 
+                <div class=\\"state\\">pending</div>
+                 
+            </header>
+            
+            <div class=\\"data hidden\\">
+                <pre>
+                    <code class=\\"json\\">{
+  \\"req\\": {
+    \\"url\\": \\"/p2\\",
+    \\"body\\": \\"req2\\"
+  }
+}</code>
+                    <code class=\\"yaml hidden\\">req:
+  url: /p2
+  body: req2
+</code>
+                </pre>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class=\\"module\\">
+         
+        <div class=\\"name\\">module3</div>
+        
+        <div class=\\"unit pass\\">
+            <header>
+                <div class=\\"describes\\">root / grp3 / describe3</div>
+                
+                <div class=\\"state\\">passed in 0ms</div>
+                  
+            </header>
+            
+            <div class=\\"data hidden\\">
+                <pre>
+                    <code class=\\"json\\">{
+  \\"req\\": {
+    \\"url\\": \\"/p3\\",
+    \\"body\\": \\"req3\\"
+  },
+  \\"res\\": {
+    \\"body\\": \\"res3\\"
+  }
+}</code>
+                    <code class=\\"yaml hidden\\">req:
+  url: /p3
+  body: req3
+res:
+  body: res3
+</code>
+                </pre>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class=\\"module\\">
+         
+        <div class=\\"name\\">module4</div>
+        
+        <div class=\\"unit fail\\">
+            <header>
+                <div class=\\"describes\\">root / grp4 / describe4</div>
+                  
+                <div class=\\"state\\">failed</div>
+                
+            </header>
+            
+            <div class=\\"errorinfo\\">at req->body, throw error: err4</div>
+            
+            <div class=\\"data hidden\\">
+                <pre>
+                    <code class=\\"json\\">{
+  \\"req\\": {
+    \\"url\\": \\"/p4\\",
+    \\"body\\": \\"req4\\"
+  }
+}</code>
+                    <code class=\\"yaml hidden\\">req:
+  url: /p4
+  body: req4
+</code>
+                </pre>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script src=\\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js\\" integrity=\\"sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=\\"
+        crossorigin=\\"anonymous\\"></script>
+    <script src=\\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js\\" integrity=\\"sha256-KPdGtw3AdDen/v6+9ue/V3m+9C2lpNiuirroLsHrJZM=\\"
+        crossorigin=\\"anonymous\\"></script>
+    <script src=\\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js\\" integrity=\\"sha256-tvm0lHsuUZcOfj/0C9xJTU4OQx5KpUgxUcAXLX5kvwA=\\"
+        crossorigin=\\"anonymous\\"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+        (function () {
+            let $btnToogleDisplay = document.getElementById('btn-toogle-display');
+            let $btnSwitchFormat = document.getElementById('btn-switch-format');
+            let $unitDataDivs = document.querySelectorAll('.data');
+            let $jsonDivs = document.querySelectorAll('.data .json');
+            let $yamlDivs = document.querySelectorAll('.data .yaml');
+            let isJSON = true;
+            let isDisplay = false;
+
+            $btnToogleDisplay.addEventListener('click', toggleDisplay);
+
+            $btnSwitchFormat.addEventListener('click', function () {
+                if (!isDisplay) {
+                    toggleDisplay();
+                }
+                switchFormat()
+            });
+            function toggleDisplay() {
+                isDisplay = !isDisplay;
+                $unitDataDivs.forEach(function ($el) {
+                    $el.classList.toggle('hidden');
+                });
+                $btnToogleDisplay.textContent = isDisplay ? 'collpase' : 'expand';
+            }
+            function switchFormat() {
+                isJSON = !isJSON;
+                $jsonDivs.forEach(function ($el) {
+                    $el.classList.toggle('hidden');
+                });
+                $yamlDivs.forEach(function ($el) {
+                    $el.classList.toggle('hidden');
+                });
+                $btnSwitchFormat.textContent = isJSON ? 'yaml' : 'json';
+            }
+        }());
+    </script>
+</body>
+
+</html>"
+`;

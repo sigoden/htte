@@ -1,0 +1,36 @@
+- describe: all comments for article
+  includes: listCommentsForActicle
+  req:
+    headers:
+      Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
+    params:
+      slug: !$query article.createArticleTrainDragon.res.body.article.slug
+  res:
+    body:
+      comments: []
+- describe: create comments
+  includes: createComment
+  name: createCommentTrainDragon
+  req:
+    headers:
+      Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
+    params:
+      slug: !$query article.createArticleTrainDragon.res.body.article.slug
+    body:
+      comment:
+        body: Thank you so much!
+  res:
+    body:
+      comment:
+        id: !@exist
+        body: !@query req.body.comment.body
+        createdAt: !@exist
+        author: !@exist
+- describe: delete comments
+  includes: deleteComment
+  req:
+    headers:
+      Authorization: !$concat ['Token', ' ', !$query auth.loginJohn.res.body.user.token]
+    params:
+      slug: !$query article.createArticleTrainDragon.res.body.article.slug
+      id: !$query createCommentTrainDragon.res.body.comment.id

@@ -1,0 +1,47 @@
+- describe: generate random str
+  req:
+    body:
+      v: !$randstr
+  res:
+    body:
+      v: !@regexp \w{1,62}
+
+- describe: generate random str with length 10
+  req:
+    body:
+      v: !$randstr 10
+  res:
+    body:
+      v: !@regexp \w{10}
+
+- describe: generate random str contains only A-Z
+  req:
+    body:
+      v: !$randstr '6:u'
+  res:
+    body:
+      v: !@regexp '[A-Z]{6}'
+
+- describe: generate random str contains only a-z
+  req:
+    body:
+      v: !$randstr '6:l'
+  res:
+    body:
+      v: !@regexp '[a-z]{6}'
+
+- describe: generate random str contains only 0-9
+  req:
+    body:
+      v: !$randstr '6:n'
+  res:
+    body:
+      v: !@regexp '[0-9]{6}'
+
+- describe: generate random str contains only a-z0-9
+  req:
+    body:
+      v: !$randstr '6:nl'
+  res:
+    body:
+      v: !@regexp '[a-z0-9]{6}'

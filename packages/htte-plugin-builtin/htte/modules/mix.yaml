@@ -1,0 +1,28 @@
+- describe: prepare data
+  name: u1
+  req:
+    body:
+      v: 2
+- describe: use resolver query
+  req:
+    body:
+      v: 2
+  res:
+    body:
+      v: !$query req.body.v
+- describe: use differ query
+  req:
+    body:
+      v: 2
+  res:
+    body:
+      v: !@query req.body.v
+- describe: emabed in differ args
+  req:
+    body:
+      v: 2
+  res:
+    body:
+      v: !@compare
+        op: eq
+        value: !$query req.body.v

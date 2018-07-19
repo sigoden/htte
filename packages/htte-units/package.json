@@ -1,0 +1,31 @@
+{
+  "name": "htte-units",
+  "version": "0.4.0",
+  "description": "utils for htte to parse units",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://github.com/sigoden/htte#readme",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
+  "dependencies": {
+    "htte-errors": "^0.4.0",
+    "htte-schema-validator": "^0.4.0",
+    "htte-utils": "^0.4.0",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.10"
+  }
+}

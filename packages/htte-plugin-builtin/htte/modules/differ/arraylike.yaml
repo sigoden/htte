@@ -1,0 +1,10 @@
+- describe: diff array by see array as arraylike object
+  req:
+    body:
+    - 1
+    - 2
+    - 3
+  res:
+    body: !@arraylike
+      length: 3
+      1: 2

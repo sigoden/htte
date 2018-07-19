@@ -1,0 +1,30 @@
+{
+  "name": "htte-reporter-html",
+  "version": "0.4.0",
+  "description": "html reporter for htte",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "htte-reporter",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://github.com/sigoden/htte/tree/master/packages/htte-reporter-html#readme",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte/tree/master/packages/htte-reporter-html"
+  },
+  "dependencies": {
+    "dot": "^1.1.2",
+    "js-yaml": "^3.12.0",
+    "ms": "^2.1.1"
+  }
+}

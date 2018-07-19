@@ -1,0 +1,29 @@
+{
+  "name": "htte-runner",
+  "version": "0.4.0",
+  "description": "runner for htte",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://github.com/sigoden/htte#readme",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10",
+    "htte-context": "^0.4.0",
+    "htte-errors": "^0.4.0"
+  }
+}

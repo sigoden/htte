@@ -1,0 +1,27 @@
+{
+  "name": "htte-query",
+  "version": "0.4.0",
+  "description": "query utils for htte",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://github.com/sigoden/htte#readme",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte.git"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
+}

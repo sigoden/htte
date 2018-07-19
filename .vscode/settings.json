@@ -1,0 +1,27 @@
+{
+  "prettier.eslintIntegration": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
+  },
+  "yaml.customTags": [
+    "!@and sequence",
+    "!@array sequence",
+    "!@arraylike mapping",
+    "!@compare mapping",
+    "!@exist",
+    "!@object mapping",
+    "!@or sequence",
+    "!@query",
+    "!@range sequence",
+    "!@rangetime sequence",
+    "!@regexp",
+    "!@trycatch mapping",
+    "!$concat sequence",
+    "!$query",
+    "!$randnum sequence",
+    "!$randstr",
+    "!$time",
+    "!$convert mapping"
+  ]
+}

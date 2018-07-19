@@ -1,0 +1,25 @@
+{
+  "name": "htte-client-echo",
+  "version": "0.4.0",
+  "description": "echo client plugin for htte",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "htte",
+    "htte-client",
+    "http",
+    "declartive",
+    "test",
+    "testing",
+    "ddt"
+  ],
+  "homepage": "https://github.com/sigoden/htte/tree/master/packages/htte-client-echo#readme",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sigoden/htte/tree/master/packages/htte-client-echo"
+  }
+}

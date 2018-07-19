@@ -1,0 +1,5 @@
+- describe: concat array to string
+  req:
+    body: !$concat ['a', 'b', 'c']
+  res:
+    body: abc
