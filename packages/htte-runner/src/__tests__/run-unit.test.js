@@ -97,7 +97,8 @@ describe('run-unit', function() {
     runUnit(unit)(session, clients, emitter).catch(function(err) {
       expect(err).toBeInstanceOf(ContextError);
       expect(err.message).toBe('diff properties, -- key');
-      expect(unit.session).toEqual({ err, duration: 0, req: { body: {} }, state: 'fail', res: { body: { key: 'v' } } });
+      expect(unit.session.state).toBe('fail');
+      expect(unit.session.res).toEqual({ body: { key: 'v' } });
       done();
     });
   });
