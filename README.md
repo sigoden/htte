@@ -447,13 +447,19 @@ clients:                     # 配置可用客户端。省略将采用默认配�
 - name: http                   # 服务名
   pkg: htte-client-http        # 包名
   options:                     # 客户端扩展选项，由客户端提供，请查阅客户端文档填写。
-reporters:                   # 配置启用的报告生成器。省略采用默认配置，即 {pkg: 'htte-reporter-cli', options: {}}
-- pkg: htte-reporter-cli       # 包名
-  options:                     # 报告生成器扩展选项，由报告生成器提供，请查阅报告生成器文档填写。
 plugins:                     # 配置安装的插件集。省略将采用默认配置，即 {pkg: 'htte-plugin-builtin', options: {}}
-- pkg: htte-plugin-builtin     # 包名
+- name: ns                     # 插件名称空间，插件标签名要用到 如'!@ns/name'
+  pkg: htte-plugin-builtin     # 包名
   options:                   # 配置插件集选项，由插件集提供，请查阅插件集文档填写。
+reporters:                   # 配置启用的报告生成器。省略采用默认配置，即 {pkg: 'htte-reporter-cli', options: {}}
+- name: cli                    # 报告生成器
+  pkg: htte-reporter-cli       # 包名
+  options:                     # 报告生成器扩展选项，由报告生成器提供，请查阅报告生成器文档填写。
 defines:                     # 定义宏
+  <name>:                      # 宏名
+    client:                    # 接口客户端/协议
+    req:                       # 
+    res:
 ```
 
 ### 配置补丁
@@ -473,12 +479,13 @@ defines:                     # 定义宏
 
 ## 测试文档
 
-测试单元：
+测试单元是 HTTE 的基本单位。其选项如下。
+
 ```yaml
 - describe: unit   # 定义一个测试单元
   name: u1         # 测试名，方便 `!$query` 和 `!@query` 引用
   client: http     # 指定使用的客户端
-  includes: api    # 引用宏
+  includes: api    # 引用宏，可以接数组引用多个宏
   metadata:        # 元标签，HTTE 引擎专用数据
     skip: true     # 跳过这条测试
     debug: true    # 报告时打印的请求和响应数据详情
@@ -487,13 +494,14 @@ defines:                     # 定义宏
   res:             # 响应，查阅对应客户端扩展的文档填写
 ```
 
-测试组:
+有时一项功能测试需要多个测试单元配合才能完成。为了表示这种组合关系，HTTE 引入了组的概念。
+
 ```yaml
 - describe: group  # 定义一个测试组
-  defines:         # 定义一个宏
+  defines:         # 定义一个宏，与配置文件一致，不过作用域仅限组内
   units:           # 子元素 
   - describe: t1     # 组嵌套组
-    units: 
+    units: []     
   - describe: t2     # 测试单元
     req:
 ```
