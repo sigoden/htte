@@ -3,7 +3,6 @@ git:
 sudo: false
 language: node_js
 node_js:
- - '10'
  - '8'
  - '6'
 
@@ -18,11 +17,11 @@ before_install:
   - npm config set loglevel warn
   - npm install --global npm@latest
 
-install: npm ci
+install: npm install
 
 before_script:
-  - git config --global user.email test@example.com
-  - git config --global user.name "Tester McPerson"
+  - git config --global user.email sigoden@gmail.com
+  - git config --global user.name "Sigoden Huang"
   - npm run bootstrap
 
 script: npm run test
