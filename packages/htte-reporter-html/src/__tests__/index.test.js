@@ -18,6 +18,8 @@ describe('reporter-html', function() {
     emitter.emit('start', { units });
     emitter.emit('done');
     let html = fs.readFileSync(path.resolve(htte.baseDir, options.output), 'utf8');
+    // summary duration will be 1ms in slow match, so we ignore it in snapshot
+    html = html.replace(/\dms --/, '0ms --');
     expect(html).toMatchSnapshot();
   });
 });
