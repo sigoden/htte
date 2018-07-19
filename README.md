@@ -43,22 +43,8 @@ modules:
 - 编写测试文档文件 `modules/auth.yaml`
 
 ```yaml
-- describe: 注册用户john
-  req:
-    url: https://htte-realworld.herokuapp.com/api/users
-    method: post
-    body:
-      user:
-        email: john@jacob.com
-        password: johnnyjacob
-        username: johnjacob
-  res:
-    body:
-      user: 
-        email: john@jacob.com
-        username: johnjacob
-        token: !@exist string
 - describe: john登录
+  name: loginJohn
   req:
     url: https://htte-realworld.herokuapp.com/api/users/login
     method: post
@@ -71,7 +57,18 @@ modules:
       user:
         email: john@jacob.com
         username: johnjacob
-        token: !@exist string
+        token: !@exist
+- describe: john更改用户名
+  includes: updateUser
+  req:
+    headers:
+      Authorization: !$concat ['Bearer', ' ', !$query loginJohn.res.body.user.token]
+    body:
+      user:
+        username: johnjacobII
+  res:
+    body: !@object
+      username: johnjacobII
 ```
 
 - 执行测试
