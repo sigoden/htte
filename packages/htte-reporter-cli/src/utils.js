@@ -4,6 +4,7 @@ const isatty = tty.isatty(1) && tty.isatty(2);
 const ms = require('ms');
 const { sprintf } = require('sprintf-js');
 const yaml = require('js-yaml');
+const readline = require('readline');
 
 function print() {
   let string = arguments[0];
@@ -175,7 +176,8 @@ exports.speed = function(duration, basis) {
 exports.spinner = function(print, interval) {
   let i = 0;
   let handler = setInterval(function() {
-    process.stdout.cursorTo(0);
+    // node-v6 does not support process.stdout.cursorTo
+    readline.cursorTo(process.stdout, 0);
     i = (i + 1) % exports.spinnerMarks.length;
     process.stdout.write(print(exports.spinnerMarks[i]));
   }, exports.spinnerInterval);
