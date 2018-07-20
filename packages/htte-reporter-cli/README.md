@@ -15,4 +15,4 @@
 
 ## 屏幕快照
 
-![snapshot](images/snapshot.png)
+![snapshot](https://raw.githubusercontent.com/sigoden/htte/master/packages/htte-reporter-cli/images/snapshot.png)
