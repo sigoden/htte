@@ -106,7 +106,7 @@ function listDebugs(units) {
   print();
   units
     .filter(function(unit) {
-      return !unit.session.err && unit.session.state !== 'skip' && unit.metadata.debug;
+      return unit.session.state === 'pass' && unit.metadata.debug;
     })
     .forEach(function(unit, i) {
       let title = [unit.ctx.module].concat(unit.ctx.groups, [unit.describe]).join('-> ');
