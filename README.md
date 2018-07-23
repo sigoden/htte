@@ -6,39 +6,68 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-文档就是测试。
 
 ![htte-run-realworld](site/images/realworld.gif)
 
 ## 快速开始
 
-- 安装 HTTE 命令行
+### 安装 HTTE 命令行
 
 ```
 npm i htte-cli -g
 ```
 
-- 编写测试文件，可以参考[示例代码](examples/realworld);
+### 编写测试
 
-```
-├── htte.yaml
-└── modules
-    ├── afterall.yaml
-    ├── article.yaml
-    ├── auth.yaml
-    ├── beforeall.yaml
-    ├── comment.yaml
-    ├── profile.yaml
-    └── tag.yaml
+编写配置 `config.yaml`
+```yaml
+modules:
+- echo
 ```
 
-- 运行测试
+编写测试 `modules/echo.yaml`
+```yaml
+- describe: echo get
+  req:
+    url: https://postman-echo.com/get
+    query:
+      foo1: bar1
+      foo2: bar2
+  res:
+    body:
+      args:
+        foo1: bar1
+        foo2: bar2
+      headers: !@exist object
+      url: https://postman-echo.com/get?foo1=bar1&foo2=bar2
+- describe: echo post
+  req:
+    url: https://postman-echo.com/post
+    method: post
+    body:
+      foo1: bar1
+      foo2: bar2
+  res:
+    body: !@object
+      json:
+        foo1: bar1
+        foo2: bar2
+```
+
+### 运行测试
 
 ```
-htte examples/realworld/htte.yaml
+htte config.yaml
+```
+执行结果
+```
+✔  echo get (1s)
+✔  echo post (1s)
+
+2 passed (2s)
 ```
 
-## 开发背景
+## 初衷
 
 为什么接口需要测试？
 
