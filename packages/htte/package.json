@@ -1,6 +1,6 @@
 {
   "name": "htte",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "htte core",
   "main": "src/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "htte-client-http": "^0.4.0",
     "htte-errors": "^0.4.0",
     "htte-plugin-builtin": "^0.4.0",
-    "htte-reporter-cli": "^0.4.3",
+    "htte-reporter-cli": "^0.4.4",
     "htte-runner": "^0.4.0",
     "htte-schema-validator": "^0.4.0",
     "htte-session": "^0.4.0",
