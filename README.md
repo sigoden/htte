@@ -6,7 +6,7 @@
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 
-文档就是测试，零代码。
+文档就是测试。
 
 ![htte-run-realworld](site/images/realworld.gif)
 
