@@ -10,8 +10,7 @@ const defaultExts = {
 
 module.exports = function(config, htteConfig) {
   return Object.keys(defaultExts).reduce(function(acc, type) {
-    let dir = path.resolve(config.baseDir, type);
-    acc[type] = load(type, dir, config[type] || defaultExts[type], _.clone(htteConfig));
+    acc[type] = load(type, config.baseDir, config[type] || defaultExts[type], _.clone(htteConfig));
     return acc;
   }, {});
 };

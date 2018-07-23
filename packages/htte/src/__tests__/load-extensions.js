@@ -12,9 +12,9 @@ describe('loadExtensions', function() {
   test('load use extensions', function() {
     let config = {
       baseDir: path.resolve(__dirname, './fixtures'),
-      clients: [{ name: 'c', pkg: 'rpc', options: {} }],
-      reporters: [{ name: 'r', pkg: 'html', options: {} }],
-      plugins: [{ name: 'p', pkg: 'faker', options: {} }]
+      clients: [{ name: 'c', pkg: 'clients/rpc', options: {} }],
+      reporters: [{ name: 'r', pkg: 'reporters/html', options: {} }],
+      plugins: [{ name: 'p', pkg: 'plugins/faker', options: {} }]
     };
     let { clients, reporters, plugins } = loadExtensions(config, {});
     expect(clients['c']).toBeDefined();
