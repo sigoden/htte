@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
+const { ContextError } = require('htte-errors');
 
 function resolve(context, data) {
   switch (utils.type(data)) {
@@ -16,6 +17,9 @@ function resolve(context, data) {
       try {
         return data(context);
       } catch (err) {
+        if (err instanceof ContextError) {
+          throw err;
+        }
         context.throw(err.message);
       }
     case 'array':
