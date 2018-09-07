@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const utils = require('htte-utils');
+const { ContextError } = require('htte-errors');
 
 function diff(context, expected, actual, strict = true) {
   switch (utils.type(expected)) {
@@ -18,6 +19,9 @@ function diff(context, expected, actual, strict = true) {
       try {
         expected(context, actual);
       } catch (err) {
+        if (err instanceof ContextError) {
+          throw err;
+        }
         context.throw(err.message);
       }
       break;
