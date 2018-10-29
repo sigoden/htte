@@ -1,9 +1,9 @@
 clients:
 - name: echo
-  pkg: ../../../htte-client-echo/src
+  pkg: ../../htte-client-echo/src
 plugins:
 - name: ''
-  pkg: '../../src'
+  pkg: '../src'
 modules:
 - differ/and
 - differ/array

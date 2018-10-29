@@ -55,7 +55,7 @@
 数字大小比对。判断实际值 \<op\> 标签值，可选的操作 \<op\> 有: gt, gte, lt, lte, ne, eq
 
 ```yaml
-- describe: asset actual gt literal
+- describe: assert actual gt literal
   req:
     body: 3
   res:
@@ -116,7 +116,7 @@
 带上 basis 范围: `min <= actual - basis < max`
 
 ```yaml
-- describe: asset value in range
+- describe: assert value in range
   req:
     body:
       v1: 3
@@ -126,7 +126,7 @@
       v1: !@range [3, 3.000001]
       v2: !@range [-3, -2.999999]
 
-- describe: asset value minus basis value in range
+- describe: assert value minus basis value in range
   req:
     body:
       v1: 3
@@ -146,7 +146,7 @@
 
 ```yaml
 
-- describe: asset time in range
+- describe: assert time in range
   req:
     body:
       v: '2018-07-16T03:26:17.000Z'
@@ -154,7 +154,7 @@
     body:
       v: !@rangetime [0, 3600.001, '2018-07-16T02:26:17.000Z']
 
-- describe: asset time in range with basis of now
+- describe: assert time in range with basis of now
   req:
     body:
       v: !$time 0
@@ -289,7 +289,7 @@
 
 生成随机字符串
 
-标签值规则: `<length>:<flag>`。`length` 代表生成字符串长度,`flag` 用来限定字符集，`n` 只用数字字符， `l` 只用小写字母，`u` 只用大小字母，彼此间可以组合， `nl` 或 `ln` 数字+小写。`nlu` 或缺省则标识字符集是数字+大小写字母
+标签值规则: `<length>:<flag>`。`length` 代表生成字符串长度,`flag` 用来限定字符集，`n` 只用数字字符， `l` 只用小写字母，`u` 只用大写字母，彼此间可以组合， `nl` 或 `ln` 数字+小写。`nlu` 或缺省则标识字符集是数字+大小写字母
 
 ```yaml
 - describe: generate random str

@@ -3,12 +3,17 @@ module.exports = function(options) {
     name: 'exist',
     kind: 'scalar',
     diff: function(context, literal, actual) {
-      if (typeof literal !== 'string' && literal !== null) context.throw('literal value must be string or null');
-      if (actual === undefined) context.throw('actual value do not exist');
-      if (literal === '' || literal === null) return;
-      if (actual === null && literal === 'null') return;
-      if (Array.isArray(actual) & (literal === 'array')) return;
-      if (typeof actual !== literal) context.throw(`actual value is not ${literal}`);
+      if (typeof literal !== 'string' && typeof literal !== 'null') {
+        context.throw('literal value must be string if exists');
+      }
+      if (actual === undefined) context.throw('actual value does not exist');
+      const shouldCheckType = literal !== '' && literal !== null;
+      if (!shouldCheckType) return;
+      if (typeof actual !== literal) {
+        if (Array.isArray(actual) && literal === 'array') return;
+        if (actual === null && literal === 'null') return;
+        context.throw(`actual value is not ${literal}`);
+      }
     }
   };
 };

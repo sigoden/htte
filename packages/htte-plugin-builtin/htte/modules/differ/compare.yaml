@@ -1,4 +1,4 @@
-- describe: asset actual gt literal
+- describe: assert actual gt literal
   req:
     body: 3
   res:

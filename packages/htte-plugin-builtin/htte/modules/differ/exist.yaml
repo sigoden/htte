@@ -16,8 +16,7 @@
       e5: !@exist string
       e6: !@exist array
 
-
-- describe: asset property must type
+- describe: assert property must type
   req:
     body:
       value: {}

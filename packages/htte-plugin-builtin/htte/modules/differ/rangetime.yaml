@@ -1,4 +1,4 @@
-- describe: asset time in range
+- describe: assert time in range
   req:
     body:
       v: '2018-07-16T03:26:17.000Z'
@@ -6,7 +6,7 @@
     body:
       v: !@rangetime [0, 3600.001, '2018-07-16T02:26:17.000Z']
 
-- describe: asset time in range with basis of now
+- describe: assert time in range with basis of now
   req:
     body:
       v: !$time 0
