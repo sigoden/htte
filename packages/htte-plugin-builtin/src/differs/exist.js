@@ -3,7 +3,7 @@ module.exports = function(options) {
     name: 'exist',
     kind: 'scalar',
     diff: function(context, literal, actual) {
-      if (typeof literal !== 'string' && typeof literal !== 'null') {
+      if (literal !== null && typeof literal !== 'string') {
         context.throw('literal value must be string if exists');
       }
       if (actual === undefined) context.throw('actual value does not exist');
