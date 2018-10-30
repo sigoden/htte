@@ -25,12 +25,12 @@ describe('trimYamlExt', function() {
 describe('nameFromPath', function() {
   test('create variable name from path string', function() {
     expect(utils.nameFromPath('name')).toBe('name');
-    expect(utils.nameFromPath('a/b/c')).toBe('abc');
+    expect(utils.nameFromPath('a/b/c')).toBe('a_b_c');
     let ascii = '';
     for (let i = 0; i < 128; i++) {
       ascii += String.fromCodePoint(i);
     }
-    expect(utils.nameFromPath(ascii)).toBe('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+    expect(utils.nameFromPath(ascii)).toBe('_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
   });
 });
 

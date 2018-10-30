@@ -8,12 +8,12 @@ const yaml = require('js-yaml');
 
 module.exports = function load(config, schema) {
   let modules = {};
-  let dir = path.resolve(config.baseDir, 'modules');
+  const modulesRootDir = getRootDir(config.modules);
   for (let item of config.modules) {
     item = utils.trimYamlExt(item);
-    let name = utils.nameFromPath(item);
+    let name = utils.nameFromPath(item.slice(modulesRootDir.length));
     try {
-      let file = resolveYaml(dir, item.replace(/\//g, path.sep));
+      let file = resolveYaml(config.baseDir, item.replace(/\//g, path.sep));
       let content = fs.readFileSync(file, 'utf8');
       modules[name] = yaml.load(content, { schema });
     } catch (err) {
@@ -37,4 +37,18 @@ function resolveYaml(dir, name) {
     return file;
   }
   throw new Error('cannot find yaml file');
+}
+
+function getRootDir(paths) {
+  if (!paths.length) return '';
+  const sampleSplitPath = paths[0].split('/');
+  let rootDir = '';
+  for (let i = 0; i < sampleSplitPath.length; i++) {
+    const dir = rootDir + sampleSplitPath[i] + '/';
+    if (!paths.every(p => p.slice(0, dir.length) === dir)) {
+      break;
+    }
+    rootDir = dir;
+  }
+  return rootDir;
 }

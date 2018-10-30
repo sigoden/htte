@@ -15,13 +15,21 @@ describe('load', function() {
     expect(modules.m2).toBeDefined();
     expect(modules.m2).toBeDefined();
   });
-  test('load subdir module', function() {
+  test('load subdir module only', function() {
     let config = {
       baseDir: path.resolve(__dirname, './fixtures'),
       modules: ['subdir/m1']
     };
     let modules = load(config, shcmea);
-    expect(modules.subdirm1).toEqual([{ client: 'http', describe: 'test1', req: { url: '/login' } }]);
+    expect(modules.m1).toEqual([{ client: 'http', describe: 'test1', req: { url: '/login' } }]);
+  });
+  test('load with subdir module', function() {
+    let config = {
+      baseDir: path.resolve(__dirname, './fixtures'),
+      modules: ['m1', 'subdir/m1']
+    };
+    let modules = load(config, shcmea);
+    expect(Object.keys(modules)).toEqual(['m1', 'subdir_m1']);
   });
   test('load failed', function() {
     let config = {
@@ -33,9 +41,9 @@ describe('load', function() {
   test('validate failed', function() {
     let config = {
       baseDir: path.resolve(__dirname, './fixtures'),
-      modules: ['minvalid']
+      modules: ['invalid']
     };
-    expect(() => load(config, shcmea)).toThrow(`validate modules minvalid throw errors:
+    expect(() => load(config, shcmea)).toThrow(`validate modules invalid throw errors:
   [0].req should be object`);
   });
 });
