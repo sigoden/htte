@@ -1,6 +1,6 @@
 {
   "name": "htte-client-http",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "http client plugin for htte",
   "main": "src/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "htte-errors": "^0.4.0",
-    "htte-utils": "^0.4.0",
+    "htte-utils": "^0.5.0",
     "lodash": "^4.17.10"
   }
 }

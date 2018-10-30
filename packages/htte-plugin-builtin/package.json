@@ -1,6 +1,6 @@
 {
   "name": "htte-plugin-builtin",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "htte plugin builtin",
   "main": "src/index.js",
   "scripts": {

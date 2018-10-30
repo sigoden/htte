@@ -1,6 +1,6 @@
 {
   "name": "htte-cli",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "cli for htte",
   "main": "index.js",
   "bin": {
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "commander": "^2.16.0",
-    "htte": "^0.4.4",
+    "htte": "^0.5.0",
     "update-notifier": "^2.5.0"
   }
 }

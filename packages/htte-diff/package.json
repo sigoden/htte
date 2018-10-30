@@ -1,6 +1,6 @@
 {
   "name": "htte-diff",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "diff utils for htte",
   "main": "src/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "htte-errors": "^0.4.0",
-    "htte-utils": "^0.4.0",
+    "htte-utils": "^0.5.0",
     "lodash": "^4.17.10"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "htte-session",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "session manager for htte",
   "main": "src/index.js",
   "scripts": {
@@ -25,6 +25,6 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "htte-utils": "^0.4.0"
+    "htte-utils": "^0.5.0"
   }
 }

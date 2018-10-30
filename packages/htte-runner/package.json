@@ -1,6 +1,6 @@
 {
   "name": "htte-runner",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "runner for htte",
   "main": "src/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "htte-context": "^0.4.0",
+    "htte-context": "^0.5.0",
     "htte-errors": "^0.4.0",
     "lodash": "^4.17.10"
   }

@@ -1,6 +1,6 @@
 {
   "name": "htte-context",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "context for htte",
   "main": "src/index.js",
   "scripts": {
@@ -22,9 +22,9 @@
     "url": "https://github.com/sigoden/htte.git"
   },
   "dependencies": {
-    "htte-diff": "^0.4.0",
+    "htte-diff": "^0.5.0",
     "htte-errors": "^0.4.0",
     "htte-query": "^0.4.0",
-    "htte-resolve": "^0.4.0"
+    "htte-resolve": "^0.5.0"
   }
 }
