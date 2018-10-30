@@ -5,13 +5,13 @@ clients:
     baseUrl: https://htte-realworld.herokuapp.com/api
     timeout: 10000
 modules:
-- beforeall
-- auth
-- profile
-- article
-- comment
-- tag
-- afterall
+- modules/beforeall
+- modules/auth
+- modules/profile
+- modules/article
+- modules/comment
+- modules/tag
+- modules/afterall
 defines:
   register:
     req:

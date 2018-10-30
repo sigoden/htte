@@ -25,7 +25,7 @@ modules:
 - echo
 ```
 
-编写测试 `modules/echo.yaml`
+编写测试 `echo.yaml`
 ```yaml
 - describe: echo get
   req:
@@ -462,7 +462,7 @@ defines:
 可选的配置项：
 
 - `session`: 指定持久化会话文件存储位置，一般情况下不用填写，HTTE 会在操作系统暂存文件夹下生成一个项目唯一的临时文件存储会话
-- `modules`: 提供测试模块文件列表。列表顺序对应执行顺序。HTTE 将以配置文件所在目录下的 `modules` 目录为当前目录查找并对应模块文件。
+- `modules`: 提供测试模块文件列表。列表顺序对应执行顺序。HTTE 将查找并加载模块文件中的测试用例。
 - `clients`: 配置客户端扩展
 - `plugins`: 配置插件
 - `reporters`: 配置报告生成器扩展

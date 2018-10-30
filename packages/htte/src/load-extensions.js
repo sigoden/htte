@@ -17,10 +17,10 @@ module.exports = function(config, htteConfig) {
 
 function load(type, dir, exts, htteConfig) {
   let result = {};
-  exts.forEach(function(ext, index) {
+  exts.forEach(function(ext) {
     let initExtension = tryRequireExtension(dir, ext.pkg);
     if (!initExtension) {
-      throw new Error(`${type} ${ext.pkg} cannot be loaded, maybe run "npm install ${ext.pkg} -g" to install it`);
+      throw new Error(`${type} ${ext.pkg} cannot be loaded`);
     }
     htteConfig.name = ext.name;
     result[ext.name] = initExtension(htteConfig, ext.options);
