@@ -35,10 +35,10 @@
 
 ## !@arrylike mapping sequence
 
-从数组对象的角度校验实际值数组。在只关注数组长度和某些特定元素的情况下很有用。
+校验数组长度和特定索引下元素
 
 ```yaml
-- describe: diff array by see array as arraylike object
+- describe: diff array length and the element at the index
   req:
     body:
     - 1
@@ -48,6 +48,36 @@
     body: !@arraylike
       length: 3
       1: 2
+```
+
+校验数组中存在元素满足 '?' 中的条件
+
+```yaml
+- describe: element exist
+  req:
+    body:
+    - 1
+    - 2
+    - 3
+  res:
+    body: !@arraylike
+      '?': 2
+```
+
+校验数组中的元素均满足 '*' 中的条件
+
+```yaml
+- describe: elements all pass
+  req:
+    body:
+    - 1
+    - 2
+    - 3
+  res:
+    body: !@arraylike
+      '*': !@compare
+        op: gt
+        value: 0
 ```
 
 ## !@compare mapping{op,value} scalar

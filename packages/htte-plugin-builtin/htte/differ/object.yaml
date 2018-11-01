@@ -9,7 +9,7 @@
         k1: a
       catch: 'res->body: diff properties, -- k2'
       
-- describe: use object plugin to diff key only interested
+- describe: use object plugin to diff keys only interested
   req:
     body:
       k1: a
@@ -17,3 +17,12 @@
   res:
     body: !@object
       k1: a
+
+- describe: use suffix '?' to mark value is optional
+  req:
+    body:
+      k1: a
+  res:
+    body: !@object
+      k1: a
+      k2?: b
