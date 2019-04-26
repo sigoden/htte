@@ -33,7 +33,7 @@
     - 3
 ```
 
-## !@arrylike mapping sequence
+## !@arraylike mapping sequence
 
 校验数组长度和特定索引下元素
 
