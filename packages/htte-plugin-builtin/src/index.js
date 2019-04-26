@@ -5,6 +5,7 @@ module.exports = function(htte, options = {}) {
     require('./differs/array')(opts),
     require('./differs/arraylike')(opts),
     require('./differs/compare')(opts),
+    require('./differs/eval')(opts),
     require('./differs/exist')(opts),
     require('./differs/object')(opts),
     require('./differs/or')(opts),
@@ -16,6 +17,7 @@ module.exports = function(htte, options = {}) {
 
     require('./resolvers/concat')(opts),
     require('./resolvers/convert')(opts),
+    require('./resolvers/eval')(opts),
     require('./resolvers/query')(opts),
     require('./resolvers/randnum')(opts),
     require('./resolvers/randstr')(opts),

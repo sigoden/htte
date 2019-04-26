@@ -94,6 +94,28 @@
       value: 2
 ```
 
+## !@eval mapping{js, args} *
+
+通过脚本比对结果
+
+```yaml
+- describe: compare range with eval
+  req:
+    body:
+      v1: !$range [1, 4]
+  res:
+    body:
+      v1: !@eval
+        js: >
+          $ = _ >= min && _ <= max
+        args:
+          max: 0
+          min: 4
+
+```
+
+`args` 中定义变量，`js` 中执行运算，`$` 是最终结果(bool)，`_`是需要断言的值。
+
 ## !@object mapping{op,value} mapping
 
 标签值是实际值的子集，则测试通过。
@@ -140,6 +162,8 @@
 
 ## !@range sequence[min, max, basis] scalar
 
+> 会在下一个版本废弃
+
 实际值在标签值定义的范围内，则测试通过。
 
 没用 basis 范围: `min <= actual < max`
@@ -168,6 +192,8 @@
 ```
 
 ## !@rangetime sequence[min, max, basis] scalar
+
+> 会在下一个版本废弃
 
 实际值时间在标签值定义的范围内，则测试通过。
 
@@ -280,6 +306,25 @@
     body: [3]
 ```
 
+## !$eval mapping{js, args}
+
+执行脚本获取结果
+
+```yaml
+- describe: eval
+  req:
+    body: !$eval
+      js: >
+        $ = a * b
+      args:
+        a = 3
+        b = 5
+  res:
+    body: 15 
+```
+
+`args` 中定义变量，`js` 中执行运算，`$` 是最终运算结果
+
 ## !$query scalar<string>
 
 引用标签值指向的数据
@@ -302,6 +347,8 @@
 ```
 
 ## !$randnum sequence[min, max]
+
+> 会在下一个版本废弃
 
 生成某个范围内的随机数
 
@@ -340,6 +387,8 @@
 ```
 
 ## !$time scalar<string>
+
+> 会在下一个版本废弃
 
 生成时间。
 

@@ -1,0 +1,12 @@
+- describe: compare range with eval
+  req:
+    body:
+      v1: !$range [1, 4]
+  res:
+    body:
+      v1: !@eval
+        js: >
+          $ = _ >= min && _ <= max
+        args:
+          max: 0
+          min: 4

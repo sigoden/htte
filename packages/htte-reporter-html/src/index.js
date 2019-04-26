@@ -31,35 +31,37 @@ function tidy(data) {
   let { startedAt, stopedAt, units } = data;
   let duration = ms(stopedAt.getTime() - startedAt.getTime());
   let summary = { passes: 0, skips: 0, failures: 0, all: 0 };
-  let tidiedUnits = units.filter(unit => unit.session.state).map(function(unit) {
-    let { state, err, req, res, duration } = unit.session;
-    let { groups, module } = unit.ctx;
-    summary.all++;
-    switch (unit.session.state) {
-      case 'fail':
-        summary.failures++;
-        break;
-      case 'pass':
-        summary.passes++;
-        break;
-      case 'skip':
-        summary.skips++;
-        break;
-    }
-    let tidiedUnit = {
-      state,
-      duration: ms(duration || 0),
-      describes: groups.concat(unit.describe).join(' / '),
-      module,
-      dataJSON: JSON.stringify({ req, res }, null, 2),
-      dataYAML: toYAML({ req, res })
-    };
-    if (err) {
-      let { parts, message } = err;
-      tidiedUnit.error = { parts: parts.join('->'), message };
-    }
-    return tidiedUnit;
-  });
+  let tidiedUnits = units
+    .filter(unit => unit.session.state)
+    .map(function(unit) {
+      let { state, err, req, res, duration } = unit.session;
+      let { groups, module } = unit.ctx;
+      summary.all++;
+      switch (unit.session.state) {
+        case 'fail':
+          summary.failures++;
+          break;
+        case 'pass':
+          summary.passes++;
+          break;
+        case 'skip':
+          summary.skips++;
+          break;
+      }
+      let tidiedUnit = {
+        state,
+        duration: ms(duration || 0),
+        describes: groups.concat(unit.describe).join(' / '),
+        module,
+        dataJSON: JSON.stringify({ req, res }, null, 2),
+        dataYAML: toYAML({ req, res })
+      };
+      if (err) {
+        let { parts, message } = err;
+        tidiedUnit.error = { parts: parts.join('->'), message };
+      }
+      return tidiedUnit;
+    });
 
   return { startedAt, stopedAt, duration, summary, modules: groupBy(tidiedUnits, u => u.module) };
 }
