@@ -4,8 +4,8 @@
       js: >
         $ = a * b
       args:
-        a = 3
-        b = 5
+        a: 3
+        b: 5
   res:
     body: 15 
 - describe: eval time
@@ -16,4 +16,4 @@
   res:
     body: !@eval
       js: >
-        $ = Date.now() - _ > 0 && Date.now() - _ < 1000
+        $ = Date.now() - _ > -1

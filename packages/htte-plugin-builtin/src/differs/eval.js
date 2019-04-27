@@ -1,3 +1,4 @@
+const vm = require('vm');
 const { getClass, beautifyVmError } = require('../helper');
 
 module.exports = function(options) {
@@ -6,15 +7,15 @@ module.exports = function(options) {
     kind: 'mapping',
     diff: function(context, literal, actual) {
       if (literal === null) context.throw('literal cannot be null');
-      let { js, args } = literal;
+      let { js, args = {} } = literal;
       if (typeof js !== 'string') {
-        return context.error('literal must be { js, args? }');
+        return context.throw('literal must be { js, args? }');
       }
       if (args === null) {
         args = {};
       }
       if (getClass(args) !== 'Object') {
-        return context.error('literal.args must be object');
+        return context.throw('literal.args must be object');
       }
       args.$ = true;
       args._ = actual;
@@ -23,11 +24,13 @@ module.exports = function(options) {
       try {
         script.runInContext(vmContext);
       } catch (err) {
-        return context.error('literal.js failed, ' + beautifyVmError(err));
+        return context.throw('literal.js failed, ' + beautifyVmError(err));
       }
+      console.log(args);
       if (!args.$) {
-        context.throw(`eval false`);
+        return context.throw(`eval false`);
       }
+      return true;
     }
   };
 };
