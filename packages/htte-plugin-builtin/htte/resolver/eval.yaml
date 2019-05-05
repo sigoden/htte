@@ -1,0 +1,19 @@
+- describe: eval math
+  req:
+    body: !$eval
+      js: >
+        $ = a * b
+      args:
+        a: 3
+        b: 5
+  res:
+    body: 15 
+- describe: eval time
+  req:
+    body: !$eval
+      js: >
+        $ = Date.now()
+  res:
+    body: !@eval
+      js: >
+        $ = Date.now() - _ > -1

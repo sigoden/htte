@@ -9,6 +9,7 @@ modules:
 - differ/array
 - differ/arraylike
 - differ/compare
+- differ/eval
 - differ/exist
 - differ/object
 - differ/or
@@ -18,6 +19,7 @@ modules:
 - differ/regexp
 - resolver/concat
 - resolver/convert
+- resolver/eval
 - resolver/query
 - resolver/randnum
 - resolver/randstr
