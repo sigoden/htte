@@ -20,6 +20,7 @@ function run({ session, clients, reporters, emitter, units, controls }) {
     return runUnit(unit);
   });
   let stop = false;
+  let isAllSuccess = true;
   return tasks
     .reduce(function(promise, task) {
       return promise.then(function() {
@@ -30,6 +31,7 @@ function run({ session, clients, reporters, emitter, units, controls }) {
             emitter.emit('doneUnit');
           })
           .catch(function(err) {
+            isAllSuccess = false;
             emitter.emit('errorUnit', err);
             if (controls.bail) stop = true;
           });
@@ -40,6 +42,7 @@ function run({ session, clients, reporters, emitter, units, controls }) {
       let [s, n] = process.hrtime(hrstart);
       let duration = s * 1000 + Math.round(n / 1000000);
       emitter.emit('done', { units, duration });
+      return isAllSuccess;
     });
 }
 

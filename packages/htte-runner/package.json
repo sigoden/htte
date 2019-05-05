@@ -1,6 +1,6 @@
 {
   "name": "htte-runner",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "runner for htte",
   "main": "src/index.js",
   "scripts": {

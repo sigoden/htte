@@ -24,12 +24,16 @@ try {
 } catch (err) {
   if (process.env.HTTE_DEBUG) {
     console.error(err);
-    return;
+  } else {
+    console.log();
+    console.log(`\u001b[31m${err.name}: ${err.message}\u001b[0m`);
+    console.log();
   }
-  console.log();
-  console.log(`\u001b[31m${err.name}: ${err.message}\u001b[0m`);
-  console.log();
   process.exit(1);
 }
 
-app.run(program);
+app.run(program).then(isAllSuccess => {
+  if (!isAllSuccess) {
+    process.exit(1);
+  }
+});
