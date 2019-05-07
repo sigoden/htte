@@ -20,7 +20,7 @@ const reqChecks = [
 ];
 
 module.exports = function init(htte, options = {}) {
-  options = _.merge(defaultOptions, options);
+  options = _.merge({}, defaultOptions, options);
   return function({ req, res }) {
     try {
       checkReqproperties(reqChecks, req);
