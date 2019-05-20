@@ -95,7 +95,7 @@ function listFailures(units) {
 function dump(obj, indents = '') {
   return yaml
     .safeDump(obj, { skipInvalid: true })
-    .split(os.EOL)
+    .split('\n')
     .map(function(line) {
       return indents + line;
     })
