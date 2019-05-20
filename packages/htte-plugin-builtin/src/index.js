@@ -1,5 +1,4 @@
-module.exports = function(htte, options = {}) {
-  let opts = {};
+module.exports = function(htte, opts = {}) {
   return [
     require('./differs/and')(opts),
     require('./differs/array')(opts),
@@ -18,6 +17,8 @@ module.exports = function(htte, options = {}) {
     require('./resolvers/concat')(opts),
     require('./resolvers/convert')(opts),
     require('./resolvers/eval')(opts),
+    require('./resolvers/mock')(opts),
+    require('./resolvers/moco')(opts),
     require('./resolvers/query')(opts),
     require('./resolvers/randnum')(opts),
     require('./resolvers/randstr')(opts),

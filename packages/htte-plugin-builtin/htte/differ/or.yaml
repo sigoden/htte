@@ -14,4 +14,4 @@
       try: !@or
         - !@compare {op: gt, value: 4}
         - !@compare {op: gt, value: 5}
-      catch: "res->body: res.body: actual dont gt literal\nres.body: actual dont gt literal"
+      catch: !@regexp "actual dont gt literal"

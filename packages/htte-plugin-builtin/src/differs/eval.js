@@ -26,7 +26,6 @@ module.exports = function(options) {
       } catch (err) {
         return context.throw('literal.js failed, ' + beautifyVmError(err));
       }
-      console.log(args);
       if (!args.$) {
         return context.throw(`eval false`);
       }

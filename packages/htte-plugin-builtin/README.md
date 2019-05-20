@@ -433,3 +433,58 @@
   res:
     body: !@rangetime [0, 0.01, '2018-07-09T05:00:00.000Z']
 ```
+
+## !$mock scalar
+
+使用 [mockjs](http://mockjs.com/) 生成数据
+
+```yaml
+- describe: mock data
+  req:
+    body:
+      color: !$mock '@hex'
+      natural: !$mock '@natural(10, 20)'
+  res:
+    body:
+      color: !$regexp #\d{6}
+      natural: !@and
+      - !@compare {op: gte, value: 10}
+      - !@compare {op: lt, value: 20}
+```
+
+`color` 值等同于 `Mock.hex()`, `natural` 值等同 `Mock.natural(10,20)`
+
+## !$mock/o mapping
+
+使用 [mockjs](http://mockjs.com/) 生成数据
+
+```yaml
+- describe: mock object
+  req:
+    body: !$moco
+      'list|1-10':
+        - 'id|+1': 1
+  res:
+    body:
+      list: !@arraylike
+        length: !@compare {op: lte, value: 10}
+        0:
+          id: 1
+```
+
+```yaml
+    body: !$moco
+      'list|1-10':
+        - 'id|+1': 1
+```
+
+等同于
+```js
+body = Mock.mock({
+    // 属性 list 的值是一个数组，其中含有 1 到 10 个元素
+    'list|1-10': [{
+        // 属性 id 是一个自增数，起始值为 1，每次增 1
+        'id|+1': 1
+    }]
+});
+```

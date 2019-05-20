@@ -20,6 +20,8 @@ modules:
 - resolver/concat
 - resolver/convert
 - resolver/eval
+- resolver/mock
+- resolver/moco
 - resolver/query
 - resolver/randnum
 - resolver/randstr

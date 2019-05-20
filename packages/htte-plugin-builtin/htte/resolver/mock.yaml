@@ -1,0 +1,11 @@
+- describe: mock scalar
+  req:
+    body:
+      color: !$mock '@hex'
+      natural: !$mock '@natural(10, 20)'
+  res:
+    body:
+      color: !@regexp '#\w{6}'
+      natural: !@and
+      - !@compare {op: gte, value: 10}
+      - !@compare {op: lte, value: 20}
