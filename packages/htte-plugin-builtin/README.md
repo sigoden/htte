@@ -160,65 +160,6 @@
       v1: !@query req.body.v1
 ```
 
-## !@range sequence[min, max, basis] scalar
-
-> 会在下一个版本废弃
-
-实际值在标签值定义的范围内，则测试通过。
-
-没用 basis 范围: `min <= actual < max`
-带上 basis 范围: `min <= actual - basis < max`
-
-```yaml
-- describe: assert value in range
-  req:
-    body:
-      v1: 3
-      v2: -3
-  res:
-    body:
-      v1: !@range [3, 3.000001]
-      v2: !@range [-3, -2.999999]
-
-- describe: assert value minus basis value in range
-  req:
-    body:
-      v1: 3
-      v2: -3
-  res:
-    body:
-      v1: !@range [0, 0.000001, 3]
-      v2: !@range [0, 0.000001, -3]
-```
-
-## !@rangetime sequence[min, max, basis] scalar
-
-> 会在下一个版本废弃
-
-实际值时间在标签值定义的范围内，则测试通过。
-
-没用 basis 范围: `min <= actual - now < max`
-带上 basis 范围: `min <= actual - basis < max`
-
-```yaml
-
-- describe: assert time in range
-  req:
-    body:
-      v: '2018-07-16T03:26:17.000Z'
-  res:
-    body:
-      v: !@rangetime [0, 3600.001, '2018-07-16T02:26:17.000Z']
-
-- describe: assert time in range with basis of now
-  req:
-    body:
-      v: !$time 0
-  res:
-    body:
-      v: !@rangetime [-0.01, 0.01]
-```
-
 ## !@regexp scalar<string> scalar
 
 实际值匹配正则，则测试通过。
@@ -346,22 +287,6 @@
       v2: !$query u1.req.body.c[0].d
 ```
 
-## !$randnum sequence[min, max]
-
-> 会在下一个版本废弃
-
-生成某个范围内的随机数
-
-```yaml
-- describe: generate random float between [min, max]
-  req:
-    body:
-      v: !$randnum [1, 5]
-  res:
-    body:
-      v: !@range [1, 5]
-```
-
 ## !$randstr scalar<string>
 
 生成随机字符串
@@ -386,54 +311,6 @@
       v: !@regexp '[a-z0-9]{6}'
 ```
 
-## !$time scalar<string>
-
-> 会在下一个版本废弃
-
-生成时间。
-
-标签值格式 `<timestring> <before|after>? <basis>`
-
-`timestring` 格式:
-> - ms, milli, millisecond, milliseconds - 毫秒
-> - s, sec, secs, second, seconds - 秒
-> - m, min, mins, minute, minutes - 分
-> - h, hr, hrs, hour, hours - 时
-> - d, day, days - 天
-> - w, week, weeks - 星期
-> - mon, mth, mths, month, months - 月
-> - y, yr, yrs, year, years - 年
-
-> 组合形式方式类似 `1d 3h 25m 18s`
-
-`basis` 缺省表示当前时间
-
-```yaml
-- describe: now
-  req:
-    body: !$time
-  res:
-    body: !@rangetime [-0.01, 0.01]
-
-- describe: after 1h 3m
-  req:
-    body: !$time '1h 3m'
-  res:
-    body: !@rangetime [3779.99, 3780.01]
-
-- describe: before 1w 2h
-  req:
-    body: !$time '1w 2h before'
-  res:
-    body: !@rangetime [-612000.01, -611999.9]
-
-- describe: 1h before 2018-07-09T06:00:00.000Z
-  req:
-    body: !$time '1h before 2018-07-09T06:00:00.000Z'
-  res:
-    body: !@rangetime [0, 0.01, '2018-07-09T05:00:00.000Z']
-```
-
 ## !$mock scalar
 
 使用 [mockjs](http://mockjs.com/) 生成数据
@@ -454,7 +331,7 @@
 
 `color` 值等同于 `Mock.hex()`, `natural` 值等同 `Mock.natural(10,20)`
 
-## !$mock/o mapping
+## !$moco mapping
 
 使用 [mockjs](http://mockjs.com/) 生成数据
 

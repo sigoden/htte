@@ -1,7 +1,7 @@
 - describe: compare range with eval
   req:
     body:
-      v1: !$randnum [0, 4]
+      v1: !$mock '@natural(0, 4)'
   res:
     body:
       v1: !@eval
