@@ -7,9 +7,9 @@ exports[`epilogue list statistics 1`] = `
 2 failed
 
 1) module2-> root-> grp2-> describe2
-   at req*body, throw error: err2
+   at req•body, throw error: err2
 2) module6-> root-> grp6-> describe6
-   at req*body, throw error: err6
+   at req•body, throw error: err6
    req:
      url: /p6
      body: req6

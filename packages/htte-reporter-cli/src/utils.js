@@ -203,12 +203,6 @@ exports.print = print;
 exports.symbols = symbols;
 exports.listFailures = listFailures;
 
-// With node.js on Windows: use symbols available in terminal default fonts
-if (process.platform === 'win32') {
-  exports.symbols.ok = '\u221A';
-  exports.symbols.err = '\u00D7';
-  exports.symbols.dot = '*';
-}
 exports.listDebugs = listDebugs;
 
 exports.useColors = !process.env.NO_COLOR;
