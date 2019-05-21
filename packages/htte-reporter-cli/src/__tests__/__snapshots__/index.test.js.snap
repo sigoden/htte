@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reporter @enterGroup 1`] = `
+"root
+  grp1
+"
+`;
+
+exports[`reporter @runUnit & doneUnit 1`] = `
+"    ✔  describe1
+"
+`;
+
+exports[`reporter @runUnit & doneUnit slow 1`] = `
+"    ✔  describe1 (10s)
+"
+`;
+
+exports[`reporter @runUnit & errorUnit 1`] = `"    ◵  describe1"`;
+
+exports[`reporter @runUnit & errorUnit 2`] = `
+"    1) describe1
+"
+`;
+
+exports[`reporter @skipUnit 1`] = `
+"    •  describe1
+"
+`;
+
+exports[`reporter @start 1`] = `
+"
+"
+`;

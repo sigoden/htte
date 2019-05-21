@@ -19,19 +19,19 @@ describe('reporter', function() {
 
   test('@start', function() {
     emitter.emit('start', { units: [], tdd: false });
-    expect(stdoutWrite.mock.calls.join('')).toBe('\n');
+    expect(stdoutWrite.mock.calls.join('')).toMatchSnapshot();
   });
 
   test('@enterGroup', function() {
     let unit = mockUnit(1, 'pass');
     emitter.emit('enterGroup', { unit });
-    expect(stdoutWrite.mock.calls.join('')).toBe(`root\n  grp1\n`);
+    expect(stdoutWrite.mock.calls.join('')).toMatchSnapshot();
   });
 
   test('@skipUnit', function() {
     let unit = mockUnit(1, 'skip');
     emitter.emit('skipUnit', { unit });
-    expect(stdoutWrite.mock.calls.join('')).toBe(`    •  describe1\n`);
+    expect(stdoutWrite.mock.calls.join('')).toMatchSnapshot();
   });
 
   test('@runUnit & doneUnit', function(done) {
@@ -40,7 +40,7 @@ describe('reporter', function() {
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('doneUnit');
-      expect(stdoutWrite.mock.calls.slice(3).join('')).toBe(`    ✔  describe1\n`);
+      expect(stdoutWrite.mock.calls.slice(3).join('')).toMatchSnapshot();
       done();
     }, utils.spinnerInterval + 1);
   });
@@ -52,7 +52,7 @@ describe('reporter', function() {
     setTimeout(() => {
       expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
       emitter.emit('doneUnit');
-      expect(stdoutWrite.mock.calls.slice(3).join('')).toBe(`    ✔  describe1 (10s)\n`);
+      expect(stdoutWrite.mock.calls.slice(3).join('')).toMatchSnapshot();
       done();
     }, utils.spinnerInterval + 1);
   });
@@ -61,9 +61,9 @@ describe('reporter', function() {
     let unit = mockUnit(1, 'fail');
     emitter.emit('runUnit', { unit });
     setTimeout(() => {
-      expect(stdoutWrite.mock.calls[1][0]).toBe(`    ◵  describe1`);
+      expect(stdoutWrite.mock.calls[1][0]).toMatchSnapshot();
       emitter.emit('errorUnit');
-      expect(stdoutWrite.mock.calls.slice(3).join('')).toBe(`    1) describe1\n`);
+      expect(stdoutWrite.mock.calls.slice(3).join('')).toMatchSnapshot();
       done();
     }, utils.spinnerInterval + 1);
   });

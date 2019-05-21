@@ -10,7 +10,6 @@
 	"scripts": {
 		"bootstrap": "lerna bootstrap --hoist",
 		"lint": "eslint .",
-		"pretest": "npm run lint",
 		"test": "jest",
 		"test:plugins": "node packages/htte-cli/bin/htte.js packages/htte-plugin-builtin/htte/htte.yaml",
 		"realworld": "node packages/htte-cli/bin/htte.js examples/realworld/htte.yaml"
