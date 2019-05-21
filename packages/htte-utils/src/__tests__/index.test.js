@@ -59,7 +59,7 @@ describe('completeUrlParams', function() {
 describe('tmpfile', function() {
   test('generate tmpfile ', function() {
     let tmpfile = utils.tmpfile(path.resolve(__dirname, 'htte-utils'));
-    expect(tmpfile).toMatch(/\/tmp\/htte-utils-\w{6}\.json/);
+    expect(tmpfile).toMatch(/htte-utils-\w{6}\.json$/);
     let newtmpfile = utils.tmpfile(path.resolve(__dirname, 'htte-utils'));
     expect(newtmpfile).toBe(tmpfile);
   });

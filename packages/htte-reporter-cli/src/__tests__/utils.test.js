@@ -1,4 +1,5 @@
 const utils = require('../utils');
+const os = require('os');
 
 utils.useColors = false;
 
@@ -52,28 +53,6 @@ describe('epilogue', function() {
       mockUnit(7, 'skip', true)
     ];
     utils.epilogue({ units, duration: 4000 });
-    expect(stdoutWrite.mock.calls.join('')).toBe(`
-3 passed (4s)
-2 pending
-2 failed
-
-1) module2-> root-> grp2-> describe2
-   at req•body, throw error: err2
-2) module6-> root-> grp6-> describe6
-   at req•body, throw error: err6
-   req:
-     url: /p6
-     body: req6
-   res: {}
-   
-
-module5-> root-> grp5-> describe5
-  req:
-    url: /p5
-    body: req5
-  res:
-    body: res5
-  
-`);
+    expect(stdoutWrite.mock.calls.join('')).toMatchSnapshot();
   });
 });
