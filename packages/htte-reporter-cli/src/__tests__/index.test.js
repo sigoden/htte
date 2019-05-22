@@ -86,4 +86,3 @@ describe('reporter', function() {
     }, utils.spinnerInterval + 1);
   });
 });
-
