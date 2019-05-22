@@ -18,7 +18,7 @@ module.exports = function(htte, options = {}) {
 
     emitter.on('enterGroup', function(args) {
       let { unit } = args;
-      const { groups, enterGroupLevel } = unit.ctx;
+      const { groups, enterGroupLevel = groups.length } = unit.ctx;
       const startIndex = groups.length - enterGroupLevel;
       groups.forEach(function(group, index) {
         if (index >= startIndex) {
