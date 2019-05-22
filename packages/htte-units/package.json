@@ -1,6 +1,6 @@
 {
   "name": "htte-units",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "utils for htte to parse units",
   "main": "src/index.js",
   "scripts": {
