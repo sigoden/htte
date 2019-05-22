@@ -2,7 +2,6 @@
 
 [![Node Version](https://img.shields.io/badge/node-%3E=6-brightgreen.svg)](https://www.npmjs.com/package/htte)
 [![Build Status](https://travis-ci.org/sigoden/htte.svg?branch=master)](https://travis-ci.org/sigoden/htte)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f019843d36f643378a26840660c10f61)](https://www.codacy.com/app/sigoden/htte?utm_source=github.com&utm_medium=referral&utm_content=sigoden/htte&utm_campaign=Badge_Grade)
 [![dependencies Status](https://david-dm.org/sigoden/htte/status.svg)](https://david-dm.org/sigoden/htte)
 [![Known Vulnerabilities](https://snyk.io/test/github/sigoden/htte/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sigoden/htte?targetFile=package.json)
 

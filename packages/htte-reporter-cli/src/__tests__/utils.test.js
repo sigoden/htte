@@ -1,5 +1,5 @@
 const utils = require('../utils');
-const os = require('os');
+const { mockUnit } = require('./helper');
 
 utils.useColors = false;
 
@@ -15,22 +15,6 @@ describe('color', function() {
     expect(utils.color('title', '%s')).toBe('%s');
   });
 });
-
-function mockUnit(index, state, debug) {
-  let unit = {
-    session: { state, req: { url: `/p${index}`, body: `req${index}` } },
-    ctx: { module: `module${index}`, groups: [`root`, `grp${index}`] },
-    describe: `describe${index}`,
-    name: `name${index}`,
-    metadata: { debug }
-  };
-  if (state === 'pass') {
-    unit.session.res = { body: `res${index}` };
-  } else if (state === 'fail') {
-    unit.session.err = { parts: ['req', 'body'], message: `err${index}` };
-  }
-  return unit;
-}
 
 describe('speed', function() {
   test('class the speed of unit', function() {

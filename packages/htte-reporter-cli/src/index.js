@@ -18,8 +18,12 @@ module.exports = function(htte, options = {}) {
 
     emitter.on('enterGroup', function(args) {
       let { unit } = args;
-      unit.ctx.groups.map(function(group, index) {
-        utils.print(utils.color('title', '%s%s'), indent(index), group);
+      const { groups, enterGroupLevel = groups.length } = unit.ctx;
+      const startIndex = groups.length - enterGroupLevel;
+      groups.forEach(function(group, index) {
+        if (index >= startIndex) {
+          utils.print(utils.color('title', '%s%s'), indent(index), group);
+        }
       });
     });
 

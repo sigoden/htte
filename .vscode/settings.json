@@ -1,5 +1,4 @@
 {
-  "prettier.eslintIntegration": true,
   "files.exclude": {
     "**/.git": true,
     "**/node_modules": true
@@ -9,19 +8,19 @@
     "!@array sequence",
     "!@arraylike mapping",
     "!@compare mapping",
+    "!@eval mapping",
     "!@exist",
     "!@object mapping",
     "!@or sequence",
     "!@query",
-    "!@range sequence",
-    "!@rangetime sequence",
     "!@regexp",
     "!@trycatch mapping",
     "!$concat sequence",
+    "!$convert mapping",
+    "!$eval mapping",
+    "!$mock",
+    "!$moco mapping",
     "!$query",
-    "!$randnum sequence",
-    "!$randstr",
-    "!$time",
-    "!$convert mapping"
+    "!$randstr"
   ]
 }

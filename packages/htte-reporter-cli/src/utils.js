@@ -173,7 +173,7 @@ exports.speed = function(duration, basis) {
  * Show spinner
  */
 
-exports.spinner = function(print, interval) {
+exports.spinner = function(print) {
   let i = 0;
   let handler = setInterval(function() {
     // node-v6 does not support process.stdout.cursorTo

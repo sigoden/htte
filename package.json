@@ -19,7 +19,8 @@
 	],
 	"jest": {
 		"testPathIgnorePatterns": [
-			"/packages/htte/src/__tests__/fixtures"
+			"/packages/.*/__tests__/fixtures",
+			"/packages/.*/__tests__/helper.js"
 		]
 	},
 	"prettier": {
