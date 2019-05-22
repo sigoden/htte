@@ -1,6 +1,7 @@
 const createReporter = require('../');
 const EventEmitter = require('events');
 const utils = require('../utils');
+const { mockUnit } = require('./helper');
 
 const htte = {};
 const options = {};
@@ -15,7 +16,7 @@ utils.spinnerMarks = '◵';
 afterEach(() => jest.clearAllMocks());
 
 describe('reporter', function() {
-  let reporter = createReporter(htte, options)({ emitter });
+  createReporter(htte, options)({ emitter });
 
   test('@start', function() {
     emitter.emit('start', { units: [], tdd: false });
@@ -86,18 +87,3 @@ describe('reporter', function() {
   });
 });
 
-function mockUnit(index, state, debug) {
-  let unit = {
-    session: { state, req: { url: `/p${index}`, body: `req${index}` } },
-    ctx: { module: `module${index}`, groups: [`root`, `grp${index}`] },
-    describe: `describe${index}`,
-    name: `name${index}`,
-    metadata: { debug }
-  };
-  if (state === 'pass') {
-    unit.session.res = { body: `res${index}` };
-  } else if (state === 'fail') {
-    unit.session.err = { parts: ['req', 'body'], message: `err${index}` };
-  }
-  return unit;
-}

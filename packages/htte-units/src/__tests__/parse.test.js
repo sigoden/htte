@@ -9,7 +9,7 @@ describe('parse', function() {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       client: 'http',
-      ctx: { macro, firstChild: true, groups: [], module: 'm1' },
+      ctx: { macro, firstChild: true, groups: [], module: 'm1', enterGroupLevel: 0 },
       describe: 'test1',
       index: 0,
       session: {},
@@ -50,5 +50,32 @@ describe('parse', function() {
     let result = parse('m1', [unit], macro);
     expect(result).toHaveLength(1);
     expect(result[0].res).toEqual({ status: 200 });
+  });
+  test('should caculate enterGroupLevel', function() {
+    let unit = {
+      describe: 'root',
+      units: [
+        {
+          describe: 'g0',
+          units: [
+            {
+              describe: 'g0-0'
+            }
+          ]
+        },
+        {
+          describe: 'g1',
+          units: [
+            {
+              describe: 'g1-0'
+            }
+          ]
+        }
+      ]
+    };
+    let macro = new Macro({});
+    let result = parse('m1', [unit], macro);
+    expect(result[0].ctx.enterGroupLevel).toEqual(2);
+    expect(result[1].ctx.enterGroupLevel).toEqual(1);
   });
 });

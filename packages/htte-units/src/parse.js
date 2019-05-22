@@ -13,13 +13,17 @@ function parseNode(output, ctx, node) {
       ctx.macro = ctx.macro.scope(node.defines);
     }
     node.units.forEach(function(child, index) {
-      let localCtx = _.pick(ctx, ['module', 'groups', 'macro']);
+      let localCtx = _.pick(ctx, ['module', 'groups', 'macro', 'enterGroupLevel']);
+      localCtx.firstChild = index === 0;
       if (!ctx.groups) {
         localCtx.groups = []; // top level
+        localCtx.enterGroupLevel = 0;
       } else {
         localCtx.groups = ctx.groups.concat(node.describe);
+        if (localCtx.firstChild) {
+          localCtx.enterGroupLevel += 1;
+        }
       }
-      localCtx.firstChild = index === 0;
       parseNode(output, localCtx, child);
     });
     return;
