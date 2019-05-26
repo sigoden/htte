@@ -19,7 +19,6 @@ modules:
 - resolver/convert
 - resolver/eval
 - resolver/mock
-- resolver/moco
 - resolver/query
 - resolver/randstr
 - mix

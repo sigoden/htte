@@ -16,7 +16,6 @@ module.exports = function(htte, opts = {}) {
     require('./resolvers/convert')(opts),
     require('./resolvers/eval')(opts),
     require('./resolvers/mock')(opts),
-    require('./resolvers/moco')(opts),
     require('./resolvers/query')(opts),
     require('./resolvers/randstr')(opts)
   ];
