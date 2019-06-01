@@ -27,6 +27,7 @@ exports.nameFromPath = function(path) {
       if (code >= 47 && code < 58) return true;
       if (code >= 65 && code < 91) return true;
       if (code >= 97 && code < 123) return true;
+      if (code === 95) return true;
       if (code >= 128) return true;
       return false;
     })
