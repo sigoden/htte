@@ -41,7 +41,7 @@ module.exports = function(htte, options = {}) {
     });
 
     emitter.on('doneUnit', function() {
-      clearSpinner();
+      if (clearSpinner) clearSpinner();
       let unit = current;
       let fmt;
       let speed = utils.speed(unit.session.duration, options.slow);
@@ -59,7 +59,7 @@ module.exports = function(htte, options = {}) {
     });
 
     emitter.on('errorUnit', function(err) {
-      clearSpinner();
+      if (clearSpinner) clearSpinner();
       if (tdd) current.metadata.debug = true;
       utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d) %s'), ++counterr, current.describe);
     });

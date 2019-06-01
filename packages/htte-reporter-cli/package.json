@@ -1,6 +1,6 @@
 {
   "name": "htte-reporter-cli",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "cli reporter for htte",
   "main": "src/index.js",
   "scripts": {
