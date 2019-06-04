@@ -19,7 +19,6 @@
     "!$convert mapping",
     "!$eval mapping",
     "!$mock",
-    "!$moco mapping",
     "!$query",
     "!$randstr"
   ]

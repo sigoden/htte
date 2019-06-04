@@ -30,7 +30,7 @@ describe('nameFromPath', function() {
     for (let i = 0; i < 128; i++) {
       ascii += String.fromCodePoint(i);
     }
-    expect(utils.nameFromPath(ascii)).toBe('_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+    expect(utils.nameFromPath(ascii)).toBe('_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz');
   });
 });
 
