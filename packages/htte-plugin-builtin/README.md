@@ -258,8 +258,8 @@
       js: >
         $ = a * b
       args:
-        a = 3
-        b = 5
+        a: 3
+        b: 5
   res:
     body: 15 
 ```
