@@ -12,7 +12,7 @@ program
   .usage('<config-file> [options]')
   .option('--bail', 'Specify whether or not to gracefully stop a htte run on encountering an error')
   .option('--continue', 'Specify whether or not to continue run from abort unit')
-  .option('--patch', 'Specify a patch config file to override the options in default config file')
+  .option('--patch <value>', 'Specify a patch config file to override the options in default config file')
   .parse(process.argv);
 
 let app;
