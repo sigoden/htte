@@ -8,7 +8,6 @@ const { loadProtoFile } = require('../utils');
 const htte = { baseDir: path.resolve(__dirname, './fixtures'), name: 'grpc' };
 
 const proto = loadProtoFile(htte.baseDir + '/mysrv.proto').helloworld;
-const protoLoader = require('@grpc/proto-loader');
 
 describe('grpc', function() {
   let server = new grpc.Server();
