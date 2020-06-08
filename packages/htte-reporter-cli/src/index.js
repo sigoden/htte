@@ -35,9 +35,11 @@ module.exports = function(htte, options = {}) {
     emitter.on('runUnit', function(args) {
       let { unit } = args;
       current = unit;
-      clearSpinner = utils.spinner(function(mark) {
-        return utils.sprintf(utils.color('pending', '%s%s  %s'), indent(unit.ctx.groups.length), mark, unit.describe);
-      }, utils.spinnerInterval);
+      if (!process.env.HTTE_CI_MODE) {
+        clearSpinner = utils.spinner(function(mark) {
+          return utils.sprintf(utils.color('pending', '%s%s  %s'), indent(unit.ctx.groups.length), mark, unit.describe);
+        }, utils.spinnerInterval || 30);
+      }
     });
 
     emitter.on('doneUnit', function() {
@@ -60,7 +62,7 @@ module.exports = function(htte, options = {}) {
 
     emitter.on('errorUnit', function(err) {
       if (clearSpinner) clearSpinner();
-      if (tdd) current.metadata.debug = true;
+      if (tdd || !!process.env.HTTE_CI_MODE) current.metadata.debug = true;
       utils.print(indent(current.ctx.groups.length) + utils.color('fail', '%d) %s'), ++counterr, current.describe);
     });
 

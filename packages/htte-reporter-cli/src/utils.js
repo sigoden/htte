@@ -172,7 +172,6 @@ exports.speed = function(duration, basis) {
 /**
  * Show spinner
  */
-
 exports.spinner = function(print) {
   let i = 0;
   let handler = setInterval(function() {

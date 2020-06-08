@@ -16,3 +16,7 @@
 ## 屏幕快照
 
 ![snapshot](https://raw.githubusercontent.com/sigoden/htte/master/packages/htte-reporter-cli/images/snapshot.png)
+
+## CI模式
+
+当设置了环境变量 `HTTE_CI_MODE`, htte-reporter-cli 将禁用 `spinner` 并打印失败接口的错误信息
