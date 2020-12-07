@@ -1,33 +1,37 @@
 {
-	"devDependencies": {
-		"eslint": "^5.1.0",
-		"eslint-plugin-jest": "^21.17.0",
-		"eslint-plugin-prettier": "^2.6.2",
-		"jest": "^23.4.1",
-		"lerna": "^2.11.0",
-		"prettier": "^1.13.7"
-	},
-	"scripts": {
-		"bootstrap": "lerna bootstrap --hoist",
-		"lint": "eslint .",
-		"test": "jest",
-		"test:plugins": "node packages/htte-cli/bin/htte.js packages/htte-plugin-builtin/htte/htte.yaml",
-		"realworld": "node packages/htte-cli/bin/htte.js examples/realworld/htte.yaml"
-	},
-	"eslintIgnore": [
-		"node_modules"
-	],
-	"jest": {
-		"testPathIgnorePatterns": [
-			"/packages/.*/__tests__/fixtures",
-			"/packages/.*/__tests__/helper.js"
-		]
-	},
-	"prettier": {
-		"singleQuote": true,
-		"printWidth": 120
-	},
-	"dependencies": {
-		"lodash": "^4.17.10"
-	}
+  "devDependencies": {
+    "eslint": "^5.1.0",
+    "eslint-plugin-jest": "^21.17.0",
+    "eslint-plugin-prettier": "^2.6.2",
+    "jest": "^23.4.1",
+    "lerna": "^2.11.0",
+    "prettier": "^1.13.7"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "lint": "eslint .",
+    "test": "jest",
+    "test:plugins": "node packages/htte-cli/bin/htte.js packages/htte-plugin-builtin/htte/htte.yaml",
+    "realworld": "node packages/htte-cli/bin/htte.js examples/realworld/htte.yaml",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "eslintIgnore": [
+    "node_modules"
+  ],
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/packages/.*/__tests__/fixtures",
+      "/packages/.*/__tests__/helper.js"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120
+  },
+  "dependencies": {
+    "lodash": "^4.17.10",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
