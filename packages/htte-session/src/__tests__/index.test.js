@@ -8,7 +8,12 @@ const session = Session(tmpfile);
 
 describe('session', function() {
   test('get & set', function() {
-    let values = [['a.b.c', 3], ['a.d[0]', { a: 3 }], ['a.d[1]', [2, 4]], ['a.f', true]];
+    let values = [
+      ['a.b.c', 3],
+      ['a.d[0]', { a: 3 }],
+      ['a.d[1]', [2, 4]],
+      ['a.f', true]
+    ];
     values.map(([path, value]) => {
       session.set(path, value);
       expect(session.get(path)).toEqual(value);

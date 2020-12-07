@@ -4,7 +4,10 @@ const yaml = require('js-yaml');
 describe('schema', function() {
   test('apply plugins to yaml schema', function() {
     let plugins = {
-      myp: [{ name: 'test', kind: 'scalar', diff: () => {} }, { name: 'test', kind: 'scalar', resolve: () => {} }]
+      myp: [
+        { name: 'test', kind: 'scalar', diff: () => {} },
+        { name: 'test', kind: 'scalar', resolve: () => {} }
+      ]
     };
     let schmea = createSchema(plugins);
     expect(schmea).toBeInstanceOf(yaml.Schema);
